@@ -60,8 +60,8 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <SecondaryButton href="/how-it-works">View Platform</SecondaryButton>
-          <PrimaryButton href="/contact">Request Demo</PrimaryButton>
+          <SecondaryButton href="/dashboard">View Platform</SecondaryButton>
+          <PrimaryButton href="/login">Login</PrimaryButton>
         </div>
 
         <button
@@ -97,11 +97,11 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="mt-3 flex flex-col gap-3 px-4">
-            <SecondaryButton href="/how-it-works" className="w-full justify-center">
+            <SecondaryButton href="/dashboard" className="w-full justify-center">
               View Platform
             </SecondaryButton>
-            <PrimaryButton href="/contact" className="w-full justify-center">
-              Request Demo
+            <PrimaryButton href="/login" className="w-full justify-center">
+              Login
             </PrimaryButton>
           </div>
         </nav>

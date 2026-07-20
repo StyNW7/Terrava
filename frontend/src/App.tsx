@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
 import Layout from "@/layouts/root-layout";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
 import LoadingScreen from "./pages/Utility/LoadingScreen";
@@ -20,8 +21,24 @@ import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/ResetPasswordPage";
-import DashboardPage from "@/pages/DashboardPage";
 import OnboardingPage from "@/pages/OnboardingPage";
+
+import DashboardOverviewPage from "@/pages/DashboardOverviewPage";
+import LivestockListPage from "@/pages/LivestockListPage";
+import AddLivestockPage from "@/pages/AddLivestockPage";
+import LivestockDetailPage from "@/pages/LivestockDetailPage";
+import MonitoringPage from "@/pages/MonitoringPage";
+import AlertsPage from "@/pages/AlertsPage";
+import AlertDetailPage from "@/pages/AlertDetailPage";
+import AIInsightsPage from "@/pages/AIInsightsPage";
+import FarmMapPage from "@/pages/FarmMapPage";
+import FarmManagementPage from "@/pages/FarmManagementPage";
+import FarmDetailPage from "@/pages/FarmDetailPage";
+import DeviceManagementPage from "@/pages/DeviceManagementPage";
+import DeviceDetailPage from "@/pages/DeviceDetailPage";
+import TeamPage from "@/pages/TeamPage";
+import ReportsAnalyticsPage from "@/pages/ReportsAnalyticsPage";
+import SettingsPage from "@/pages/SettingsPage";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -38,8 +55,27 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
+
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<DashboardOverviewPage />} />
+            <Route path="livestock" element={<LivestockListPage />} />
+            <Route path="livestock/add" element={<AddLivestockPage />} />
+            <Route path="livestock/:id" element={<LivestockDetailPage />} />
+            <Route path="monitoring" element={<MonitoringPage />} />
+            <Route path="alerts" element={<AlertsPage />} />
+            <Route path="alerts/:id" element={<AlertDetailPage />} />
+            <Route path="ai-insights" element={<AIInsightsPage />} />
+            <Route path="map" element={<FarmMapPage />} />
+            <Route path="farms" element={<FarmManagementPage />} />
+            <Route path="farms/:id" element={<FarmDetailPage />} />
+            <Route path="devices" element={<DeviceManagementPage />} />
+            <Route path="devices/:id" element={<DeviceDetailPage />} />
+            <Route path="team" element={<TeamPage />} />
+            <Route path="reports" element={<ReportsAnalyticsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
 
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />

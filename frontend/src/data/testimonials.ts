@@ -6,7 +6,7 @@ export const testimonials: TestimonialItem[] = [
     id: "testimonial-1",
     quote:
       "Dengan peringatan dini, kami tidak harus menunggu hingga gejala terlihat parah sebelum mengambil tindakan.",
-    name: "Pak Slamet Riyadi",
+    name: "Pak Stanley Wijaya",
     role: "Peternak Sapi Perah",
     location: "Boyolali, Jawa Tengah",
     image: images.farmerSmartphone,
