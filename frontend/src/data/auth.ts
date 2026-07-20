@@ -60,6 +60,48 @@ export const registerBenefits: AuthBenefit[] = [
   },
 ];
 
+export const accountRoleOptions = [
+  { value: "peternak", label: "Peternak" },
+  { value: "farm-manager", label: "Farm Manager" },
+  { value: "dokter-hewan", label: "Dokter Hewan" },
+  { value: "pengurus-koperasi", label: "Pengurus Koperasi" },
+  { value: "administrator", label: "Administrator" },
+  { value: "lainnya", label: "Lainnya" },
+];
+
+export const farmTypeOptions = [
+  { value: "mandiri", label: "Peternakan Mandiri" },
+  { value: "koperasi", label: "Koperasi" },
+  { value: "komersial", label: "Peternakan Komersial" },
+  { value: "pemerintah", label: "Institusi Pemerintah" },
+  { value: "riset", label: "Lembaga Riset" },
+  { value: "lainnya", label: "Lainnya" },
+];
+
+export const livestockCountOptions = [
+  { value: "1-10", label: "1 - 10" },
+  { value: "11-50", label: "11 - 50" },
+  { value: "51-100", label: "51 - 100" },
+  { value: "101-500", label: "101 - 500" },
+  { value: "500+", label: "Lebih dari 500" },
+];
+
+export const primaryLivestockOptions = [
+  { value: "sapi-perah", label: "Sapi Perah" },
+  { value: "sapi-potong", label: "Sapi Potong" },
+  { value: "kambing", label: "Kambing" },
+  { value: "domba", label: "Domba" },
+  { value: "unggas", label: "Unggas" },
+  { value: "lainnya", label: "Lainnya" },
+];
+
+export const notificationMethodOptions = [
+  { value: "in-app", label: "In-App Notification" },
+  { value: "email", label: "Email" },
+  { value: "whatsapp", label: "WhatsApp" },
+  { value: "critical-only", label: "Critical Alerts Only" },
+];
+
 export const trustRowItems = [
   { icon: Cloud, label: "Secure cloud infrastructure" },
   { icon: LockKeyhole, label: "Role-based access" },
