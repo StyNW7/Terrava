@@ -14,7 +14,7 @@ export const teamMembers: TeamMember[] = [
     name: "Aqnhatul Shabrina",
     role: "Business Lead",
     image:
-      "",
+      "Images/profile/aqna.jpeg",
     linkedin: "https://www.linkedin.com/in/aqnhatul-shabrina-341643320/",
   },
 ];
