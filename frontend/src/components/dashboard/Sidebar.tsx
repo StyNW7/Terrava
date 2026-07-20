@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { PanelLeftClose, PanelLeftOpen, ChevronUp, UserRound, Settings, LogOut } from "lucide-react";
 import { dashboardNavGroups } from "@/data/dashboardNav";
 import { images } from "@/data/images";
 import { useSidebarState } from "@/hooks/useSidebarState";
 
 export default function Sidebar() {
+  
+  const navigate = useNavigate()
   const { collapsed, toggleCollapsed } = useSidebarState();
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -106,7 +108,7 @@ export default function Sidebar() {
               <NavLink to="/dashboard/settings" className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-terrava-text hover:bg-terrava-bg">
                 <Settings className="h-4 w-4" aria-hidden="true" /> Settings
               </NavLink>
-              <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-terrava-error hover:bg-terrava-error/10">
+              <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-terrava-error hover:bg-terrava-error/10" onClick={() => navigate("/")}>
                 <LogOut className="h-4 w-4" aria-hidden="true" /> Logout
               </button>
             </div>
