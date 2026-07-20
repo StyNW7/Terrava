@@ -1,68 +1,47 @@
-// Default Import
-
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 
-// Layout
-
 import Layout from "@/layouts/root-layout";
 
-// Utility Pages / Components
-
-import ScrollToTop from "./utility/ScrollToTop";
-import CustomCursor from "./utility/CustomCursor";
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
-import NotFoundPage from "./pages/Utility/NotFound404";
 import LoadingScreen from "./pages/Utility/LoadingScreen";
 
-// Pages
-
-import LandingPage from "@/pages/Landing/page";
+import HomePage from "@/pages/HomePage";
+import AboutPage from "@/pages/AboutPage";
+import SolutionsPage from "@/pages/SolutionsPage";
+import SmartEarTagPage from "@/pages/SmartEarTagPage";
+import HowItWorksPage from "@/pages/HowItWorksPage";
+import ImpactPage from "@/pages/ImpactPage";
+import ContactPage from "@/pages/ContactPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 function App() {
-
   const [loading, setLoading] = useState(true);
 
   return (
-
-    // Providers, Router, Scroll to Top Function and Button, and Custom Cursor
-
     <BrowserRouter>
       <ScrollToTopFunction />
-      <ScrollToTop />
-      <CustomCursor />
 
-      {loading && (
-        <LoadingScreen onComplete={() => setLoading(false)} />
+      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
+
+      {!loading && (
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="solutions" element={<SolutionsPage />} />
+            <Route path="smart-ear-tag" element={<SmartEarTagPage />} />
+            <Route path="how-it-works" element={<HowItWorksPage />} />
+            <Route path="impact" element={<ImpactPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
       )}
 
-      <AnimatePresence mode="wait">
-
-        {!loading && (
-
-          <Routes>
-            
-            <Route path="/" element={<Layout />}>
-              
-                <Route index element={<LandingPage/>} />
-
-                <Route path="*" element={<NotFoundPage />} />
-
-            </Route>
-
-          </Routes>
-
-        )}
-
-      </AnimatePresence>
-
       <Toaster position="top-center" />
-
     </BrowserRouter>
-
   );
 }
 

@@ -1,0 +1,24 @@
+import SectionHeading from "@/components/common/SectionHeading";
+import { companyValues } from "@/data/values";
+
+export default function ValuesSection() {
+  return (
+    <section className="py-20 sm:py-28">
+      <div className="container">
+        <SectionHeading badge="Our Values" title="Prinsip yang memandu setiap keputusan kami" />
+
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {companyValues.map((value) => (
+            <div key={value.id} className="rounded-2xl border border-terrava-border bg-white p-6 shadow-card">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-terrava-light text-terrava-primary">
+                <value.icon className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <h3 className="mb-2 text-sm font-semibold text-terrava-text">{value.title}</h3>
+              <p className="text-sm leading-relaxed text-terrava-muted">{value.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
