@@ -7,14 +7,14 @@ export const teamMembers: TeamMember[] = [
     role: "Founder & Product Lead",
     image:
       "Images/profile/snw.png",
-    linkedin: "#",
+    linkedin: "https://www.linkedin.com/in/stanley-nathanael-wijaya/",
   },
   {
     id: "member-2",
-    name: "Ayu Pramesti",
+    name: "Aqnhatul Shabrina",
     role: "Business Lead",
     image:
       "",
-    linkedin: "#",
+    linkedin: "https://www.linkedin.com/in/aqnhatul-shabrina-341643320/",
   },
 ];

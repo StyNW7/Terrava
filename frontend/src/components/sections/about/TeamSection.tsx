@@ -8,7 +8,7 @@ export default function TeamSection() {
       <div className="container">
         <SectionHeading badge="Our Team" title="Tim di balik Terrava" />
 
-        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-4">
+        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-2">
           {teamMembers.map((member) => (
             <div key={member.id} className="text-center">
               <img

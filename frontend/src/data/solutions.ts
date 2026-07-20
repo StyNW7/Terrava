@@ -26,7 +26,7 @@ export const solutions: SolutionItem[] = [
       "Riwayat data tersimpan otomatis",
     ],
     benefit: "Deteksi risiko kesehatan lebih awal sebelum gejala terlihat jelas.",
-    image: images.dataDashboard,
+    image: "Images/mockup/mockup-2.png",
   },
   {
     id: "anomaly-detection",
@@ -138,6 +138,6 @@ export const solutions: SolutionItem[] = [
       "Laporan yang dapat diekspor",
     ],
     benefit: "Keputusan berbasis data yang lebih cepat dan terukur.",
-    image: images.dataDashboard,
+    image: "Images/mockup/mockup-1.png",
   },
 ];

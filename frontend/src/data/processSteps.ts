@@ -41,7 +41,7 @@ export const journeySteps: ProcessStep[] = [
     icon: Radio,
     title: "Pair Smart Ear Tags",
     description: "Hubungkan smart ear tag ke masing-masing ternak melalui aplikasi.",
-    image: images.earTagCloseup,
+    image: "Images/close-up-ear-tag.png",
   },
   {
     id: "collect-data",

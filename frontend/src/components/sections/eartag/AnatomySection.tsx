@@ -1,7 +1,6 @@
 import { useState } from "react";
 import SectionHeading from "@/components/common/SectionHeading";
 import { anatomyCallouts } from "@/data/earTag";
-import { images } from "@/data/images";
 
 export default function AnatomySection() {
   const [activeId, setActiveId] = useState(anatomyCallouts[0].id);
@@ -19,7 +18,7 @@ export default function AnatomySection() {
         <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
           <div className="relative overflow-hidden rounded-3xl">
             <img
-              src={images.earTagCloseup}
+              src="/Images/ear-tag-anatomy.png"
               alt="Anatomi smart ear tag Terrava"
               loading="lazy"
               className="h-[320px] w-full object-cover sm:h-[420px]"

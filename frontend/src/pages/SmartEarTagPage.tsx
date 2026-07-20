@@ -8,7 +8,6 @@ import ConnectivitySection from "@/components/sections/eartag/ConnectivitySectio
 import ComfortSafetySection from "@/components/sections/eartag/ComfortSafetySection";
 import SpecsSection from "@/components/sections/eartag/SpecsSection";
 import CTASection from "@/components/sections/CTASection";
-import { images } from "@/data/images";
 
 export default function SmartEarTagPage() {
   useEffect(() => {
@@ -20,7 +19,7 @@ export default function SmartEarTagPage() {
       <PageHero
         badge="Smart Ear Tag"
         title="Teknologi ringan yang menjaga setiap detak, gerakan, dan lokasi ternak."
-        image={images.earTagCloseup}
+        image="/Images/close-up-ear-tag.png"
         imageAlt="Close-up smart ear tag pada sapi"
       />
 
