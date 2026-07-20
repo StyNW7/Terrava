@@ -41,7 +41,7 @@ export const targetPersonas: PersonaItem[] = [
     icon: Users,
     title: "Smallholder Farmers",
     description: "Peternak individu dengan skala kecil yang ingin memantau ternak dengan lebih mudah.",
-    image: images.personaSmallholder,
+    image: "Images/peternak-indo.jpg",
   },
   {
     id: "cooperative",

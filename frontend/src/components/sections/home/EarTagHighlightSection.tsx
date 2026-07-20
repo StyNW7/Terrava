@@ -1,7 +1,6 @@
 import { Feather, Cpu, MapPin, BatteryCharging, Radio, Sun } from "lucide-react";
 import ImageWithOverlay from "@/components/common/ImageWithOverlay";
 import PrimaryButton from "@/components/common/PrimaryButton";
-import { images } from "@/data/images";
 
 const highlights = [
   { icon: Feather, label: "Lightweight design" },
@@ -17,7 +16,7 @@ export default function EarTagHighlightSection() {
     <section className="py-20 sm:py-28">
       <div className="container grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <ImageWithOverlay
-          src={images.earTagCloseup}
+          src="Images/close-up-ear-tag.png"
           alt="Close-up smart ear tag pada sapi"
           className="aspect-[4/3]"
         />

@@ -1,5 +1,4 @@
 import type { TestimonialItem } from "@/types";
-import { images } from "@/data/images";
 
 export const testimonials: TestimonialItem[] = [
   {
@@ -9,7 +8,7 @@ export const testimonials: TestimonialItem[] = [
     name: "Pak Stanley Wijaya",
     role: "Peternak Sapi Perah",
     location: "Boyolali, Jawa Tengah",
-    image: images.farmerSmartphone,
+    image: "Images/avatar/male.jpg",
   },
   {
     id: "testimonial-2",
@@ -18,7 +17,7 @@ export const testimonials: TestimonialItem[] = [
     name: "Ibu Ratna Kusuma",
     role: "Ketua Koperasi Ternak",
     location: "Pasuruan, Jawa Timur",
-    image: images.personaCooperative,
+    image: "Images/avatar/female.jpg",
   },
   {
     id: "testimonial-3",
@@ -27,6 +26,6 @@ export const testimonials: TestimonialItem[] = [
     name: "drh. Andi Wirawan",
     role: "Dokter Hewan Pendamping",
     location: "Malang, Jawa Timur",
-    image: images.vetChecking,
+    image: "Images/avatar/male.jpg",
   },
 ];

@@ -6,7 +6,6 @@ import RecognitionSection from "@/components/sections/about/RecognitionSection";
 import TeamSection from "@/components/sections/about/TeamSection";
 import SdgSection from "@/components/sections/SdgSection";
 import CTASection from "@/components/sections/CTASection";
-import { images } from "@/data/images";
 
 export default function AboutPage() {
   useEffect(() => {
@@ -19,7 +18,7 @@ export default function AboutPage() {
         badge="About Terrava"
         title="Teknologi yang tumbuh dari kebutuhan nyata peternak."
         description="Terrava dibangun untuk menghubungkan kesehatan ternak, data, dan pengambilan keputusan dalam satu ekosistem yang modular dan mudah digunakan."
-        image={images.aboutHero}
+        image="Images/close-up-ear-tag.png"
         imageAlt="Tim Terrava bersama teknologi peternakan"
       />
       <VisionMissionSection />

@@ -1,7 +1,6 @@
 import { Clock, HandMetal, ClipboardX, TrendingDown } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
 import ImageWithOverlay from "@/components/common/ImageWithOverlay";
-import { images } from "@/data/images";
 
 const problems = [
   {
@@ -49,7 +48,7 @@ export default function ProblemSection() {
           </div>
 
           <ImageWithOverlay
-            src={images.farmerManualCheck}
+            src="/Images/meriksa-sapi.jpg"
             alt="Peternak memeriksa kondisi sapi secara manual"
             className="aspect-[4/3] order-first lg:order-last"
           />
