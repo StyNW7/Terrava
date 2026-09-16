@@ -1,9 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { AnimatePresence, MotionConfig } from "framer-motion";
 
 import Layout from "@/layouts/root-layout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { AuthProvider } from "@/context/AuthContext";
+import ProtectedRoute, { GuestOnlyRoute } from "@/components/auth/ProtectedRoute";
 
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
 import LoadingScreen from "./pages/Utility/LoadingScreen";
@@ -44,20 +47,52 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   return (
-    <BrowserRouter>
-      <ScrollToTopFunction />
+    <MotionConfig reducedMotion="user">
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTopFunction />
 
-      {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
+          <AnimatePresence>
+            {loading && <LoadingScreen key="loading" onComplete={() => setLoading(false)} />}
+          </AnimatePresence>
 
-      {!loading && (
+          {!loading && (
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/login"
+            element={
+              <GuestOnlyRoute>
+                <LoginPage />
+              </GuestOnlyRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <GuestOnlyRoute>
+                <RegisterPage />
+              </GuestOnlyRoute>
+            }
+          />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route
+            path="/onboarding"
+            element={
+              <ProtectedRoute>
+                <OnboardingPage />
+              </ProtectedRoute>
+            }
+          />
 
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<DashboardOverviewPage />} />
             <Route path="livestock" element={<LivestockListPage />} />
             <Route path="livestock/add" element={<AddLivestockPage />} />
@@ -88,10 +123,29 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
-      )}
+          )}
 
-      <Toaster position="top-center" />
-    </BrowserRouter>
+          <Toaster
+            position="top-center"
+            gutter={10}
+            toastOptions={{
+              duration: 3200,
+              style: {
+                borderRadius: "14px",
+                background: "#15231B",
+                color: "#FFFFFF",
+                fontSize: "14px",
+                fontWeight: 500,
+                padding: "12px 16px",
+                boxShadow: "0 12px 32px -12px rgba(21, 35, 27, 0.45)",
+              },
+              success: { iconTheme: { primary: "#27875B", secondary: "#FFFFFF" } },
+              error: { iconTheme: { primary: "#C95B5B", secondary: "#FFFFFF" } },
+            }}
+          />
+        </BrowserRouter>
+      </AuthProvider>
+    </MotionConfig>
   );
 }
 

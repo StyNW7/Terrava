@@ -84,7 +84,7 @@ export default function DataTable<T extends { id: string }>({
 
       {/* Desktop / tablet table */}
       <div className="hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+        <table className="w-full min-w-[960px] border-collapse text-left text-sm">
           <thead className="sticky top-0 z-10 bg-terrava-bg">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -115,9 +115,9 @@ export default function DataTable<T extends { id: string }>({
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-t border-terrava-border hover:bg-terrava-bg/60">
+              <tr key={row.id} className="border-t border-terrava-border transition-colors hover:bg-terrava-bg/60">
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3.5 align-middle text-terrava-text">
+                  <td key={cell.id} className="whitespace-nowrap px-4 py-3.5 align-middle text-terrava-text">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

@@ -1,5 +1,6 @@
 import { Radio, BatteryLow, Map, Antenna, Home } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 const reasons = [
   { icon: Map, label: "Long-range communication" },
@@ -19,7 +20,7 @@ export default function ConnectivitySection() {
           description="LoRa dipilih karena cocok untuk kondisi peternakan yang luas dan minim infrastruktur jaringan."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
           {reasons.map((reason) => (
             <div
               key={reason.label}
@@ -29,7 +30,7 @@ export default function ConnectivitySection() {
               <p className="text-sm font-medium text-terrava-text">{reason.label}</p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

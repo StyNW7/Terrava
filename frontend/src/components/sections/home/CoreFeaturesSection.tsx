@@ -1,6 +1,7 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import FeatureCard from "@/components/cards/FeatureCard";
 import { coreFeatures } from "@/data/features";
+import { StaggerGroup, StaggerItem } from "@/components/motion/Stagger";
 
 export default function CoreFeaturesSection() {
   return (
@@ -12,11 +13,13 @@ export default function CoreFeaturesSection() {
           description="Enam pilar utama Terrava yang bekerja bersama untuk menjaga kesehatan dan produktivitas ternak Anda."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerGroup className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {coreFeatures.map((feature) => (
-            <FeatureCard key={feature.id} feature={feature} />
+            <StaggerItem key={feature.id} className="h-full">
+              <FeatureCard feature={feature} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   );

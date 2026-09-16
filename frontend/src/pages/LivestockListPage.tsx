@@ -72,8 +72,8 @@ export default function LivestockListPage() {
         <div className="flex items-center gap-2.5">
           <img src={row.original.photo} alt={row.original.name} className="h-9 w-9 rounded-lg object-cover" />
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-terrava-text">{row.original.name}</p>
-            <p className="truncate text-xs text-terrava-muted">{row.original.earTagId}</p>
+            <p className="text-sm font-medium text-terrava-text">{row.original.name}</p>
+            <p className="text-xs text-terrava-muted">{row.original.earTagId}</p>
           </div>
         </div>
       ),

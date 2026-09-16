@@ -35,9 +35,38 @@
   }
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: rgba(39, 122, 77, 0.18);
+    color: #102b1d;
+  }
+  /* Consistent, brand-colored keyboard focus everywhere. */
+  :focus-visible {
+    outline: 2px solid #277a4d;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -63,4 +92,36 @@
   .section-fade {
     animation: fade-in-up 0.6s ease-out both;
   }
+  /* Card that lifts subtly on hover. */
+  .card-hover {
+    @apply transition-all duration-300 ease-out-expo hover:-translate-y-1 hover:shadow-lift hover:border-terrava-primary/30;
+  }
+  /* Frosted glass surface for floating UI. */
+  .glass {
+    @apply border border-white/60 bg-white/80 backdrop-blur-md;
+  }
+  /* Animated placeholder shimmer. */
+  .shimmer {
+    background: linear-gradient(90deg, #eef4f0 0%, #f7faf8 40%, #eef4f0 80%);
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+  .text-gradient {
+    background: linear-gradient(120deg, #1f633e 0%, #277a4d 45%, #3c9a67 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Leaflet containers inherit our rounded corners. */
+.leaflet-container {
+  font-family: inherit;
 }

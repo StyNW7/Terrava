@@ -1,6 +1,7 @@
 import { Linkedin } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
 import { teamMembers } from "@/data/team";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function TeamSection() {
   return (
@@ -8,7 +9,7 @@ export default function TeamSection() {
       <div className="container">
         <SectionHeading badge="Our Team" title="Tim di balik Terrava" />
 
-        <div className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-2">
+        <StaggerGrid className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-2">
           {teamMembers.map((member) => (
             <div key={member.id} className="text-center">
               <img
@@ -30,7 +31,7 @@ export default function TeamSection() {
               )}
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

@@ -9,10 +9,10 @@ export const images = {
     "https://images.unsplash.com/photo-1500595046743-cd271d694d30?q=80&w=1600&auto=format&fit=crop",
   // Farmer checking cattle manually (problem statement section)
   farmerManualCheck:
-    "https://images.unsplash.com/photo-1594761051556-8b6a8dd5bbb4?q=80&w=1400&auto=format&fit=crop",
+    "/Images/meriksa-sapi.jpg",
   // Close-up smart ear tag on cattle
   earTagCloseup:
-    "https://images.unsplash.com/photo-1567976089089-cd68b4c9d5b1?q=80&w=1400&auto=format&fit=crop",
+    "/Images/close-up-ear-tag.png",
   // Cattle in modern barn/enclosure
   modernBarn:
     "https://images.unsplash.com/photo-1465379944081-7f47de8d74ac?q=80&w=1400&auto=format&fit=crop",
@@ -30,7 +30,7 @@ export const images = {
     "https://images.unsplash.com/photo-1516467508483-a7212febe31a?q=80&w=1600&auto=format&fit=crop",
   // Veterinarian checking livestock
   vetChecking:
-    "https://images.unsplash.com/photo-1601758228041-3caa4de81652?q=80&w=1400&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=1400&auto=format&fit=crop",
   // Sustainable rural farming landscape
   sustainableFarming:
     "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1600&auto=format&fit=crop",
@@ -42,10 +42,10 @@ export const images = {
     "https://images.unsplash.com/photo-1546445317-29f4545e9d53?q=80&w=1400&auto=format&fit=crop",
   // About page hero – team/technology
   aboutHero:
-    "https://images.unsplash.com/photo-1571843439991-dd2b8e569979?q=80&w=1600&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1560493676-04071c5f467b?q=80&w=1600&auto=format&fit=crop",
   // Smallholder farmer persona
   personaSmallholder:
-    "https://images.unsplash.com/photo-1591086722964-3a415a3b5115?q=80&w=1200&auto=format&fit=crop",
+    "/Images/peternak-indo.jpg",
   // Cooperative persona
   personaCooperative:
     "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1200&auto=format&fit=crop",

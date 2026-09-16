@@ -6,8 +6,8 @@ export default function FeatureCard({ feature }: { feature: FeatureItem }) {
   const Icon = feature.icon;
 
   return (
-    <div className="group flex h-full flex-col rounded-2xl border border-terrava-border bg-white p-6 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-soft">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-terrava-light text-terrava-primary transition-colors duration-300 group-hover:bg-terrava-primary group-hover:text-white">
+    <div className="card-hover group flex h-full flex-col rounded-2xl border border-terrava-border bg-white p-6 shadow-card">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-terrava-light text-terrava-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-terrava-primary group-hover:text-white group-hover:shadow-glow">
         <Icon className="h-6 w-6" aria-hidden="true" />
       </div>
       <h3 className="mb-2 text-lg font-semibold text-terrava-text">{feature.title}</h3>

@@ -1,5 +1,6 @@
 import PrimaryButton from "@/components/common/PrimaryButton";
 import SecondaryButton from "@/components/common/SecondaryButton";
+import Reveal from "@/components/motion/Reveal";
 
 interface CTASectionProps {
   title: string;
@@ -19,8 +20,10 @@ export default function CTASection({
   secondaryHref,
 }: CTASectionProps) {
   return (
-    <section className="bg-terrava-primary py-16 sm:py-20">
-      <div className="container max-w-4xl text-center">
+    <section className="relative overflow-hidden bg-gradient-to-br from-terrava-dark via-[#1B5F3A] to-terrava-primary py-16 sm:py-20">
+      <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-float-slow" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-16 bottom-0 h-72 w-72 rounded-full bg-emerald-300/10 blur-3xl animate-float-slow [animation-delay:2.5s]" aria-hidden="true" />
+      <Reveal className="container relative max-w-4xl text-center" amount={0.4}>
         <h2 className="text-3xl font-bold text-white sm:text-4xl">{title}</h2>
         {description && (
           <p className="mx-auto mt-4 max-w-2xl text-base text-white/85 sm:text-lg">
@@ -43,7 +46,7 @@ export default function CTASection({
             </SecondaryButton>
           )}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

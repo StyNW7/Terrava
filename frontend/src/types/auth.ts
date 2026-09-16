@@ -21,3 +21,18 @@ export interface AuthPanelCopy {
 }
 
 export type AuthPanelVariant = "login" | "register" | "forgot" | "reset";
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  farmName: string;
+  initials: string;
+}
+
+export interface AuthSession {
+  user: AuthUser;
+  loggedInAt: string;
+  rememberMe: boolean;
+}

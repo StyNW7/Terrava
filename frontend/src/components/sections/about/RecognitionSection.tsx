@@ -1,6 +1,7 @@
 import { Award } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
 import { recognitionTimeline } from "@/data/timeline";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function RecognitionSection() {
   return (
@@ -8,7 +9,7 @@ export default function RecognitionSection() {
       <div className="container">
         <SectionHeading badge="Recognition" title="Pencapaian dan langkah kolaborasi kami" />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3">
           {recognitionTimeline.map((item) => (
             <div key={item.id} className="rounded-2xl border border-terrava-border bg-terrava-bg p-6">
               <div className="mb-4 flex items-center gap-2">
@@ -21,7 +22,7 @@ export default function RecognitionSection() {
               <p className="text-sm leading-relaxed text-terrava-muted">{item.description}</p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

@@ -88,6 +88,17 @@ module.exports = {
       boxShadow: {
         soft: "0 2px 24px -8px rgba(21, 35, 27, 0.12)",
         card: "0 1px 2px rgba(21, 35, 27, 0.04), 0 8px 24px -12px rgba(21, 35, 27, 0.1)",
+        lift: "0 12px 40px -16px rgba(21, 35, 27, 0.22), 0 2px 6px -2px rgba(21, 35, 27, 0.06)",
+        glow: "0 0 0 1px rgba(39, 122, 77, 0.18), 0 16px 40px -18px rgba(39, 122, 77, 0.45)",
+        inset: "inset 0 1px 0 rgba(255,255,255,0.6)",
+      },
+      backgroundImage: {
+        "grid-soft":
+          "linear-gradient(to right, rgba(39,122,77,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(39,122,77,0.07) 1px, transparent 1px)",
+        "radial-glow": "radial-gradient(60% 60% at 50% 0%, rgba(39,122,77,0.16) 0%, rgba(39,122,77,0) 70%)",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.22, 1, 0.36, 1)",
       },
       keyframes: {
         "accordion-down": {
@@ -111,6 +122,30 @@ module.exports = {
           "25%": { transform: "translateX(-4px)" },
           "75%": { transform: "translateX(4px)" },
         },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+        "ping-slow": {
+          "0%": { transform: "scale(0.9)", opacity: 0.8 },
+          "70%, 100%": { transform: "scale(1.35)", opacity: 0 },
+        },
+        shimmer: {
+          from: { backgroundPosition: "200% 0" },
+          to: { backgroundPosition: "-200% 0" },
+        },
+        "pulse-dot": {
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(39, 122, 77, 0.45)" },
+          "70%": { boxShadow: "0 0 0 8px rgba(39, 122, 77, 0)" },
+        },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(-14px) rotate(1.5deg)" },
+        },
+        "gradient-shift": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -118,6 +153,12 @@ module.exports = {
         "fade-in-up": "fade-in-up 0.6s ease-out",
         float: "float 4s ease-in-out infinite",
         shake: "shake 0.4s ease-in-out",
+        marquee: "marquee 38s linear infinite",
+        "ping-slow": "ping-slow 1.8s cubic-bezier(0, 0, 0.2, 1) infinite",
+        shimmer: "shimmer 2.2s linear infinite",
+        "pulse-dot": "pulse-dot 2s ease-out infinite",
+        "float-slow": "float-slow 7s ease-in-out infinite",
+        "gradient-shift": "gradient-shift 12s ease infinite",
       },
     },
   },

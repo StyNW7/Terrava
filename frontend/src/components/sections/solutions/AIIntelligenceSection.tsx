@@ -1,5 +1,6 @@
 import { Database, LayoutGrid, Search, BrainCircuit, Lightbulb, Users } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 const aiSteps = [
   { icon: Database, label: "Collect Data" },
@@ -20,7 +21,7 @@ export default function AIIntelligenceSection() {
           description="Model AI Terrava belajar dari data historis setiap ternak untuk memberikan insight yang relevan dan dapat ditindaklanjuti."
         />
 
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <StaggerGrid className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {aiSteps.map((step, index) => (
             <div key={step.label} className="rounded-2xl border border-terrava-border bg-terrava-bg p-5 text-center">
               <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-terrava-primary text-white">
@@ -31,7 +32,7 @@ export default function AIIntelligenceSection() {
               </p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
 
         <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-terrava-border bg-terrava-light px-6 py-5 text-center text-sm text-terrava-dark">
           AI Terrava membantu proses pengambilan keputusan dan tidak menggantikan diagnosis profesional

@@ -1,6 +1,7 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import StatisticCard from "@/components/cards/StatisticCard";
 import { impactStatistics } from "@/data/statistics";
+import { StaggerGroup, StaggerItem } from "@/components/motion/Stagger";
 
 export default function ImpactStatsSection() {
   return (
@@ -12,11 +13,13 @@ export default function ImpactStatsSection() {
           description="Angka berikut menggambarkan target kapabilitas platform pada tahap pengembangan MVP."
         />
 
-        <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
+        <StaggerGroup className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6" stagger={0.07}>
           {impactStatistics.map((stat) => (
-            <StatisticCard key={stat.id} stat={stat} />
+            <StaggerItem key={stat.id} className="h-full">
+              <StatisticCard stat={stat} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   );

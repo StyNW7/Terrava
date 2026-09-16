@@ -1,5 +1,6 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { sdgItems } from "@/data/sdgs";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 interface SdgSectionProps {
   title?: string;
@@ -15,7 +16,7 @@ export default function SdgSection({
       <div className="container">
         <SectionHeading badge="SDG Contribution" title={title} description={description} />
 
-        <div className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        <StaggerGrid className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {sdgItems.map((sdg) => (
             <div
               key={sdg.id}
@@ -29,7 +30,7 @@ export default function SdgSection({
               <p className="text-xs leading-relaxed text-terrava-muted">{sdg.description}</p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

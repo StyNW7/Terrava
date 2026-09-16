@@ -17,6 +17,8 @@ import OverviewDeviceIssuesPanel from "@/components/dashboard/overview/OverviewD
 import OverviewTasksPanel from "@/components/dashboard/overview/OverviewTasksPanel";
 import OverviewActivityPanel from "@/components/dashboard/overview/OverviewActivityPanel";
 import OverviewWeatherPanel from "@/components/dashboard/overview/OverviewWeatherPanel";
+import WelcomeBanner from "@/components/dashboard/overview/WelcomeBanner";
+import { StaggerGroup, StaggerItem } from "@/components/motion/Stagger";
 import { livestockHealthDistribution } from "@/data/dashboardChartData";
 import { livestock } from "@/data/mockLivestock";
 import { alerts } from "@/data/mockAlerts";
@@ -34,6 +36,8 @@ export default function DashboardOverviewPage() {
   const criticalAlertCount = alerts.filter((a) => a.severity === "critical" && a.status === "active").length;
   const activeDevices = devices.filter((d) => d.status === "online").length;
   const avgHealthScore = Math.round(livestock.reduce((sum, a) => sum + a.healthScore, 0) / livestock.length);
+  const healthyPercent = Math.round((healthyCount / livestock.length) * 100);
+  const activeAlertCount = alerts.filter((a) => a.status === "active").length;
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -63,14 +67,21 @@ export default function DashboardOverviewPage() {
         }
       />
 
-      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <MetricCard icon={PawPrint} label="Total Livestock" value={livestock.length} trend={4.2} trendLabel="vs last month" />
-        <MetricCard icon={HeartPulse} label="Healthy Livestock" value={healthyCount} trend={2.1} trendLabel="vs last month" />
-        <MetricCard icon={TriangleAlert} label="Needs Attention" value={attentionCount} trend={-1.4} trendLabel="vs last month" tone="warning" />
-        <MetricCard icon={BellRing} label="Critical Alerts" value={criticalAlertCount} trend={-3.5} trendLabel="vs yesterday" tone="error" />
-        <MetricCard icon={Radio} label="Active Devices" value={activeDevices} trend={1.8} trendLabel="vs last week" />
-        <MetricCard icon={Gauge} label="Avg Health Score" value={avgHealthScore} trend={0.9} trendLabel="vs last week" />
-      </div>
+      <WelcomeBanner
+        healthyPercent={healthyPercent}
+        activeAlerts={activeAlertCount}
+        devicesOnline={activeDevices}
+        devicesTotal={devices.length}
+      />
+
+      <StaggerGroup className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6" stagger={0.06}>
+        <StaggerItem><MetricCard icon={PawPrint} label="Total Livestock" value={livestock.length} trend={4.2} trendLabel="vs last month" /></StaggerItem>
+        <StaggerItem><MetricCard icon={HeartPulse} label="Healthy Livestock" value={healthyCount} trend={2.1} trendLabel="vs last month" /></StaggerItem>
+        <StaggerItem><MetricCard icon={TriangleAlert} label="Needs Attention" value={attentionCount} trend={-1.4} trendLabel="vs last month" tone="warning" /></StaggerItem>
+        <StaggerItem><MetricCard icon={BellRing} label="Critical Alerts" value={criticalAlertCount} trend={-3.5} trendLabel="vs yesterday" tone="error" /></StaggerItem>
+        <StaggerItem><MetricCard icon={Radio} label="Active Devices" value={activeDevices} trend={1.8} trendLabel="vs last week" /></StaggerItem>
+        <StaggerItem><MetricCard icon={Gauge} label="Avg Health Score" value={avgHealthScore} trend={0.9} trendLabel="vs last week" /></StaggerItem>
+      </StaggerGroup>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <ChartCard title="Health Score Trend" description="Rata-rata skor kesehatan seluruh ternak (30 hari terakhir)">

@@ -1,5 +1,6 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { targetPersonas } from "@/data/roles";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function TargetUsersSection() {
   return (
@@ -11,7 +12,7 @@ export default function TargetUsersSection() {
           description="Dari peternak individu hingga lembaga pemerintah, Terrava dapat disesuaikan dengan kebutuhan Anda."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {targetPersonas.map((persona) => (
             <div
               key={persona.id}
@@ -32,7 +33,7 @@ export default function TargetUsersSection() {
               </div>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

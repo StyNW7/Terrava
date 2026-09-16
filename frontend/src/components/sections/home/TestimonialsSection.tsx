@@ -1,6 +1,7 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import TestimonialCard from "@/components/cards/TestimonialCard";
 import { testimonials } from "@/data/testimonials";
+import { StaggerGroup, StaggerItem } from "@/components/motion/Stagger";
 
 export default function TestimonialsSection() {
   return (
@@ -12,11 +13,13 @@ export default function TestimonialsSection() {
           description="Testimoni contoh dari program pilot dan diskusi awal bersama komunitas peternak."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+        <StaggerGroup className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3" stagger={0.12}>
           {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+            <StaggerItem key={testimonial.id} className="h-full">
+              <TestimonialCard testimonial={testimonial} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
     </section>
   );

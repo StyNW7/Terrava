@@ -1,5 +1,7 @@
 import { HeartPulse, Thermometer, Radio, BellRing } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import type { Variants } from "framer-motion";
 import type { AuthBenefit, AuthTestimonialData } from "@/types/auth";
 import AuthBenefitItem from "@/components/auth/AuthBenefitItem";
 import AuthTestimonial from "@/components/auth/AuthTestimonial";
@@ -15,11 +17,21 @@ interface AuthBrandPanelProps {
 }
 
 const floatingCards = [
-  { icon: HeartPulse, label: "Health Score", value: "92 / 100", meta: "Stable" },
-  { icon: Thermometer, label: "Temperature", value: "38.4°C", meta: "Normal Range" },
-  { icon: Radio, label: "Device Status", value: "128 Connected", meta: "Prototype demo" },
-  { icon: BellRing, label: "Active Alerts", value: "2 Need Attention", meta: "Prototype demo" },
+  { icon: HeartPulse, label: "Health Score", value: "92 / 100", meta: "Stable", tone: "text-terrava-success" },
+  { icon: Thermometer, label: "Temperature", value: "38.4°C", meta: "Normal range", tone: "text-terrava-primary" },
+  { icon: Radio, label: "Device Status", value: "128 Connected", meta: "99.2% uptime", tone: "text-terrava-info" },
+  { icon: BellRing, label: "Active Alerts", value: "2 Need Attention", meta: "1 critical", tone: "text-terrava-warning" },
 ];
+
+const container: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
+};
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+};
 
 export default function AuthBrandPanel({ heading, description, benefits, testimonial }: AuthBrandPanelProps) {
   return (
@@ -31,10 +43,11 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#102B1D] via-terrava-dark/80 to-terrava-primary/70" aria-hidden="true" />
 
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]"
-        aria-hidden="true"
-      >
+      {/* Ambient light blobs */}
+      <div className="pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-terrava-primary/30 blur-3xl animate-float-slow" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-20 bottom-24 h-80 w-80 rounded-full bg-emerald-300/10 blur-3xl animate-float-slow [animation-delay:2s]" aria-hidden="true" />
+
+      <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.08]" aria-hidden="true">
         <defs>
           <pattern id="auth-node-grid" width="56" height="56" patternUnits="userSpaceOnUse">
             <circle cx="2" cy="2" r="1.5" fill="white" />
@@ -43,8 +56,13 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
         <rect width="100%" height="100%" fill="url(#auth-node-grid)" />
       </svg>
 
-      <div className="relative flex h-full flex-col justify-between px-12 py-12 xl:px-16">
-        <div>
+      <motion.div
+        className="relative flex h-full flex-col justify-between px-12 py-12 xl:px-16"
+        variants={container}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={item}>
           <Link to="/" className="flex items-center gap-2.5">
             <img src={images.logoIcon} alt="Terrava logo" className="h-9 w-9 rounded-lg object-contain" />
             <span className="text-xl font-bold text-white">Terrava</span>
@@ -52,60 +70,67 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
           <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-white/60">
             AI-Powered Smart Livestock Ecosystem
           </p>
-        </div>
+        </motion.div>
 
         <div className="max-w-md">
-          <h1 className="text-3xl font-bold leading-tight text-white xl:text-[2.15rem]">{heading}</h1>
-          <p className="mt-4 text-sm leading-relaxed text-white/80">{description}</p>
+          <motion.h1 variants={item} className="text-3xl font-bold leading-tight text-white xl:text-[2.15rem]">
+            {heading}
+          </motion.h1>
+          <motion.p variants={item} className="mt-4 text-sm leading-relaxed text-white/80">
+            {description}
+          </motion.p>
 
-          <div className="mt-5">
+          <motion.div variants={item} className="mt-5">
             <RotatingMessage />
-          </div>
+          </motion.div>
 
           <div className="mt-8 space-y-5">
             {benefits.map((benefit) => (
-              <AuthBenefitItem key={benefit.id} benefit={benefit} />
+              <motion.div key={benefit.id} variants={item}>
+                <AuthBenefitItem benefit={benefit} />
+              </motion.div>
             ))}
           </div>
 
-          <div className="relative mt-10 hidden xl:block">
+          <motion.div variants={item} className="relative mt-10 hidden xl:block">
             <div className="grid grid-cols-2 gap-3">
               {floatingCards.map((card, index) => (
-                <div
+                <motion.div
                   key={card.label}
-                  className="animate-float rounded-2xl border border-white/15 bg-white/95 p-4 shadow-soft"
-                  style={{ animationDelay: `${index * 0.4}s` }}
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ duration: 4 + index * 0.6, repeat: Infinity, ease: "easeInOut", delay: index * 0.4 }}
+                  className="rounded-2xl border border-white/15 bg-white/95 p-4 shadow-soft backdrop-blur"
                 >
-                  <card.icon className="mb-2 h-4 w-4 text-terrava-primary" aria-hidden="true" />
+                  <card.icon className={`mb-2 h-4 w-4 ${card.tone}`} aria-hidden="true" />
                   <p className="text-[11px] font-medium text-terrava-muted">{card.label}</p>
                   <p className="text-sm font-bold text-terrava-text">{card.value}</p>
                   <p className="text-[10px] text-terrava-muted">{card.meta}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {testimonial && (
-            <div className="mt-8">
+            <motion.div variants={item} className="mt-8">
               <AuthTestimonial testimonial={testimonial} />
-            </div>
+            </motion.div>
           )}
         </div>
 
-        <div>
+        <motion.div variants={item}>
           <p className="text-xs text-white/70">
             Dirancang untuk peternak, koperasi, dokter hewan, dan pengelola peternakan modern.
           </p>
           <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-            {trustRowItems.map((item) => (
-              <div key={item.label} className="flex items-center gap-1.5 text-xs text-white/60">
-                <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-                {item.label}
+            {trustRowItems.map((trust) => (
+              <div key={trust.label} className="flex items-center gap-1.5 text-xs text-white/60">
+                <trust.icon className="h-3.5 w-3.5" aria-hidden="true" />
+                {trust.label}
               </div>
             ))}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

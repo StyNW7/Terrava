@@ -1,5 +1,6 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { journeySteps } from "@/data/processSteps";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function JourneySection() {
   return (
@@ -11,7 +12,7 @@ export default function JourneySection() {
           description="Tujuh langkah utama yang membawa peternak dari pendaftaran akun hingga pengambilan keputusan berbasis data."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {journeySteps.map((step) => (
             <div key={step.id} className="overflow-hidden rounded-2xl border border-terrava-border bg-white shadow-card">
               <img src={step.image} alt={step.title} loading="lazy" className="h-36 w-full object-cover" />
@@ -27,7 +28,7 @@ export default function JourneySection() {
               </div>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

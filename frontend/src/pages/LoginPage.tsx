@@ -1,21 +1,31 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
-import { Mail, LoaderCircle, CircleAlert, Chrome, AppWindow } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { Mail, LoaderCircle, CircleAlert, Chrome, AppWindow, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthInput from "@/components/auth/AuthInput";
 import PasswordInput from "@/components/auth/PasswordInput";
 import SocialLoginButton from "@/components/auth/SocialLoginButton";
+import DemoAccountCard from "@/components/auth/DemoAccountCard";
 import { loginSchema, type LoginFormValues } from "@/schemas/authSchemas";
+import { useAuth } from "@/hooks/useAuth";
+import { primaryDemoAccount, toAuthUser } from "@/data/demoAccounts";
+import type { DemoAccount } from "@/data/demoAccounts";
 
-const DEMO_EMAIL = "demo@terrava.id";
-const DEMO_PASSWORD = "Terrava123";
+const firstName = (name: string) => name.replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, loginAs } = useAuth();
   const [authError, setAuthError] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
+  const [quickLoading, setQuickLoading] = useState<"demo" | "google" | "microsoft" | null>(null);
+
+  const redirectTo = (location.state as { from?: string } | null)?.from ?? "/dashboard";
 
   useEffect(() => {
     document.title = "Login | Terrava";
@@ -24,24 +34,63 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: { email: "", password: "", rememberMe: true },
   });
+
+  const busy = isSubmitting || quickLoading !== null;
+
+  const finishLogin = (name: string) => {
+    toast.success(`Selamat datang kembali, ${firstName(name)}!`);
+    navigate(redirectTo, { replace: true });
+  };
 
   const onSubmit = async (values: LoginFormValues) => {
     setAuthError(null);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const result = await login(values.email, values.password, values.rememberMe);
 
-    if (values.email === DEMO_EMAIL && values.password === DEMO_PASSWORD) {
-      navigate("/dashboard");
+    if (result.ok) {
+      finishLogin(result.user?.name ?? values.email.split("@")[0]);
       return;
     }
 
-    setAuthError("Email atau password tidak sesuai. Silakan coba kembali.");
+    setAuthError(result.message ?? "Terjadi kesalahan. Silakan coba kembali.");
     setShake(true);
     setTimeout(() => setShake(false), 400);
+  };
+
+  const fillDemo = (account: DemoAccount) => {
+    setAuthError(null);
+    clearErrors();
+    setValue("email", account.email, { shouldValidate: false, shouldDirty: true });
+    setValue("password", account.password, { shouldValidate: false, shouldDirty: true });
+    toast.success("Kredensial demo terisi. Klik Masuk untuk melanjutkan.");
+  };
+
+  const quickLogin = async (account: DemoAccount) => {
+    setAuthError(null);
+    setQuickLoading("demo");
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    loginAs(toAuthUser(account), true);
+    setQuickLoading(null);
+    finishLogin(account.name);
+  };
+
+  const socialLogin = async (provider: "google" | "microsoft") => {
+    setAuthError(null);
+    setQuickLoading(provider);
+    const label = provider === "google" ? "Google" : "Microsoft";
+    const pending = toast.loading(`Menghubungkan dengan ${label}...`);
+    await new Promise((resolve) => setTimeout(resolve, 1300));
+    toast.dismiss(pending);
+    loginAs(toAuthUser(primaryDemoAccount), true);
+    setQuickLoading(null);
+    toast.success(`Masuk dengan ${label} (mode demo).`);
+    navigate(redirectTo, { replace: true });
   };
 
   return (
@@ -54,16 +103,38 @@ export default function LoginPage() {
       footerLinkText="Daftar sekarang"
       footerLinkPath="/register"
     >
+      <div className="mb-6">
+        <DemoAccountCard onFill={fillDemo} onQuickLogin={quickLogin} disabled={busy} />
+      </div>
+
+      <div className="relative mb-6 text-center">
+        <span className="relative bg-terrava-bg px-3 text-xs font-medium uppercase tracking-wide text-terrava-muted">
+          atau masuk manual
+        </span>
+        <div className="absolute left-0 top-1/2 -z-10 h-px w-full bg-terrava-border" aria-hidden="true" />
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)} noValidate className={`space-y-5 ${shake ? "animate-shake" : ""}`}>
-        {authError && (
-          <div
-            role="alert"
-            className="flex items-start gap-2.5 rounded-xl border border-terrava-error/30 bg-terrava-error/10 px-4 py-3 text-sm text-terrava-error"
-          >
-            <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            {authError}
-          </div>
-        )}
+        <AnimatePresence>
+          {authError && (
+            <motion.div
+              key="auth-error"
+              initial={{ opacity: 0, y: -6, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -6, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <div
+                role="alert"
+                className="flex items-start gap-2.5 rounded-xl border border-terrava-error/30 bg-terrava-error/10 px-4 py-3 text-sm text-terrava-error"
+              >
+                <CircleAlert className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                {authError}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <AuthInput
           id="email"
@@ -85,32 +156,33 @@ export default function LoginPage() {
             error={errors.password?.message}
             {...register("password")}
           />
-          <div className="mt-2 text-right">
-            <a href="/forgot-password" className="text-sm font-medium text-terrava-primary hover:text-terrava-hover">
+          <div className="mt-2 flex items-center justify-between">
+            <label className="flex cursor-pointer items-center gap-2.5 text-sm text-terrava-text">
+              <input type="checkbox" className="h-4 w-4 rounded accent-terrava-primary" {...register("rememberMe")} />
+              Ingat saya
+            </label>
+            <Link to="/forgot-password" className="text-sm font-medium text-terrava-primary hover:text-terrava-hover">
               Lupa password?
-            </a>
+            </Link>
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-2.5 text-sm text-terrava-text">
-          <input type="checkbox" className="h-4 w-4 accent-terrava-primary" {...register("rememberMe")} />
-          Ingat saya
-        </label>
-
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={busy}
           aria-busy={isSubmitting}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-terrava-primary text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-terrava-hover disabled:pointer-events-none disabled:opacity-70"
-          style={{ height: 54 }}
+          className="group inline-flex h-[54px] w-full items-center justify-center gap-2 rounded-xl bg-terrava-primary text-sm font-semibold text-white shadow-glow transition-all duration-300 hover:-translate-y-0.5 hover:bg-terrava-hover disabled:pointer-events-none disabled:opacity-70"
         >
           {isSubmitting ? (
             <>
               <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Memproses...
+              Memverifikasi...
             </>
           ) : (
-            "Masuk"
+            <>
+              Masuk
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+            </>
           )}
         </button>
 
@@ -122,8 +194,20 @@ export default function LoginPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <SocialLoginButton icon={Chrome} label="Continue with Google" />
-          <SocialLoginButton icon={AppWindow} label="Continue with Microsoft" />
+          <SocialLoginButton
+            icon={Chrome}
+            label="Continue with Google"
+            loading={quickLoading === "google"}
+            disabled={busy}
+            onClick={() => socialLogin("google")}
+          />
+          <SocialLoginButton
+            icon={AppWindow}
+            label="Continue with Microsoft"
+            loading={quickLoading === "microsoft"}
+            disabled={busy}
+            onClick={() => socialLogin("microsoft")}
+          />
         </div>
 
         <p className="text-center text-xs leading-relaxed text-terrava-muted">

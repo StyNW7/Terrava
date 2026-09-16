@@ -1,5 +1,6 @@
 import { Landmark, Route, HeartPulse, Baby, Wheat, Leaf, Handshake } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 const visionPoints = [
   { icon: Landmark, label: "National livestock intelligence platform" },
@@ -21,14 +22,14 @@ export default function LongTermVisionSection() {
           description="Peta jalan pengembangan Terrava menuju platform intelijen peternakan yang lebih luas."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {visionPoints.map((point) => (
             <div key={point.label} className="rounded-2xl border border-terrava-border bg-white p-6 text-center shadow-card">
               <point.icon className="mx-auto mb-3 h-6 w-6 text-terrava-primary" aria-hidden="true" />
               <p className="text-sm font-medium text-terrava-text">{point.label}</p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

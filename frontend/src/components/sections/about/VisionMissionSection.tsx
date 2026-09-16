@@ -1,5 +1,6 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { missionCards } from "@/data/values";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function VisionMissionSection() {
   return (
@@ -10,7 +11,7 @@ export default function VisionMissionSection() {
           title="Menjadi fondasi digital bagi peternakan yang sehat, produktif, dan berkelanjutan."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {missionCards.map((mission) => (
             <div key={mission.id} className="rounded-2xl border border-terrava-border bg-terrava-bg p-6">
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-terrava-primary text-white">
@@ -20,7 +21,7 @@ export default function VisionMissionSection() {
               <p className="text-sm leading-relaxed text-terrava-muted">{mission.description}</p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

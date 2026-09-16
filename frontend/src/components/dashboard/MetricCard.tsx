@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line } from "recharts";
+import AnimatedCounter from "@/components/motion/AnimatedCounter";
 
 interface MetricCardProps {
   icon: LucideIcon;
@@ -28,7 +29,7 @@ export default function MetricCard({
     tone === "warning" ? "bg-terrava-warning/10 text-terrava-warning" : tone === "error" ? "bg-terrava-error/10 text-terrava-error" : "bg-terrava-light text-terrava-primary";
 
   return (
-    <div className="rounded-2xl border border-terrava-border bg-white p-5 shadow-card">
+    <div className="card-hover rounded-2xl border border-terrava-border bg-white p-5 shadow-card">
       <div className="flex items-start justify-between gap-3">
         <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconTone}`}>
           <Icon className="h-5 w-5" aria-hidden="true" />
@@ -45,7 +46,9 @@ export default function MetricCard({
       </div>
 
       <p className="mt-4 text-xs font-medium text-terrava-muted-2">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-terrava-text sm:text-[28px]">{value}</p>
+      <p className="mt-1 text-2xl font-bold tabular-nums text-terrava-text sm:text-[28px]">
+        {typeof value === "number" ? <AnimatedCounter value={value} duration={1.1} /> : value}
+      </p>
 
       <div className="mt-2 flex items-center gap-2">
         {typeof trend === "number" && (

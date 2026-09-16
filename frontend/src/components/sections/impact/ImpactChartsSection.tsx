@@ -5,6 +5,7 @@ import ComparisonBarChart from "@/components/charts/ComparisonBarChart";
 import AlertCategoryBarChart from "@/components/charts/AlertCategoryBarChart";
 import UptimeChart from "@/components/charts/UptimeChart";
 import HealthStatusPieChart from "@/components/charts/HealthStatusPieChart";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function ImpactChartsSection() {
   return (
@@ -16,7 +17,7 @@ export default function ImpactChartsSection() {
           description="Visualisasi berikut merupakan proyeksi ilustratif berdasarkan skenario prototype dan belum merupakan hasil tervalidasi di lapangan."
         />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-2">
           <ChartCard title="Monitoring Response Time" description="Prototype scenario: manual vs assisted monitoring">
             <ResponseTimeChart />
           </ChartCard>
@@ -32,7 +33,7 @@ export default function ImpactChartsSection() {
           <ChartCard title="Health Status Distribution" description="Prototype scenario distribusi status kesehatan ternak">
             <HealthStatusPieChart />
           </ChartCard>
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );

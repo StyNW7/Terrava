@@ -1,5 +1,6 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { companyValues } from "@/data/values";
+import { StaggerGrid } from "@/components/motion/Stagger";
 
 export default function ValuesSection() {
   return (
@@ -7,7 +8,7 @@ export default function ValuesSection() {
       <div className="container">
         <SectionHeading badge="Our Values" title="Prinsip yang memandu setiap keputusan kami" />
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {companyValues.map((value) => (
             <div key={value.id} className="rounded-2xl border border-terrava-border bg-white p-6 shadow-card">
               <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-terrava-light text-terrava-primary">
@@ -17,7 +18,7 @@ export default function ValuesSection() {
               <p className="text-sm leading-relaxed text-terrava-muted">{value.description}</p>
             </div>
           ))}
-        </div>
+        </StaggerGrid>
       </div>
     </section>
   );
