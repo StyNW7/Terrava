@@ -7,6 +7,7 @@ import Logo from "@/components/layout/Logo";
 import PrimaryButton from "@/components/common/PrimaryButton";
 import SecondaryButton from "@/components/common/SecondaryButton";
 import UserAvatar from "@/components/dashboard/UserAvatar";
+import ThemeToggle from "@/components/common/ThemeToggle";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
@@ -84,6 +85,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <ThemeToggle />
           {isAuthenticated ? (
             <PrimaryButton href="/dashboard" showArrow={false} className="gap-2.5 py-2 pl-2 pr-4">
               <UserAvatar initials={user?.initials ?? "TV"} size="sm" online={false} className="[&>span]:ring-white/40" />
@@ -104,9 +106,11 @@ export default function Navbar() {
           )}
         </div>
 
+        <div className="flex items-center gap-2 lg:hidden">
+        <ThemeToggle />
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-terrava-text transition-colors hover:bg-terrava-light lg:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-terrava-text transition-colors hover:bg-terrava-light"
           onClick={() => setIsOpen((prev) => !prev)}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
@@ -125,6 +129,7 @@ export default function Navbar() {
             </motion.span>
           </AnimatePresence>
         </button>
+        </div>
       </div>
 
       <AnimatePresence>

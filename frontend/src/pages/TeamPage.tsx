@@ -17,6 +17,7 @@ import { staffWorkload } from "@/data/dashboardChartData";
 const roleOptions = [
   { value: "Owner", label: "Owner" },
   { value: "Farm Manager", label: "Farm Manager" },
+  { value: "Operational", label: "Operational" },
   { value: "Staff", label: "Staff" },
   { value: "Veterinarian", label: "Veterinarian" },
   { value: "Cooperative Admin", label: "Cooperative Admin" },
@@ -119,13 +120,13 @@ export default function TeamPage() {
         <ChartCard title="Staff Workload" description="Tugas dan alert yang ditugaskan per anggota tim">
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={staffWorkload} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} cursor={{ fill: "#F5F8F6" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} cursor={{ fill: "var(--chart-track)" }} />
               <Legend formatter={(value) => <span className="text-xs text-terrava-muted">{value}</span>} />
-              <Bar dataKey="tasks" name="Tasks" fill="#277A4D" radius={[8, 8, 0, 0]} isAnimationActive />
-              <Bar dataKey="alerts" name="Alerts Assigned" fill="#A7CFB7" radius={[8, 8, 0, 0]} isAnimationActive />
+              <Bar dataKey="tasks" name="Tasks" fill="var(--chart-primary)" radius={[8, 8, 0, 0]} isAnimationActive />
+              <Bar dataKey="alerts" name="Alerts Assigned" fill="var(--chart-soft-2)" radius={[8, 8, 0, 0]} isAnimationActive />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>

@@ -19,7 +19,7 @@ export default function HealthStatusPieChart() {
             <Cell key={entry.name} fill={entry.color} />
           ))}
         </Pie>
-        <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} />
+        <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} />
         <Legend
           verticalAlign="bottom"
           height={36}

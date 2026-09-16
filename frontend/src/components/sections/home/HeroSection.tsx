@@ -34,7 +34,7 @@ export default function HeroSection() {
       {/* Ambient decoration */}
       <div className="pointer-events-none absolute inset-0 bg-grid-soft bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" aria-hidden="true" />
       <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-terrava-primary/10 blur-3xl animate-float-slow" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-white/70 blur-3xl animate-float-slow [animation-delay:3s]" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-white/70 blur-3xl animate-float-slow [animation-delay:3s] dark:bg-terrava-primary/10" aria-hidden="true" />
 
       <div className="container relative">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">

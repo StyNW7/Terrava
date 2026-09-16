@@ -66,13 +66,13 @@ export default function AIInsightsPage() {
         <ChartCard title="Recommended Action Completion" description="Tugas selesai vs tertunda dalam 14 hari terakhir">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={taskCompletionTrend} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} />
               <Legend formatter={(value) => <span className="text-xs text-terrava-muted">{value}</span>} />
-              <Bar dataKey="completed" name="Completed" stackId="a" fill="#277A4D" radius={[0, 0, 0, 0]} isAnimationActive />
-              <Bar dataKey="pending" name="Pending" stackId="a" fill="#D6EADF" radius={[6, 6, 0, 0]} isAnimationActive />
+              <Bar dataKey="completed" name="Completed" stackId="a" fill="var(--chart-primary)" radius={[0, 0, 0, 0]} isAnimationActive />
+              <Bar dataKey="pending" name="Pending" stackId="a" fill="var(--chart-soft)" radius={[6, 6, 0, 0]} isAnimationActive />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>

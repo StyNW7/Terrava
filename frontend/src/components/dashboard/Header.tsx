@@ -16,6 +16,7 @@ import HelpDrawer from "@/components/dashboard/HelpDrawer";
 import UserMenuItems from "@/components/dashboard/UserMenuItems";
 import UserAvatar from "@/components/dashboard/UserAvatar";
 import SeverityBadge from "@/components/dashboard/SeverityBadge";
+import ThemeToggle from "@/components/common/ThemeToggle";
 import { useDashboardFilters } from "@/context/DashboardContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useClickOutside } from "@/hooks/useClickOutside";
@@ -301,6 +302,8 @@ export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
                 )}
               </AnimatePresence>
             </div>
+
+            <ThemeToggle className="h-9 w-9 rounded-lg border-transparent bg-transparent text-terrava-muted hover:bg-terrava-bg hover:text-terrava-text" />
 
             <button
               type="button"

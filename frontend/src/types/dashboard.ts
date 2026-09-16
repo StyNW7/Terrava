@@ -19,6 +19,7 @@ export type DeviceType = "ear-tag" | "gateway" | "environmental-sensor";
 export type StaffRole =
   | "Owner"
   | "Farm Manager"
+  | "Operational"
   | "Staff"
   | "Veterinarian"
   | "Cooperative Admin"

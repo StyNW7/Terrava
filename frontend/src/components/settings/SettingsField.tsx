@@ -34,9 +34,9 @@ export function SettingsToggleRow({ label, description, checked, onChange }: { l
         role="switch"
         aria-checked={checked}
         onClick={() => onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${checked ? "bg-terrava-primary" : "bg-terrava-border"}`}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${checked ? "bg-terrava-primary" : "bg-terrava-border dark:bg-terrava-neutral/40"}`}
       >
-        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-5" : "translate-x-0.5"}`} />
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform dark:bg-terrava-text ${checked ? "translate-x-5" : "translate-x-0.5"}`} />
       </button>
     </div>
   );

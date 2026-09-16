@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
+import { MapContainer, Marker, Popup, Circle } from "react-leaflet";
+import ThemedTileLayer from "@/components/dashboard/ThemedTileLayer";
 import { Link } from "react-router-dom";
 import { RotateCw, MapPinned, Radio, WifiOff, TriangleAlert } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
@@ -82,7 +83,7 @@ export default function FarmMapPage() {
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
         <div className="overflow-hidden rounded-2xl border border-terrava-border xl:col-span-3">
           <MapContainer center={[centerLat, centerLng]} zoom={13} scrollWheelZoom style={{ height: 520, width: "100%" }}>
-            <TileLayer attribution='&copy; OpenStreetMap contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <ThemedTileLayer />
 
             {relevantBarns.map((barn, index) => {
               const lat = centerLat - 0.02 + index * 0.01;
@@ -110,7 +111,7 @@ export default function FarmMapPage() {
 
             {filteredLivestock.map((animal) => (
               <div key={animal.id}>
-                {showGeofence && <Circle center={[animal.location.lat, animal.location.lng]} radius={120} pathOptions={{ color: "#277A4D", fillOpacity: 0.05, weight: 1 }} />}
+                {showGeofence && <Circle center={[animal.location.lat, animal.location.lng]} radius={120} pathOptions={{ color: "var(--chart-primary)", fillOpacity: 0.05, weight: 1 }} />}
                 <Marker position={[animal.location.lat, animal.location.lng]} icon={livestockMarkerIcons[animal.healthStatus] ?? livestockMarkerIcons.healthy}>
                   <Popup>
                     <p className="font-semibold">{animal.name}</p>

@@ -1,4 +1,5 @@
-import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
+import { MapContainer, Marker, Popup, Circle } from "react-leaflet";
+import ThemedTileLayer from "@/components/dashboard/ThemedTileLayer";
 import type { Livestock } from "@/types/dashboard";
 import { livestockMarkerIcons } from "@/utils/leafletIcons";
 import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
@@ -9,11 +10,8 @@ export default function LivestockLocationTab({ animal }: { animal: Livestock }) 
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="overflow-hidden rounded-2xl border border-terrava-border lg:col-span-2">
         <MapContainer center={[animal.location.lat, animal.location.lng]} zoom={15} scrollWheelZoom={false} style={{ height: 360, width: "100%" }}>
-          <TileLayer
-            attribution='&copy; OpenStreetMap contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Circle center={[animal.location.lat, animal.location.lng]} radius={150} pathOptions={{ color: "#277A4D", fillOpacity: 0.08 }} />
+          <ThemedTileLayer />
+          <Circle center={[animal.location.lat, animal.location.lng]} radius={150} pathOptions={{ color: "var(--chart-primary)", fillOpacity: 0.08 }} />
           <Marker position={[animal.location.lat, animal.location.lng]} icon={livestockMarkerIcons[animal.healthStatus] ?? livestockMarkerIcons.healthy}>
             <Popup>
               <p className="font-semibold">{animal.name}</p>

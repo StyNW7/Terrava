@@ -5,7 +5,46 @@
 @tailwind utilities;
 
 @layer base {
+  /* ------------------------------------------------------------------
+   * Terrava design tokens (RGB triplets so Tailwind opacity modifiers work)
+   * ------------------------------------------------------------------ */
   :root {
+    --t-primary: 39 122 77;
+    --t-hover: 31 99 62;
+    --t-light: 232 243 237;
+    --t-muted-light: 214 234 223;
+    --t-dark: 22 61 42;
+    --t-forest: 16 43 29;
+    --t-soft: 213 232 220;
+    --t-bg: 247 250 248;
+    --t-surface: 255 255 255;
+    --t-text: 21 35 27;
+    --t-muted: 96 112 102;
+    --t-muted-2: 102 115 107;
+    --t-border: 220 230 223;
+    --t-border-muted: 232 238 234;
+    --t-warning: 216 155 50;
+    --t-error: 201 91 91;
+    --t-success: 39 135 91;
+    --t-info: 74 127 167;
+    --t-neutral: 136 148 140;
+    --t-shadow: 21 35 27;
+
+    --chart-grid: #e8eeea;
+    --chart-tick: #66736b;
+    --chart-border: #dce6df;
+    --chart-tooltip-bg: #ffffff;
+    --chart-tooltip-text: #15231b;
+    --chart-track: #f5f8f6;
+    --chart-primary: #277a4d;
+    --chart-soft: #d5e8dc;
+    --chart-soft-2: #9dc7ae;
+
+    --scroll-track: #f7faf8;
+    --scroll-thumb: #a9c9b8;
+    --scroll-thumb-hover: #277a4d;
+
+    /* shadcn/ui compatibility */
     --background: 0 0% 100%;
     --foreground: 154 22% 10%;
     --card: 0 0% 100%;
@@ -27,9 +66,102 @@
     --ring: 152 51% 31%;
     --radius: 1rem;
   }
-}
 
-@layer base {
+  .dark {
+    --t-primary: 52 162 100;
+    --t-hover: 63 182 115;
+    --t-light: 23 47 36;
+    --t-muted-light: 28 58 43;
+    --t-dark: 15 36 25;
+    --t-forest: 8 18 13;
+    --t-soft: 31 61 46;
+    --t-bg: 11 22 17;
+    --t-surface: 18 33 26;
+    --t-text: 230 239 233;
+    --t-muted: 159 179 167;
+    --t-muted-2: 143 163 150;
+    --t-border: 34 57 45;
+    --t-border-muted: 27 47 37;
+    --t-warning: 227 174 74;
+    --t-error: 229 115 115;
+    --t-success: 67 194 130;
+    --t-info: 111 168 214;
+    --t-neutral: 126 143 132;
+    --t-shadow: 0 0 0;
+
+    --chart-grid: #1f3328;
+    --chart-tick: #8fa396;
+    --chart-border: #22392d;
+    --chart-tooltip-bg: #12211a;
+    --chart-tooltip-text: #e6efe9;
+    --chart-track: #172a20;
+    --chart-primary: #43c282;
+    --chart-soft: #2a5a40;
+    --chart-soft-2: #3f8a60;
+
+    --scroll-track: #0b1611;
+    --scroll-thumb: #22392d;
+    --scroll-thumb-hover: #34a264;
+
+    --background: 154 33% 6%;
+    --foreground: 140 18% 92%;
+    --card: 154 29% 10%;
+    --card-foreground: 140 18% 92%;
+    --popover: 154 29% 10%;
+    --popover-foreground: 140 18% 92%;
+    --primary: 146 51% 42%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 152 34% 14%;
+    --secondary-foreground: 140 18% 92%;
+    --muted: 152 34% 14%;
+    --muted-foreground: 140 12% 66%;
+    --accent: 152 34% 14%;
+    --accent-foreground: 140 18% 92%;
+    --destructive: 0 69% 67%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 149 25% 18%;
+    --input: 149 25% 18%;
+    --ring: 146 51% 42%;
+  }
+
+  /* In dark mode every plain white surface becomes the elevated dark surface.
+   * Low-opacity whites (bg-white/10 etc.) are intentionally left alone: they
+   * are highlights on top of dark/gradient panels and read correctly as-is. */
+  .dark .bg-white {
+    background-color: rgb(var(--t-surface));
+  }
+  .dark .bg-white\/95 {
+    background-color: rgb(var(--t-surface) / 0.95);
+  }
+  .dark .bg-white\/90 {
+    background-color: rgb(var(--t-surface) / 0.9);
+  }
+  .dark .bg-white\/85 {
+    background-color: rgb(var(--t-surface) / 0.85);
+  }
+  .dark .bg-white\/80 {
+    background-color: rgb(var(--t-surface) / 0.8);
+  }
+  .dark .bg-white\/70 {
+    background-color: rgb(var(--t-surface) / 0.7);
+  }
+  .dark .bg-white\/60 {
+    background-color: rgb(var(--t-surface) / 0.6);
+  }
+  .dark .ring-white {
+    --tw-ring-color: rgb(var(--t-surface));
+  }
+  .dark .border-white {
+    border-color: rgb(var(--t-surface));
+  }
+  .dark .divide-white > :not([hidden]) ~ :not([hidden]) {
+    border-color: rgb(var(--t-surface));
+  }
+  /* Dark green copy on soft green backgrounds flips to the light text token. */
+  .dark .text-terrava-dark {
+    color: rgb(var(--t-text));
+  }
+
   * {
     @apply border-border;
   }
@@ -38,16 +170,17 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-terrava-bg text-terrava-text font-sans antialiased;
     text-rendering: optimizeLegibility;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   ::selection {
-    background: rgba(39, 122, 77, 0.18);
-    color: #102b1d;
+    background: rgb(var(--t-primary) / 0.22);
+    color: rgb(var(--t-text));
   }
   /* Consistent, brand-colored keyboard focus everywhere. */
   :focus-visible {
-    outline: 2px solid #277a4d;
+    outline: 2px solid rgb(var(--t-primary));
     outline-offset: 2px;
     border-radius: 6px;
   }
@@ -55,6 +188,20 @@
   select:focus-visible,
   textarea:focus-visible {
     outline: none;
+  }
+  /* Native form controls follow the theme. */
+  input,
+  select,
+  textarea {
+    color-scheme: inherit;
+  }
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: rgb(var(--t-muted) / 0.7);
+  }
+  .dark select option {
+    background-color: rgb(var(--t-surface));
+    color: rgb(var(--t-text));
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -76,16 +223,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f7faf8;
+  background: var(--scroll-track);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a9c9b8;
+  background: var(--scroll-thumb);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #277a4d;
+  background: var(--scroll-thumb-hover);
 }
 
 @layer utilities {
@@ -98,16 +245,16 @@
   }
   /* Frosted glass surface for floating UI. */
   .glass {
-    @apply border border-white/60 bg-white/80 backdrop-blur-md;
+    @apply border border-white/60 bg-white/80 backdrop-blur-md dark:border-terrava-border dark:bg-terrava-surface/85;
   }
   /* Animated placeholder shimmer. */
   .shimmer {
-    background: linear-gradient(90deg, #eef4f0 0%, #f7faf8 40%, #eef4f0 80%);
+    background: linear-gradient(90deg, rgb(var(--t-light)) 0%, rgb(var(--t-bg)) 40%, rgb(var(--t-light)) 80%);
     background-size: 200% 100%;
     @apply animate-shimmer;
   }
   .text-gradient {
-    background: linear-gradient(120deg, #1f633e 0%, #277a4d 45%, #3c9a67 100%);
+    background: linear-gradient(120deg, rgb(var(--t-hover)) 0%, rgb(var(--t-primary)) 45%, rgb(var(--t-success)) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -121,7 +268,23 @@
   }
 }
 
-/* Leaflet containers inherit our rounded corners. */
+/* Leaflet containers inherit our typography and theme. */
 .leaflet-container {
   font-family: inherit;
+  background: rgb(var(--t-bg));
+}
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: rgb(var(--t-surface));
+  color: rgb(var(--t-text));
+  box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.6);
+}
+.dark .leaflet-control-zoom a,
+.dark .leaflet-control-attribution {
+  background: rgb(var(--t-surface));
+  color: rgb(var(--t-text));
+  border-color: rgb(var(--t-border));
+}
+.dark .leaflet-control-attribution a {
+  color: rgb(var(--t-primary));
 }

@@ -120,11 +120,11 @@ export default function ReportsAnalyticsPage() {
         <ChartCard title="2. Alert Category Distribution">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={alertCategoryDistribution} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="category" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} cursor={{ fill: "#F5F8F6" }} />
-              <Bar dataKey="count" fill="#277A4D" radius={[8, 8, 0, 0]} isAnimationActive />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="category" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} cursor={{ fill: "var(--chart-track)" }} />
+              <Bar dataKey="count" fill="var(--chart-primary)" radius={[8, 8, 0, 0]} isAnimationActive />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -137,22 +137,22 @@ export default function ReportsAnalyticsPage() {
         <ChartCard title="5. Temperature and Activity Correlation">
           <ResponsiveContainer width="100%" height={260}>
             <ScatterChart margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" />
-              <XAxis dataKey="temperature" name="Temperature" unit="°C" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <YAxis dataKey="activity" name="Activity" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+              <XAxis dataKey="temperature" name="Temperature" unit="°C" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <YAxis dataKey="activity" name="Activity" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
               <ZAxis range={[60, 60]} />
-              <Tooltip cursor={{ strokeDasharray: "3 3" }} contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} />
-              <Scatter data={temperatureActivityCorrelation} fill="#277A4D" isAnimationActive />
+              <Tooltip cursor={{ strokeDasharray: "3 3" }} contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} />
+              <Scatter data={temperatureActivityCorrelation} fill="var(--chart-primary)" isAnimationActive />
             </ScatterChart>
           </ResponsiveContainer>
         </ChartCard>
         <ChartCard title="6. Device Uptime Trend">
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={deviceUptimeTrend30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} unit="%" />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} unit="%" />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} />
               <Line type="monotone" dataKey="uptime" stroke="#4A7FA7" strokeWidth={2.5} dot={false} isAnimationActive />
             </LineChart>
           </ResponsiveContainer>
@@ -163,23 +163,23 @@ export default function ReportsAnalyticsPage() {
         <ChartCard title="8. Barn Comparison">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={barnComparisonData} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#66736B" }} axisLine={false} tickLine={false} interval={0} angle={-20} textAnchor="end" height={60} />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} cursor={{ fill: "#F5F8F6" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} interval={0} angle={-20} textAnchor="end" height={60} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} cursor={{ fill: "var(--chart-track)" }} />
               <Legend formatter={(value) => <span className="text-xs text-terrava-muted">{value}</span>} />
-              <Bar dataKey="healthScore" name="Health Score" fill="#277A4D" radius={[6, 6, 0, 0]} isAnimationActive />
-              <Bar dataKey="occupancy" name="Occupancy %" fill="#D6EADF" radius={[6, 6, 0, 0]} isAnimationActive />
+              <Bar dataKey="healthScore" name="Health Score" fill="var(--chart-primary)" radius={[6, 6, 0, 0]} isAnimationActive />
+              <Bar dataKey="occupancy" name="Occupancy %" fill="var(--chart-soft)" radius={[6, 6, 0, 0]} isAnimationActive />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
         <ChartCard title="9. Response Time Trend">
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={responseTimeTrend30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} unit="m" />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} unit="m" />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} />
               <Line type="monotone" dataKey="minutes" stroke="#D89B32" strokeWidth={2.5} dot={false} isAnimationActive />
             </LineChart>
           </ResponsiveContainer>
@@ -187,10 +187,10 @@ export default function ReportsAnalyticsPage() {
         <ChartCard title="10. Health Score by Group">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={healthScoreByGroup} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8EEEA" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: "#66736B" }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #DCE6DF", fontSize: 13 }} cursor={{ fill: "#F5F8F6" }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} cursor={{ fill: "var(--chart-track)" }} />
               <Bar dataKey="score" fill="#4D966D" radius={[8, 8, 0, 0]} isAnimationActive />
             </BarChart>
           </ResponsiveContainer>

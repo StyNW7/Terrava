@@ -6,6 +6,8 @@ import { AnimatePresence, MotionConfig } from "framer-motion";
 import Layout from "@/layouts/root-layout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { useTheme } from "@/hooks/useTheme";
 import ProtectedRoute, { GuestOnlyRoute } from "@/components/auth/ProtectedRoute";
 
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
@@ -43,11 +45,38 @@ import TeamPage from "@/pages/TeamPage";
 import ReportsAnalyticsPage from "@/pages/ReportsAnalyticsPage";
 import SettingsPage from "@/pages/SettingsPage";
 
+function ThemedToaster() {
+  const { isDark } = useTheme();
+
+  return (
+    <Toaster
+      position="top-center"
+      gutter={10}
+      toastOptions={{
+        duration: 3200,
+        style: {
+          borderRadius: "14px",
+          background: isDark ? "#1A2E24" : "#15231B",
+          color: "#FFFFFF",
+          fontSize: "14px",
+          fontWeight: 500,
+          padding: "12px 16px",
+          border: isDark ? "1px solid #2B4A39" : "none",
+          boxShadow: isDark ? "0 12px 32px -12px rgba(0, 0, 0, 0.7)" : "0 12px 32px -12px rgba(21, 35, 27, 0.45)",
+        },
+        success: { iconTheme: { primary: isDark ? "#43C282" : "#27875B", secondary: "#FFFFFF" } },
+        error: { iconTheme: { primary: isDark ? "#E57373" : "#C95B5B", secondary: "#FFFFFF" } },
+      }}
+    />
+  );
+}
+
 function App() {
   const [loading, setLoading] = useState(true);
 
   return (
     <MotionConfig reducedMotion="user">
+      <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTopFunction />
@@ -125,26 +154,10 @@ function App() {
         </Routes>
           )}
 
-          <Toaster
-            position="top-center"
-            gutter={10}
-            toastOptions={{
-              duration: 3200,
-              style: {
-                borderRadius: "14px",
-                background: "#15231B",
-                color: "#FFFFFF",
-                fontSize: "14px",
-                fontWeight: 500,
-                padding: "12px 16px",
-                boxShadow: "0 12px 32px -12px rgba(21, 35, 27, 0.45)",
-              },
-              success: { iconTheme: { primary: "#27875B", secondary: "#FFFFFF" } },
-              error: { iconTheme: { primary: "#C95B5B", secondary: "#FFFFFF" } },
-            }}
-          />
+          <ThemedToaster />
         </BrowserRouter>
       </AuthProvider>
+      </ThemeProvider>
     </MotionConfig>
   );
 }

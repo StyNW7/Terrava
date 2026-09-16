@@ -4,8 +4,9 @@ import { farms } from "@/data/mockFarms";
 
 const random = createSeededRandom(5005);
 
-const staffData: { name: string; role: StaffRole; status: StaffMember["status"] }[] = [
-  { name: "Stanley Wijaya", role: "Owner", status: "active" },
+const staffData: { name: string; role: StaffRole; status: StaffMember["status"]; avatar?: string; email?: string }[] = [
+  { name: "Stanley Wijaya", role: "Owner", status: "active", avatar: "/Images/profile/snw.png", email: "stanley.wijaya@terrava.id" },
+  { name: "Aqnhatul Shabrina", role: "Operational", status: "active", avatar: "/Images/profile/aqna.jpeg", email: "aqnhatul.shabrina@terrava.id" },
   { name: "Ratna Kusuma", role: "Farm Manager", status: "active" },
   { name: "Andi Wirawan", role: "Veterinarian", status: "active" },
   { name: "Budi Santoso", role: "Staff", status: "active" },
@@ -29,8 +30,8 @@ const avatarPool = [
 export const staff: StaffMember[] = staffData.map((person, index) => ({
   id: `STF-${String(index + 1).padStart(3, "0")}`,
   name: person.name,
-  email: `${person.name.toLowerCase().replace(/\s+/g, ".")}@terrava.id`,
-  avatar: avatarPool[index % avatarPool.length],
+  email: person.email ?? `${person.name.toLowerCase().replace(/\s+/g, ".")}@terrava.id`,
+  avatar: person.avatar ?? avatarPool[index % avatarPool.length],
   role: person.role,
   farmId: farms[index % farms.length].id,
   status: person.status,

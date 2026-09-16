@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import Modal from "@/components/dashboard/Modal";
 import { farms } from "@/data/mockFarms";
 
-const roles = ["Owner", "Farm Manager", "Staff", "Veterinarian", "Cooperative Admin", "Viewer"];
+const roles = ["Owner", "Farm Manager", "Operational", "Staff", "Veterinarian", "Cooperative Admin", "Viewer"];
 const permissionLevels = ["Full Access", "Edit Access", "View Only"];
 
 export default function InviteMemberModal({ open, onClose }: { open: boolean; onClose: () => void }) {

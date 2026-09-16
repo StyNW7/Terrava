@@ -10,22 +10,22 @@ const permissions = [
   "Edit settings",
 ];
 
-const roles = ["Owner", "Farm Manager", "Staff", "Veterinarian", "Cooperative Admin", "Viewer"];
+const roles = ["Owner", "Farm Manager", "Operational", "Staff", "Veterinarian", "Cooperative Admin", "Viewer"];
 
 const matrix: Record<string, boolean[]> = {
-  "View livestock": [true, true, true, true, true, true],
-  "Edit livestock": [true, true, true, true, false, false],
-  "Manage alerts": [true, true, true, true, false, false],
-  "Manage devices": [true, true, false, false, false, false],
-  "Manage team": [true, true, false, false, true, false],
-  "Export reports": [true, true, false, true, true, false],
-  "Edit settings": [true, false, false, false, false, false],
+  "View livestock": [true, true, true, true, true, true, true],
+  "Edit livestock": [true, true, true, true, true, false, false],
+  "Manage alerts": [true, true, true, true, true, false, false],
+  "Manage devices": [true, true, true, false, false, false, false],
+  "Manage team": [true, true, true, false, false, true, false],
+  "Export reports": [true, true, true, false, true, true, false],
+  "Edit settings": [true, false, false, false, false, false, false],
 };
 
 export default function PermissionsMatrix() {
   return (
     <div className="overflow-x-auto rounded-2xl border border-terrava-border bg-white">
-      <table className="w-full min-w-[720px] text-left text-sm">
+      <table className="w-full min-w-[840px] text-left text-sm">
         <thead className="bg-terrava-bg text-xs uppercase text-terrava-muted">
           <tr>
             <th className="px-4 py-3">Permission</th>

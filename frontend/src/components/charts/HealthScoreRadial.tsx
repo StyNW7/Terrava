@@ -1,7 +1,7 @@
 import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
 
 export default function HealthScoreRadial({ score = 92 }: { score?: number }) {
-  const data = [{ name: "Health Score", value: score, fill: "#277A4D" }];
+  const data = [{ name: "Health Score", value: score, fill: "var(--chart-primary)" }];
 
   return (
     <div className="relative">
@@ -14,7 +14,7 @@ export default function HealthScoreRadial({ score = 92 }: { score?: number }) {
           startAngle={90}
           endAngle={-270}
         >
-          <RadialBar background={{ fill: "#E8F3ED" }} dataKey="value" cornerRadius={12} isAnimationActive animationDuration={900} />
+          <RadialBar background={{ fill: "var(--chart-track)" }} dataKey="value" cornerRadius={12} isAnimationActive animationDuration={900} />
         </RadialBarChart>
       </ResponsiveContainer>
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">

@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { images } from "@/data/images";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "@/components/common/ThemeToggle";
 
 const steps = [
   { id: 1, label: "Profil Peternakan", icon: Building2 },
@@ -129,13 +130,16 @@ export default function OnboardingPage() {
             <img src={images.logoIcon} alt="Terrava logo" className="h-9 w-9 rounded-lg object-contain" />
             <span className="text-xl font-bold text-terrava-text">Terrava</span>
           </Link>
-          <button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            className="text-sm font-medium text-terrava-muted transition-colors hover:text-terrava-primary"
-          >
-            Lewati untuk sekarang
-          </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle className="h-9 w-9" />
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard")}
+              className="text-sm font-medium text-terrava-muted transition-colors hover:text-terrava-primary"
+            >
+              Lewati untuk sekarang
+            </button>
+          </div>
         </div>
       </header>
 

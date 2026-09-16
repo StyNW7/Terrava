@@ -26,7 +26,7 @@ export default function PageHero({ badge, title, description, children, image, i
     <section className="relative overflow-hidden bg-terrava-light pb-16 pt-16 sm:pb-20 sm:pt-24">
       <div className="pointer-events-none absolute inset-0 bg-grid-soft bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_top,black_10%,transparent_70%)]" aria-hidden="true" />
       <div className="pointer-events-none absolute -left-24 top-0 h-80 w-80 rounded-full bg-terrava-primary/10 blur-3xl" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-white/70 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-white/70 blur-3xl dark:bg-terrava-primary/10" aria-hidden="true" />
       <div className="container relative">
         <div className={`grid gap-12 ${image ? "lg:grid-cols-2 lg:items-center" : ""}`}>
           <motion.div
