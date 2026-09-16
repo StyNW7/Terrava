@@ -8,6 +8,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { useTheme } from "@/hooks/useTheme";
+import PWAPrompts from "@/components/pwa/PWAPrompts";
 import ProtectedRoute, { GuestOnlyRoute } from "@/components/auth/ProtectedRoute";
 
 import ScrollToTopFunction from "./utility/ScrollToTopFunction";
@@ -155,6 +156,7 @@ function App() {
           )}
 
           <ThemedToaster />
+          <PWAPrompts />
         </BrowserRouter>
       </AuthProvider>
       </ThemeProvider>

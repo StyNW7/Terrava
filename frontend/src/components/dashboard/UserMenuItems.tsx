@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { UserRound, Settings, LogOut, HelpCircle } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
 import { useAuth } from "@/hooks/useAuth";
+import InstallAppButton from "@/components/pwa/InstallAppButton";
 
 interface UserMenuItemsProps {
   onNavigate?: () => void;
@@ -31,6 +32,7 @@ export default function UserMenuItems({ onNavigate, onHelp, showHeader = true }:
       <Link to="/dashboard/settings" onClick={onNavigate} className={itemClass}>
         <Settings className="h-4 w-4" aria-hidden="true" /> Settings
       </Link>
+      <InstallAppButton />
       {onHelp && (
         <button
           type="button"

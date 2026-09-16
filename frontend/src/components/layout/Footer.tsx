@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Linkedin, Instagram, Youtube, Mail, Send } from "lucide-react";
 import { productLinks, companyLinks, resourceLinks } from "@/data/navigation";
 import { images } from "@/data/images";
+import InstallAppButton from "@/components/pwa/InstallAppButton";
 
 const socialLinks = [
   { icon: Linkedin, label: "LinkedIn", href: "#" },
@@ -122,6 +123,7 @@ export default function Footer() {
         <div className="container flex flex-col items-center justify-between gap-3 py-6 text-xs text-white/60 sm:flex-row">
           <p>&copy; {new Date().getFullYear()} Terrava. All rights reserved.</p>
           <div className="flex items-center gap-5">
+            <InstallAppButton className="w-auto px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 hover:text-white" />
           </div>
           <p>Made for smarter and more sustainable livestock farming.</p>
         </div>
