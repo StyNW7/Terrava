@@ -2,6 +2,7 @@ import { Download, CheckCircle2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface InstallAppButtonProps {
   className?: string;
@@ -14,12 +15,13 @@ interface InstallAppButtonProps {
  */
 export default function InstallAppButton({ className }: InstallAppButtonProps) {
   const { installAvailable, installed, install } = useInstallPrompt();
+  const { t } = useLanguage();
 
   if (installed) {
     return (
       <span className={cn("flex items-center gap-2.5 px-3 py-2 text-sm text-terrava-muted", className)}>
         <CheckCircle2 className="h-4 w-4 text-terrava-success" aria-hidden="true" />
-        Aplikasi terpasang
+        {t("pwa.appInstalled")}
       </span>
     );
   }
@@ -31,7 +33,7 @@ export default function InstallAppButton({ className }: InstallAppButtonProps) {
       type="button"
       onClick={async () => {
         const outcome = await install();
-        if (outcome === "accepted") toast.success("Terrava berhasil dipasang di perangkat Anda.");
+        if (outcome === "accepted") toast.success(t("pwa.installed"));
       }}
       className={cn(
         "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-terrava-text transition-colors hover:bg-terrava-bg",
@@ -39,7 +41,7 @@ export default function InstallAppButton({ className }: InstallAppButtonProps) {
       )}
     >
       <Download className="h-4 w-4" aria-hidden="true" />
-      Pasang aplikasi
+      {t("pwa.install")}
     </button>
   );
 }

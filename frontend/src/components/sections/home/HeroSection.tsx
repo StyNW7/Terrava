@@ -5,11 +5,12 @@ import PrimaryButton from "@/components/common/PrimaryButton";
 import SecondaryButton from "@/components/common/SecondaryButton";
 import HealthScoreRadial from "@/components/charts/HealthScoreRadial";
 import { images } from "@/data/images";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const trustPoints = [
-  { icon: Activity, label: "Real-time monitoring" },
-  { icon: ShieldCheck, label: "AI anomaly detection" },
-  { icon: Radio, label: "Long-range connectivity" },
+  { icon: Activity, key: "home.hero.trust.monitoring" },
+  { icon: ShieldCheck, key: "home.hero.trust.anomaly" },
+  { icon: Radio, key: "home.hero.trust.connectivity" },
 ];
 
 const container: Variants = {
@@ -29,6 +30,8 @@ const floatCard = (delay: number) => ({
 });
 
 export default function HeroSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="relative overflow-hidden bg-terrava-light pb-20 pt-16 sm:pb-28 sm:pt-24">
       {/* Ambient decoration */}
@@ -47,34 +50,34 @@ export default function HeroSection() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-terrava-primary opacity-60" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-terrava-primary" />
               </span>
-              AI-Powered Smart Livestock Ecosystem
+              {t("home.hero.badge")}
             </motion.span>
             <motion.h1
               variants={item}
               className="text-4xl font-bold leading-[1.1] tracking-tight text-terrava-text sm:text-5xl lg:text-[3.35rem]"
             >
-              Rawat Lebih Awal. <span className="text-gradient">Kelola Lebih Cerdas.</span> Tumbuh Lebih Berkelanjutan.
+              {t("home.hero.titleLead")} <span className="text-gradient">{t("home.hero.titleAccent")}</span>{" "}
+              {t("home.hero.titleTail")}
             </motion.h1>
             <motion.p variants={item} className="mt-6 max-w-xl text-base leading-relaxed text-terrava-muted sm:text-lg">
-              Terrava menghubungkan smart ear tag, IoT, cloud, dan artificial intelligence untuk membantu peternak
-              memantau kesehatan ternak, mendeteksi risiko lebih awal, dan mengambil keputusan berbasis data.
+              {t("home.hero.description")}
             </motion.p>
             <motion.div variants={item} className="mt-8 flex flex-col gap-4 sm:flex-row">
               <PrimaryButton href="/login" className="shadow-glow">
-                Coba Dashboard Demo
+                {t("home.hero.primaryCta")}
               </PrimaryButton>
               <SecondaryButton href="/how-it-works">
                 <Play className="h-4 w-4 text-terrava-primary" aria-hidden="true" />
-                Lihat Cara Kerja
+                {t("home.hero.secondaryCta")}
               </SecondaryButton>
             </motion.div>
             <motion.div variants={item} className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
               {trustPoints.map((point) => (
-                <div key={point.label} className="flex items-center gap-2 text-sm font-medium text-terrava-text">
+                <div key={point.key} className="flex items-center gap-2 text-sm font-medium text-terrava-text">
                   <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white text-terrava-primary shadow-sm">
                     <point.icon className="h-4 w-4" aria-hidden="true" />
                   </span>
-                  {point.label}
+                  {t(point.key)}
                 </div>
               ))}
             </motion.div>
@@ -89,7 +92,7 @@ export default function HeroSection() {
             >
               <img
                 src={images.heroFarm}
-                alt="Peternakan modern dengan sapi yang dipantau menggunakan teknologi Terrava"
+                alt={t("home.hero.imageAlt")}
                 className="h-[320px] w-full object-cover sm:h-[440px]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-terrava-dark/50 via-transparent to-transparent" aria-hidden="true" />
@@ -99,8 +102,8 @@ export default function HeroSection() {
                     <Wifi className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <div>
-                    <p className="text-xs font-semibold">128 ear tag terhubung</p>
-                    <p className="text-[10px] text-white/70">Gateway LoRa · sinyal kuat</p>
+                    <p className="text-xs font-semibold">{t("home.hero.tagsConnected", { count: 128 })}</p>
+                    <p className="text-[10px] text-white/70">{t("home.hero.gatewayStatus")}</p>
                   </div>
                 </div>
                 <span className="flex items-center gap-1.5 rounded-full bg-terrava-success/90 px-2.5 py-1 text-[10px] font-semibold">
@@ -117,7 +120,7 @@ export default function HeroSection() {
               <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
                 <p className="flex items-center gap-1.5 text-xs font-medium text-terrava-muted">
                   <HeartPulse className="h-3.5 w-3.5 text-terrava-primary" aria-hidden="true" />
-                  Livestock Health Score
+                  {t("home.hero.healthScore")}
                 </p>
                 <HealthScoreRadial score={92} />
               </motion.div>
@@ -129,15 +132,15 @@ export default function HeroSection() {
             >
               <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-medium text-terrava-muted">Temperature</p>
-                  <span className="rounded-full bg-terrava-light px-2 py-0.5 text-[10px] font-semibold text-terrava-primary">Normal</span>
+                  <p className="text-xs font-medium text-terrava-muted">{t("home.hero.temperature")}</p>
+                  <span className="rounded-full bg-terrava-light px-2 py-0.5 text-[10px] font-semibold text-terrava-primary">{t("home.hero.normal")}</span>
                 </div>
                 <p className="mt-2 text-lg font-bold text-terrava-text">38.4°C</p>
                 <div className="mt-3 flex items-center justify-between border-t border-terrava-border pt-3 text-xs text-terrava-muted">
-                  <span>Device connected</span>
+                  <span>{t("home.hero.deviceConnected")}</span>
                   <span className="h-2 w-2 rounded-full bg-terrava-success animate-pulse-dot" aria-hidden="true" />
                 </div>
-                <p className="mt-2 text-xs font-medium text-terrava-text">No critical alerts</p>
+                <p className="mt-2 text-xs font-medium text-terrava-text">{t("home.hero.noCriticalAlerts")}</p>
               </motion.div>
             </motion.div>
           </div>

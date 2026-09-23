@@ -3,13 +3,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import ChartCard from "@/components/charts/ChartCard";
 import { createSeededRandom, randomFloat } from "@/utils/seededRandom";
 import type { Livestock } from "@/types/dashboard";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const ranges = [
-  { value: "24h", label: "24 Hours" },
-  { value: "7d", label: "7 Days" },
-  { value: "30d", label: "30 Days" },
-  { value: "90d", label: "90 Days" },
-];
+const rangeValues = ["24h", "7d", "30d", "90d"];
 
 function generateSeries(seed: number, points: number, base: number, spread: number) {
   const random = createSeededRandom(seed);
@@ -36,7 +32,9 @@ function VitalChart({ title, data, color, unit }: { title: string; data: { label
 }
 
 export default function LivestockVitalSignsTab({ animal }: { animal: Livestock }) {
+  const { t } = useLanguage();
   const [range, setRange] = useState("7d");
+  const ranges = rangeValues.map((value) => ({ value, label: t("range." + value) }));
   const points = range === "24h" ? 24 : range === "7d" ? 14 : range === "30d" ? 30 : 45;
 
   const seedBase = animal.id.charCodeAt(4) + animal.id.charCodeAt(5);
@@ -57,11 +55,11 @@ export default function LivestockVitalSignsTab({ animal }: { animal: Livestock }
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <VitalChart title="Temperature Trend" data={generateSeries(seedBase + 1, points, animal.temperature, 0.6)} color="#C95B5B" unit="°C" />
-        <VitalChart title="Heart Rate Trend" data={generateSeries(seedBase + 2, points, animal.heartRate, 8)} color="#4A7FA7" unit=" bpm" />
-        <VitalChart title="Activity Trend" data={generateSeries(seedBase + 3, points, animal.activityLevel, 15)} color="var(--chart-primary)" unit="" />
-        <VitalChart title="Oxygen Trend" data={generateSeries(seedBase + 4, points, animal.oxygenLevel, 2)} color="#D89B32" unit="%" />
-        <VitalChart title="Health Score History" data={generateSeries(seedBase + 5, points, animal.healthScore, 5)} color="#4D966D" unit="" />
+        <VitalChart title={t("chart.temperatureTrend")} data={generateSeries(seedBase + 1, points, animal.temperature, 0.6)} color="#C95B5B" unit="°C" />
+        <VitalChart title={t("chart.heartRateTrend")} data={generateSeries(seedBase + 2, points, animal.heartRate, 8)} color="#4A7FA7" unit=" bpm" />
+        <VitalChart title={t("chart.activityTrend")} data={generateSeries(seedBase + 3, points, animal.activityLevel, 15)} color="var(--chart-primary)" unit="" />
+        <VitalChart title={t("chart.oxygenTrend")} data={generateSeries(seedBase + 4, points, animal.oxygenLevel, 2)} color="#D89B32" unit="%" />
+        <VitalChart title={t("chart.healthScoreHistory")} data={generateSeries(seedBase + 5, points, animal.healthScore, 5)} color="#4D966D" unit="" />
       </div>
     </div>
   );

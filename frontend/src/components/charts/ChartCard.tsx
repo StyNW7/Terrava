@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Download, Maximize2 } from "lucide-react";
 import LoadingSkeleton from "@/components/dashboard/LoadingSkeleton";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ChartCardProps {
   title: string;
@@ -23,6 +24,8 @@ export default function ChartCard({
   onExport,
   onExpand,
 }: ChartCardProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="rounded-2xl border border-terrava-border bg-white p-6 shadow-card">
       <div className="flex items-start justify-between gap-3">
@@ -33,12 +36,12 @@ export default function ChartCard({
         <div className="flex shrink-0 items-center gap-1.5">
           {actions}
           {onExport && (
-            <button type="button" onClick={onExport} aria-label={`Export ${title}`} className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg hover:text-terrava-primary">
+            <button type="button" onClick={onExport} aria-label={t("dashboard.exportChart", { title })} className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg hover:text-terrava-primary">
               <Download className="h-4 w-4" aria-hidden="true" />
             </button>
           )}
           {onExpand && (
-            <button type="button" onClick={onExpand} aria-label={`Expand ${title}`} className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg hover:text-terrava-primary">
+            <button type="button" onClick={onExpand} aria-label={t("dashboard.expandChart", { title })} className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg hover:text-terrava-primary">
               <Maximize2 className="h-4 w-4" aria-hidden="true" />
             </button>
           )}
@@ -49,7 +52,7 @@ export default function ChartCard({
           <LoadingSkeleton variant="chart" />
         ) : isEmpty ? (
           <div className="flex h-64 items-center justify-center rounded-xl bg-terrava-bg text-sm text-terrava-muted">
-            Data belum tersedia
+            {t("dashboard.chartEmpty")}
           </div>
         ) : (
           children

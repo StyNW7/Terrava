@@ -1,6 +1,8 @@
 import type { AuthBenefit } from "@/types/auth";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function AuthBenefitItem({ benefit }: { benefit: AuthBenefit }) {
+  const { tr } = useLanguage();
   const Icon = benefit.icon;
 
   return (
@@ -10,7 +12,7 @@ export default function AuthBenefitItem({ benefit }: { benefit: AuthBenefit }) {
       </div>
       <div>
         <p className="text-sm font-semibold text-white">{benefit.title}</p>
-        <p className="mt-0.5 text-sm leading-relaxed text-white/75">{benefit.description}</p>
+        <p className="mt-0.5 text-sm leading-relaxed text-white/75">{tr(benefit.description)}</p>
       </div>
     </div>
   );

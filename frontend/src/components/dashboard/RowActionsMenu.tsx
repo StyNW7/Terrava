@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MoreVertical } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export interface RowAction {
   label: string;
@@ -8,6 +9,7 @@ export interface RowAction {
 }
 
 export default function RowActionsMenu({ actions }: { actions: RowAction[] }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -27,7 +29,7 @@ export default function RowActionsMenu({ actions }: { actions: RowAction[] }) {
           event.stopPropagation();
           setOpen((prev) => !prev);
         }}
-        aria-label="Buka menu aksi"
+        aria-label={t("dashboard.openActionsMenu")}
         className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg hover:text-terrava-text"
       >
         <MoreVertical className="h-4 w-4" aria-hidden="true" />

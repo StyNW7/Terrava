@@ -2,6 +2,7 @@ import { CheckCircle2, Send, TriangleAlert, RefreshCw, WifiOff } from "lucide-re
 import type { Device, DeviceLog } from "@/types/dashboard";
 import { getLogsByDevice } from "@/data/mockDevices";
 import EmptyState from "@/components/dashboard/EmptyState";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const logIcons: Record<DeviceLog["type"], typeof CheckCircle2> = {
   connected: CheckCircle2,
@@ -20,10 +21,11 @@ const logTone: Record<DeviceLog["type"], string> = {
 };
 
 export default function DeviceLogsTab({ device }: { device: Device }) {
+  const { t, tr, tRel } = useLanguage();
   const logs = getLogsByDevice(device.id);
 
   if (logs.length === 0) {
-    return <EmptyState title="Belum ada log" description="Tidak ada aktivitas tercatat untuk perangkat ini." />;
+    return <EmptyState title={t("devices.noLogsTitle")} description={t("devices.noLogsDescription")} />;
   }
 
   return (
@@ -37,8 +39,8 @@ export default function DeviceLogsTab({ device }: { device: Device }) {
                 <Icon className="h-4 w-4" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-sm text-terrava-text">{log.message}</p>
-                <p className="text-xs text-terrava-muted">{log.timestamp}</p>
+                <p className="text-sm text-terrava-text">{tr(log.message)}</p>
+                <p className="text-xs text-terrava-muted">{tRel(log.timestamp)}</p>
               </div>
             </li>
           );

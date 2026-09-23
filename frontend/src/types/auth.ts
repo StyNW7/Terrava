@@ -1,23 +1,30 @@
 import type { LucideIcon } from "lucide-react";
+import type { Localized } from "@/i18n/types";
 
 export interface AuthBenefit {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface AuthTestimonialData {
-  quote: string;
+  quote: Localized;
   name: string;
-  role: string;
+  role: Localized;
 }
 
 export interface AuthPanelCopy {
-  heading: string;
-  description: string;
+  heading: Localized;
+  description: Localized;
   benefits: AuthBenefit[];
   testimonial?: AuthTestimonialData;
+}
+
+/** A `<select>`/radio choice whose label is translated at render time. */
+export interface LocalizedOption {
+  value: string;
+  label: Localized;
 }
 
 export type AuthPanelVariant = "login" | "register" | "forgot" | "reset";

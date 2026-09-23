@@ -17,20 +17,14 @@ import LivestockDeviceTab from "@/components/livestock/LivestockDeviceTab";
 import LivestockTimelineTab from "@/components/livestock/LivestockTimelineTab";
 import { getLivestockById } from "@/data/mockLivestock";
 import { getFarmById, getBarnById } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const tabs = [
-  { value: "overview", label: "Overview" },
-  { value: "vitals", label: "Vital Signs" },
-  { value: "records", label: "Health Records" },
-  { value: "alerts", label: "Alerts" },
-  { value: "location", label: "Location" },
-  { value: "device", label: "Device" },
-  { value: "timeline", label: "Activity Timeline" },
-];
+const tabValues = ["overview", "vitals", "records", "alerts", "location", "device", "timeline"];
 
 export default function LivestockDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t, tRel } = useLanguage();
   const [activeTab, setActiveTab] = useState("overview");
   const animal = id ? getLivestockById(id) : undefined;
 
@@ -39,19 +33,26 @@ export default function LivestockDetailPage() {
   }, [animal]);
 
   if (!animal) {
-    return <ErrorState title="Ternak tidak ditemukan" description="Data ternak yang Anda cari tidak tersedia." onRetry={() => navigate("/dashboard/livestock")} />;
+    return (
+      <ErrorState
+        title={t("livestock.notFound")}
+        description={t("livestock.notFoundDescription")}
+        onRetry={() => navigate("/dashboard/livestock")}
+      />
+    );
   }
 
+  const tabs = tabValues.map((value) => ({ value, label: t("livestock.tab." + value) }));
   const farm = getFarmById(animal.farmId);
   const barn = getBarnById(animal.barnId);
 
   return (
     <div>
-      <Breadcrumb items={[{ label: "Livestock", href: "/dashboard/livestock" }, { label: animal.name }]} />
+      <Breadcrumb items={[{ label: t("nav.item.livestock"), href: "/dashboard/livestock" }, { label: animal.name }]} />
 
       <div className="mt-3 mb-6 flex flex-col gap-4 rounded-2xl border border-terrava-border bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate("/dashboard/livestock")} aria-label="Kembali" className="rounded-lg p-2 text-terrava-muted hover:bg-terrava-bg">
+          <button onClick={() => navigate("/dashboard/livestock")} aria-label={t("common.back")} className="rounded-lg p-2 text-terrava-muted hover:bg-terrava-bg">
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <img src={animal.photo} alt={animal.name} className="h-16 w-16 rounded-xl object-cover" />
@@ -61,31 +62,32 @@ export default function LivestockDetailPage() {
               <StatusBadge status={animal.healthStatus} />
             </div>
             <p className="text-sm text-terrava-muted">
-              {animal.code} &middot; {farm?.name} &middot; {barn?.name} &middot; Updated {animal.lastUpdate}
+              {animal.code} &middot; {farm?.name} &middot; {barn?.name} &middot;{" "}
+              {t("monitoring.updated", { time: tRel(animal.lastUpdate) })}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2.5">
-          <button onClick={() => toast.success(`Membuka form edit ${animal.name}.`)} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            Edit
+          <button onClick={() => toast.success(t("livestock.toast.edit", { name: animal.name }))} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+            {t("common.edit")}
           </button>
           <RowActionsMenu
             actions={[
-              { label: "Assign device", onClick: () => toast.success("Perangkat ditugaskan.") },
-              { label: "Move barn", onClick: () => toast.success("Ternak dipindahkan ke kandang lain.") },
-              { label: "Archive", onClick: () => toast.success("Ternak diarsipkan."), danger: true },
+              { label: t("livestock.action.assignDevice"), onClick: () => toast.success(t("livestock.toast.deviceAssigned")) },
+              { label: t("livestock.action.moveBarn"), onClick: () => toast.success(t("livestock.toast.barnMoved")) },
+              { label: t("livestock.action.archive"), onClick: () => toast.success(t("livestock.toast.archived")), danger: true },
             ]}
           />
         </div>
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <SummaryCard icon={HeartPulse} label="Health Score" value={<HealthScoreBadge score={animal.healthScore} />} />
-        <SummaryCard icon={Thermometer} label="Temperature" value={`${animal.temperature}°C`} />
-        <SummaryCard icon={HeartPulse} label="Heart Rate" value={`${animal.heartRate} bpm`} />
-        <SummaryCard icon={Activity} label="Activity" value={`${animal.activityLevel}/100`} />
-        <SummaryCard icon={MapPin} label="Location" value="In Barn" />
-        <SummaryCard icon={BatteryFull} label="Device Battery" value={animal.deviceId ? `${animal.batteryLevel}%` : "-"} />
+        <SummaryCard icon={HeartPulse} label={t("livestock.column.healthScore")} value={<HealthScoreBadge score={animal.healthScore} />} />
+        <SummaryCard icon={Thermometer} label={t("vitals.temperature")} value={`${animal.temperature}°C`} />
+        <SummaryCard icon={HeartPulse} label={t("vitals.heartRate")} value={`${animal.heartRate} bpm`} />
+        <SummaryCard icon={Activity} label={t("vitals.activity")} value={`${animal.activityLevel}/100`} />
+        <SummaryCard icon={MapPin} label={t("category.location")} value={t("livestock.inBarn")} />
+        <SummaryCard icon={BatteryFull} label={t("devices.deviceBattery")} value={animal.deviceId ? `${animal.batteryLevel}%` : "-"} />
       </div>
 
       <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />

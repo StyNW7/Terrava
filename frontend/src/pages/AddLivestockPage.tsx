@@ -8,6 +8,7 @@ import PageHeader from "@/components/dashboard/PageHeader";
 import { livestockSchema, type LivestockFormValues } from "@/schemas/livestockSchema";
 import { farms, getBarnsByFarm } from "@/data/mockFarms";
 import { livestock } from "@/data/mockLivestock";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const fieldClass =
   "w-full rounded-xl border border-terrava-border bg-white px-3.5 py-2.5 text-sm text-terrava-text focus:border-terrava-primary focus:outline-none focus:ring-2 focus:ring-terrava-primary/20";
@@ -38,6 +39,7 @@ function Section({ number, title, children }: { number: number; title: string; c
 
 export default function AddLivestockPage() {
   const navigate = useNavigate();
+  const { t, tt } = useLanguage();
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -71,43 +73,43 @@ export default function AddLivestockPage() {
   const onSubmit = async () => {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSuccess(true);
-    toast.success("Livestock berhasil ditambahkan.");
+    toast.success(t("addLivestock.created"));
     setTimeout(() => navigate(`/dashboard/livestock/${livestock[0].id}`), 1200);
   };
 
   const handleSaveDraft = () => {
-    toast.success("Draft berhasil disimpan.");
+    toast.success(t("addLivestock.draftSaved"));
   };
 
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-terrava-border bg-white p-14 text-center">
         <CheckCircle2 className="mb-4 h-14 w-14 text-terrava-primary" aria-hidden="true" />
-        <h2 className="text-xl font-semibold text-terrava-text">Livestock berhasil ditambahkan</h2>
-        <p className="mt-1.5 text-sm text-terrava-muted">Mengarahkan Anda ke halaman detail ternak...</p>
+        <h2 className="text-xl font-semibold text-terrava-text">{t("addLivestock.created")}</h2>
+        <p className="mt-1.5 text-sm text-terrava-muted">{t("addLivestock.redirecting")}</p>
       </div>
     );
   }
 
   return (
     <div>
-      <PageHeader title="Add Livestock" subtitle="Lengkapi informasi ternak baru untuk memulai pemantauan." />
+      <PageHeader title={t("nav.item.addLivestock")} subtitle={t("addLivestock.subtitle")} />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
-        <Section number={1} title="Basic Information">
-          <Field label="Livestock Name or Code" required error={errors.name?.message}>
-            <input className={fieldClass} placeholder="Contoh: Bella" {...register("name")} />
+        <Section number={1} title={t("addLivestock.section.basic")}>
+          <Field label={t("addLivestock.field.nameOrCode")} required error={errors.name?.message && t(errors.name.message)}>
+            <input className={fieldClass} placeholder={t("addLivestock.placeholder.name")} {...register("name")} />
           </Field>
-          <Field label="Animal Type" required error={errors.animalType?.message}>
+          <Field label={t("addLivestock.field.animalType")} required error={errors.animalType?.message && t(errors.animalType.message)}>
             <select className={fieldClass} {...register("animalType")}>
-              <option value="">Pilih jenis</option>
-              <option value="Sapi Perah">Sapi Perah</option>
-              <option value="Sapi Potong">Sapi Potong</option>
+              <option value="">{t("addLivestock.placeholder.selectType")}</option>
+              <option value="Dairy Cattle">{tt("livestockType", "Dairy Cattle")}</option>
+              <option value="Beef Cattle">{tt("livestockType", "Beef Cattle")}</option>
             </select>
           </Field>
-          <Field label="Breed" required error={errors.breed?.message}>
+          <Field label={t("livestock.column.breed")} required error={errors.breed?.message && t(errors.breed.message)}>
             <select className={fieldClass} {...register("breed")}>
-              <option value="">Pilih ras</option>
+              <option value="">{t("addLivestock.placeholder.selectBreed")}</option>
               <option>Friesian Holstein</option>
               <option>Limousin</option>
               <option>Simmental</option>
@@ -115,20 +117,20 @@ export default function AddLivestockPage() {
               <option>Ongole</option>
             </select>
           </Field>
-          <Field label="Gender" required error={errors.gender?.message}>
+          <Field label={t("livestock.column.gender")} required error={errors.gender?.message && t(errors.gender.message)}>
             <select className={fieldClass} {...register("gender")}>
-              <option value="Female">Female</option>
-              <option value="Male">Male</option>
+              <option value="Female">{tt("gender", "Female")}</option>
+              <option value="Male">{tt("gender", "Male")}</option>
             </select>
           </Field>
-          <Field label="Date of Birth" required error={errors.dateOfBirth?.message}>
+          <Field label={t("addLivestock.field.dateOfBirth")} required error={errors.dateOfBirth?.message && t(errors.dateOfBirth.message)}>
             <input type="date" className={fieldClass} {...register("dateOfBirth")} />
           </Field>
-          <Field label="Estimated Age">
-            <input className={fieldClass} placeholder="Contoh: 18 bulan" {...register("estimatedAge")} />
+          <Field label={t("addLivestock.field.estimatedAge")}>
+            <input className={fieldClass} placeholder={t("addLivestock.placeholder.age")} {...register("estimatedAge")} />
           </Field>
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-sm font-medium text-terrava-text">Photo Upload</label>
+            <label className="mb-1.5 block text-sm font-medium text-terrava-text">{t("addLivestock.field.photo")}</label>
             <div className="flex items-center gap-4">
               <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-dashed border-terrava-border bg-terrava-bg">
                 {photoPreview ? (
@@ -138,44 +140,48 @@ export default function AddLivestockPage() {
                 )}
               </div>
               <label className="cursor-pointer rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-medium text-terrava-text hover:bg-terrava-bg">
-                Upload Photo
+                {t("addLivestock.uploadPhoto")}
                 <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
               </label>
             </div>
           </div>
         </Section>
 
-        <Section number={2} title="Identification">
-          <Field label="Internal Livestock ID" required error={errors.internalId?.message}>
+        <Section number={2} title={t("addLivestock.section.identification")}>
+          <Field label={t("addLivestock.field.internalId")} required error={errors.internalId?.message && t(errors.internalId.message)}>
             <input className={fieldClass} placeholder="LVS-041" {...register("internalId")} />
           </Field>
-          <Field label="Ear Tag ID" required error={errors.earTagId?.message}>
+          <Field label={t("addLivestock.field.earTagId")} required error={errors.earTagId?.message && t(errors.earTagId.message)}>
             <input className={fieldClass} placeholder="EAR-1041" {...register("earTagId")} />
           </Field>
           <Field label="RFID">
             <input className={fieldClass} {...register("rfid")} />
           </Field>
-          <Field label="Registration Number">
+          <Field label={t("addLivestock.field.registrationNumber")}>
             <input className={fieldClass} {...register("registrationNumber")} />
           </Field>
         </Section>
 
-        <Section number={3} title="Physical Information">
-          <Field label="Weight (kg)" required error={errors.weightKg?.message}>
+        <Section number={3} title={t("addLivestock.section.physical")}>
+          <Field label={t("addLivestock.field.weight")} required error={errors.weightKg?.message && t(errors.weightKg.message)}>
             <input type="number" className={fieldClass} {...register("weightKg")} />
           </Field>
-          <Field label="Body Condition Score (1-5)" required error={errors.bodyConditionScore?.message}>
+          <Field
+            label={t("addLivestock.field.bodyCondition")}
+            required
+            error={errors.bodyConditionScore?.message && t(errors.bodyConditionScore.message)}
+          >
             <input type="number" min={1} max={5} className={fieldClass} {...register("bodyConditionScore")} />
           </Field>
-          <Field label="Color or Markings">
+          <Field label={t("addLivestock.field.markings")}>
             <input className={fieldClass} {...register("markings")} />
           </Field>
         </Section>
 
-        <Section number={4} title="Farm Assignment">
-          <Field label="Farm" required error={errors.farmId?.message}>
+        <Section number={4} title={t("livestock.farmAssignment")}>
+          <Field label={t("filter.farm")} required error={errors.farmId?.message && t(errors.farmId.message)}>
             <select className={fieldClass} {...register("farmId")}>
-              <option value="">Pilih farm</option>
+              <option value="">{t("addLivestock.placeholder.selectFarm")}</option>
               {farms.map((farm) => (
                 <option key={farm.id} value={farm.id}>
                   {farm.name}
@@ -183,9 +189,9 @@ export default function AddLivestockPage() {
               ))}
             </select>
           </Field>
-          <Field label="Barn" required error={errors.barnId?.message}>
+          <Field label={t("farms.barn")} required error={errors.barnId?.message && t(errors.barnId.message)}>
             <select className={fieldClass} disabled={!selectedFarmId} {...register("barnId")}>
-              <option value="">Pilih barn</option>
+              <option value="">{t("addLivestock.placeholder.selectBarn")}</option>
               {barnsForFarm.map((barn) => (
                 <option key={barn.id} value={barn.id}>
                   {barn.name}
@@ -193,85 +199,95 @@ export default function AddLivestockPage() {
               ))}
             </select>
           </Field>
-          <Field label="Herd Group" required error={errors.herdGroup?.message}>
+          <Field label={t("livestock.herdGroup")} required error={errors.herdGroup?.message && t(errors.herdGroup.message)}>
             <select className={fieldClass} {...register("herdGroup")}>
-              <option value="">Pilih herd group</option>
+              <option value="">{t("addLivestock.placeholder.selectHerd")}</option>
               <option>Herd 1</option>
               <option>Herd 2</option>
               <option>Herd 3</option>
             </select>
           </Field>
-          <Field label="Arrival Date" required error={errors.arrivalDate?.message}>
+          <Field label={t("livestock.arrivalDate")} required error={errors.arrivalDate?.message && t(errors.arrivalDate.message)}>
             <input type="date" className={fieldClass} {...register("arrivalDate")} />
           </Field>
-          <Field label="Acquisition Source" required error={errors.acquisitionSource?.message}>
+          <Field
+            label={t("addLivestock.field.acquisitionSource")}
+            required
+            error={errors.acquisitionSource?.message && t(errors.acquisitionSource.message)}
+          >
             <select className={fieldClass} {...register("acquisitionSource")}>
-              <option value="">Pilih sumber</option>
-              <option>Breeding internal</option>
-              <option>Pembelian mitra</option>
-              <option>Program koperasi</option>
-              <option>Transfer antar farm</option>
+              <option value="">{t("addLivestock.placeholder.selectSource")}</option>
+              <option value="Internal breeding">{tt("acquisition", "Internal breeding")}</option>
+              <option value="Partner purchase">{tt("acquisition", "Partner purchase")}</option>
+              <option value="Cooperative program">{tt("acquisition", "Cooperative program")}</option>
+              <option value="Inter-farm transfer">{tt("acquisition", "Inter-farm transfer")}</option>
             </select>
           </Field>
         </Section>
 
-        <Section number={5} title="Health Information">
-          <Field label="Initial Health Status" required error={errors.initialHealthStatus?.message}>
+        <Section number={5} title={t("addLivestock.section.health")}>
+          <Field
+            label={t("addLivestock.field.initialHealth")}
+            required
+            error={errors.initialHealthStatus?.message && t(errors.initialHealthStatus.message)}
+          >
             <select className={fieldClass} {...register("initialHealthStatus")}>
-              <option value="">Pilih status</option>
-              <option value="healthy">Healthy</option>
-              <option value="attention">Needs Attention</option>
-              <option value="critical">Critical</option>
+              <option value="">{t("addLivestock.placeholder.selectStatus")}</option>
+              <option value="healthy">{t("status.healthy")}</option>
+              <option value="attention">{t("status.attention")}</option>
+              <option value="critical">{t("status.critical")}</option>
             </select>
           </Field>
-          <Field label="Vaccination Status" required error={errors.vaccinationStatus?.message}>
+          <Field
+            label={t("addLivestock.field.vaccinationStatus")}
+            required
+            error={errors.vaccinationStatus?.message && t(errors.vaccinationStatus.message)}
+          >
             <select className={fieldClass} {...register("vaccinationStatus")}>
-              <option value="">Pilih status</option>
-              <option value="up-to-date">Up to Date</option>
-              <option value="due">Due</option>
-              <option value="overdue">Overdue</option>
+              <option value="">{t("addLivestock.placeholder.selectStatus")}</option>
+              <option value="up-to-date">{t("status.up-to-date")}</option>
+              <option value="due">{t("status.due")}</option>
+              <option value="overdue">{t("status.overdue")}</option>
             </select>
           </Field>
-          <Field label="Last Examination Date">
+          <Field label={t("addLivestock.field.lastExamination")}>
             <input type="date" className={fieldClass} {...register("lastExaminationDate")} />
           </Field>
-          <Field label="Known Conditions">
+          <Field label={t("addLivestock.field.knownConditions")}>
             <input className={fieldClass} {...register("knownConditions")} />
           </Field>
           <div className="sm:col-span-2">
-            <Field label="Notes">
+            <Field label={t("alerts.notes")}>
               <textarea rows={3} className={fieldClass} {...register("notes")} />
             </Field>
           </div>
         </Section>
 
-        <Section number={6} title="Device Assignment">
+        <Section number={6} title={t("addLivestock.section.device")}>
           <div className="sm:col-span-2">
             <label className="flex cursor-pointer items-center gap-2.5 text-sm text-terrava-text">
               <input type="checkbox" className="h-4 w-4 accent-terrava-primary" {...register("assignDevice")} />
-              Assign smart ear tag sekarang
+              {t("addLivestock.assignNow")}
             </label>
           </div>
           {assignDevice && (
-            <Field label="Device ID">
+            <Field label={t("devices.deviceId")}>
               <input className={fieldClass} placeholder="DEV-021" {...register("deviceId")} />
             </Field>
           )}
         </Section>
 
         <div className="rounded-2xl border border-terrava-border bg-white p-6">
-          <h2 className="mb-3 text-base font-semibold text-terrava-text">Review</h2>
-          <p className="text-sm text-terrava-muted">
-            Periksa kembali seluruh informasi sebelum menyimpan. Anda dapat mengedit data ternak kapan pun setelah disimpan.
-          </p>
+          <h2 className="mb-3 text-base font-semibold text-terrava-text">{t("addLivestock.review")}</h2>
+          <p className="text-sm text-terrava-muted">{t("addLivestock.reviewDescription")}</p>
         </div>
 
         <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-terrava-border bg-white/95 p-4 backdrop-blur">
           <button type="button" onClick={() => navigate("/dashboard/livestock")} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            Cancel
+            {t("common.cancel")}
           </button>
           <button type="button" onClick={handleSaveDraft} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            Save Draft
+            {t("addLivestock.saveDraft")}
           </button>
           <button
             type="submit"
@@ -280,7 +296,7 @@ export default function AddLivestockPage() {
             className="inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover disabled:opacity-70"
           >
             {isSubmitting && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />}
-            Submit Livestock
+            {t("addLivestock.submit")}
           </button>
         </div>
       </form>

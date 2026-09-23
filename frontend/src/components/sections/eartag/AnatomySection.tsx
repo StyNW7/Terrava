@@ -1,8 +1,10 @@
 import { useState } from "react";
 import SectionHeading from "@/components/common/SectionHeading";
 import { anatomyCallouts } from "@/data/earTag";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function AnatomySection() {
+  const { t, tr } = useLanguage();
   const [activeId, setActiveId] = useState(anatomyCallouts[0].id);
   const activeCallout = anatomyCallouts.find((callout) => callout.id === activeId) ?? anatomyCallouts[0];
 
@@ -10,16 +12,16 @@ export default function AnatomySection() {
     <section className="bg-white py-20 sm:py-28">
       <div className="container">
         <SectionHeading
-          badge="Product Anatomy"
-          title="Anatomi interaktif smart ear tag"
-          description="Klik setiap titik untuk melihat penjelasan komponen perangkat."
+          badge={t("eartag.anatomy.badge")}
+          title={t("eartag.anatomy.title")}
+          description={t("eartag.anatomy.description")}
         />
 
         <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
           <div className="relative overflow-hidden rounded-3xl">
             <img
               src="/Images/ear-tag-anatomy.png"
-              alt="Anatomi smart ear tag Terrava"
+              alt={t("eartag.anatomy.imageAlt")}
               loading="lazy"
               className="h-[320px] w-full object-cover sm:h-[420px]"
             />
@@ -59,7 +61,7 @@ export default function AnatomySection() {
             </div>
             <div className="mt-6">
               <h3 className="mb-2 text-lg font-semibold text-terrava-text">{activeCallout.label}</h3>
-              <p className="text-sm leading-relaxed text-terrava-muted">{activeCallout.description}</p>
+              <p className="text-sm leading-relaxed text-terrava-muted">{tr(activeCallout.description)}</p>
             </div>
           </div>
         </div>

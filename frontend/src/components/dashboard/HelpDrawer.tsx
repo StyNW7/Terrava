@@ -1,18 +1,19 @@
 import { Link } from "react-router-dom";
 import { BookOpen, Keyboard, LifeBuoy, MessageCircle, PawPrint, BellRing, Cpu, BrainCircuit, ArrowRight } from "lucide-react";
 import Drawer from "@/components/dashboard/Drawer";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const quickLinks = [
-  { icon: PawPrint, label: "Tambah ternak baru", description: "Daftarkan ternak dan pasangkan ear tag.", href: "/dashboard/livestock/add" },
-  { icon: BellRing, label: "Tinjau alert aktif", description: "Lihat peringatan yang perlu ditindaklanjuti.", href: "/dashboard/alerts" },
-  { icon: Cpu, label: "Kelola perangkat", description: "Status baterai, sinyal, dan firmware.", href: "/dashboard/devices" },
-  { icon: BrainCircuit, label: "AI Insights", description: "Rekomendasi berbasis data sensor.", href: "/dashboard/ai-insights" },
+  { icon: PawPrint, key: "addLivestock", href: "/dashboard/livestock/add" },
+  { icon: BellRing, key: "reviewAlerts", href: "/dashboard/alerts" },
+  { icon: Cpu, key: "manageDevices", href: "/dashboard/devices" },
+  { icon: BrainCircuit, key: "aiInsights", href: "/dashboard/ai-insights" },
 ];
 
 const shortcuts = [
-  { keys: ["Ctrl", "K"], label: "Fokus ke pencarian global" },
-  { keys: ["Esc"], label: "Tutup menu, dialog, atau panel" },
-  { keys: ["?"], label: "Buka panel bantuan ini" },
+  { keys: ["Ctrl", "K"], key: "search" },
+  { keys: ["Esc"], key: "close" },
+  { keys: ["?"], key: "help" },
 ];
 
 interface HelpDrawerProps {
@@ -21,13 +22,15 @@ interface HelpDrawerProps {
 }
 
 export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
+  const { t } = useLanguage();
+
   return (
-    <Drawer open={open} onClose={onClose} title="Pusat Bantuan">
+    <Drawer open={open} onClose={onClose} title={t("help.title")}>
       <div className="space-y-7">
         <section>
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-terrava-muted">
             <LifeBuoy className="h-3.5 w-3.5" aria-hidden="true" />
-            Mulai cepat
+            {t("help.quickStart")}
           </p>
           <ul className="space-y-2">
             {quickLinks.map((link) => (
@@ -41,8 +44,12 @@ export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
                     <link.icon className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-terrava-text">{link.label}</span>
-                    <span className="block text-xs text-terrava-muted">{link.description}</span>
+                    <span className="block text-sm font-semibold text-terrava-text">
+                      {t("help.link." + link.key + ".label")}
+                    </span>
+                    <span className="block text-xs text-terrava-muted">
+                      {t("help.link." + link.key + ".description")}
+                    </span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0 text-terrava-muted transition-transform group-hover:translate-x-1 group-hover:text-terrava-primary" aria-hidden="true" />
                 </Link>
@@ -54,12 +61,12 @@ export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
         <section>
           <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-terrava-muted">
             <Keyboard className="h-3.5 w-3.5" aria-hidden="true" />
-            Pintasan keyboard
+            {t("help.shortcuts")}
           </p>
           <ul className="divide-y divide-terrava-border rounded-xl border border-terrava-border">
             {shortcuts.map((shortcut) => (
-              <li key={shortcut.label} className="flex items-center justify-between px-3.5 py-2.5 text-sm">
-                <span className="text-terrava-text">{shortcut.label}</span>
+              <li key={shortcut.key} className="flex items-center justify-between px-3.5 py-2.5 text-sm">
+                <span className="text-terrava-text">{t("help.shortcut." + shortcut.key)}</span>
                 <span className="flex items-center gap-1">
                   {shortcut.keys.map((key) => (
                     <kbd
@@ -78,10 +85,10 @@ export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
         <section className="rounded-2xl bg-gradient-to-br from-terrava-dark to-terrava-primary p-5 text-white">
           <p className="flex items-center gap-2 text-sm font-semibold">
             <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            Butuh bantuan lebih lanjut?
+            {t("help.needMore")}
           </p>
           <p className="mt-1.5 text-xs leading-relaxed text-white/80">
-            Tim Terrava siap membantu dari Senin sampai Sabtu, 08.00 - 18.00 WIB.
+            {t("help.availability")}
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link
@@ -89,7 +96,7 @@ export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
               onClick={onClose}
               className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-terrava-primary transition-colors hover:bg-terrava-light"
             >
-              Hubungi tim
+              {t("help.contactTeam")}
             </Link>
             <Link
               to="/how-it-works"
@@ -97,7 +104,7 @@ export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
               className="inline-flex items-center gap-1.5 rounded-lg border border-white/30 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-white/10"
             >
               <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-              Dokumentasi
+              {t("help.documentation")}
             </Link>
           </div>
         </section>

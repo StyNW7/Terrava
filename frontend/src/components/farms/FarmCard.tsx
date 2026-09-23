@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { MapPin, Users, HeartPulse, Radio, TriangleAlert } from "lucide-react";
 import type { Farm } from "@/types/dashboard";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmCard({ farm }: { farm: Farm }) {
+  const { t } = useLanguage();
+
   return (
     <Link
       to={`/dashboard/farms/${farm.id}`}
@@ -20,11 +23,11 @@ export default function FarmCard({ farm }: { farm: Farm }) {
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="rounded-lg bg-terrava-bg p-2">
             <p className="font-semibold text-terrava-text">{farm.livestockCount}</p>
-            <p className="text-terrava-muted">Livestock</p>
+            <p className="text-terrava-muted">{t("nav.item.livestock")}</p>
           </div>
           <div className="rounded-lg bg-terrava-bg p-2">
             <p className="font-semibold text-terrava-text">{farm.barnCount}</p>
-            <p className="text-terrava-muted">Barns</p>
+            <p className="text-terrava-muted">{t("farms.tab.barns")}</p>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between border-t border-terrava-border pt-2.5 text-xs">

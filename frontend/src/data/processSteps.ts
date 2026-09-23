@@ -16,7 +16,10 @@ export const journeySteps: ProcessStep[] = [
     number: 1,
     icon: UserPlus,
     title: "Create an Account",
-    description: "Daftarkan diri Anda sebagai peternak, manajer, atau administrator koperasi.",
+    description: {
+      id: "Daftarkan diri Anda sebagai peternak, manajer, atau administrator koperasi.",
+      en: "Register as a farmer, a farm manager, or a cooperative administrator.",
+    },
     image: images.farmerSmartphone,
   },
   {
@@ -24,7 +27,10 @@ export const journeySteps: ProcessStep[] = [
     number: 2,
     icon: Building2,
     title: "Register the Farm",
-    description: "Tambahkan informasi peternakan seperti lokasi, kandang, dan jumlah ternak.",
+    description: {
+      id: "Tambahkan informasi peternakan seperti lokasi, kandang, dan jumlah ternak.",
+      en: "Add your farm details: location, barns, and herd size.",
+    },
     image: images.modernBarn,
   },
   {
@@ -32,7 +38,10 @@ export const journeySteps: ProcessStep[] = [
     number: 3,
     icon: ClipboardList,
     title: "Add Livestock Profiles",
-    description: "Buat profil digital untuk setiap ekor ternak beserta data dasarnya.",
+    description: {
+      id: "Buat profil digital untuk setiap ekor ternak beserta data dasarnya.",
+      en: "Create a digital profile for every animal, along with its baseline data.",
+    },
     image: images.cattleHerd,
   },
   {
@@ -40,7 +49,10 @@ export const journeySteps: ProcessStep[] = [
     number: 4,
     icon: Radio,
     title: "Pair Smart Ear Tags",
-    description: "Hubungkan smart ear tag ke masing-masing ternak melalui aplikasi.",
+    description: {
+      id: "Hubungkan smart ear tag ke masing-masing ternak melalui aplikasi.",
+      en: "Pair a smart ear tag with each animal from the app.",
+    },
     image: "Images/close-up-ear-tag.png",
   },
   {
@@ -48,7 +60,10 @@ export const journeySteps: ProcessStep[] = [
     number: 5,
     icon: Activity,
     title: "Collect Real-Time Data",
-    description: "Sensor mengumpulkan data fisiologis, aktivitas, dan lokasi secara berkelanjutan.",
+    description: {
+      id: "Sensor mengumpulkan data fisiologis, aktivitas, dan lokasi secara berkelanjutan.",
+      en: "Sensors collect physiological, activity, and location data continuously.",
+    },
     image: images.sensorTech,
   },
   {
@@ -56,7 +71,10 @@ export const journeySteps: ProcessStep[] = [
     number: 6,
     icon: BrainCircuit,
     title: "Analyze with AI",
-    description: "AI menganalisis data untuk mendeteksi pola dan potensi anomali kesehatan.",
+    description: {
+      id: "AI menganalisis data untuk mendeteksi pola dan potensi anomali kesehatan.",
+      en: "AI analyses the data to surface patterns and potential health anomalies.",
+    },
     image: images.dataDashboard,
   },
   {
@@ -64,7 +82,10 @@ export const journeySteps: ProcessStep[] = [
     number: 7,
     icon: BellRing,
     title: "Receive Alerts and Take Action",
-    description: "Peternak menerima notifikasi dan rekomendasi tindakan yang perlu diambil.",
+    description: {
+      id: "Peternak menerima notifikasi dan rekomendasi tindakan yang perlu diambil.",
+      en: "Farmers receive notifications along with the actions they should take next.",
+    },
     image: images.farmerSmartphone,
   },
 ];

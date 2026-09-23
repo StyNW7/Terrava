@@ -1,15 +1,18 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { sensorItems } from "@/data/earTag";
 import { StaggerGrid } from "@/components/motion/Stagger";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SensorsSection() {
+  const { t, tr } = useLanguage();
+
   return (
     <section className="py-20 sm:py-28">
       <div className="container">
         <SectionHeading
-          badge="Key Sensors"
-          title="Komponen sensor di dalam smart ear tag"
-          description="Setiap sensor bekerja bersama untuk memberikan gambaran menyeluruh terhadap kondisi ternak."
+          badge={t("eartag.sensors.badge")}
+          title={t("eartag.sensors.title")}
+          description={t("eartag.sensors.description")}
         />
 
         <StaggerGrid className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -19,7 +22,7 @@ export default function SensorsSection() {
                 <sensor.icon className="h-5 w-5" aria-hidden="true" />
               </div>
               <h3 className="mb-2 text-sm font-semibold text-terrava-text">{sensor.title}</h3>
-              <p className="text-sm leading-relaxed text-terrava-muted">{sensor.description}</p>
+              <p className="text-sm leading-relaxed text-terrava-muted">{tr(sensor.description)}</p>
             </div>
           ))}
         </StaggerGrid>

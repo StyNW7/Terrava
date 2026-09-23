@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface RegisterStepIndicatorProps {
   currentStep: number;
@@ -7,12 +8,13 @@ interface RegisterStepIndicatorProps {
 }
 
 const steps = [
-  { number: 1, label: "Account" },
-  { number: 2, label: "Farm" },
-  { number: 3, label: "Finish" },
+  { number: 1, key: "account" },
+  { number: 2, key: "farm" },
+  { number: 3, key: "finish" },
 ];
 
 export default function RegisterStepIndicator({ currentStep, completedSteps, onStepClick }: RegisterStepIndicatorProps) {
+  const { t } = useLanguage();
   const progressPercent = ((currentStep - 1) / (steps.length - 1)) * 100;
 
   return (
@@ -51,7 +53,7 @@ export default function RegisterStepIndicator({ currentStep, completedSteps, onS
               >
                 {isCompleted ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : step.number}
               </span>
-              <span className="hidden sm:inline">{step.label}</span>
+              <span className="hidden sm:inline">{t("auth.step." + step.key)}</span>
             </button>
           );
         })}

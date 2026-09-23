@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sunrise, Sun, Sunset, Moon, ArrowRight, CircleCheck, BellRing, Radio } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface WelcomeBannerProps {
   healthyPercent: number;
@@ -11,24 +12,38 @@ interface WelcomeBannerProps {
 }
 
 function greetingFor(hour: number) {
-  if (hour < 11) return { text: "Selamat pagi", icon: Sunrise };
-  if (hour < 15) return { text: "Selamat siang", icon: Sun };
-  if (hour < 19) return { text: "Selamat sore", icon: Sunset };
-  return { text: "Selamat malam", icon: Moon };
+  if (hour < 11) return { key: "greeting.morning", icon: Sunrise };
+  if (hour < 15) return { key: "greeting.afternoon", icon: Sun };
+  if (hour < 19) return { key: "greeting.evening", icon: Sunset };
+  return { key: "greeting.night", icon: Moon };
 }
 
 export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnline, devicesTotal }: WelcomeBannerProps) {
   const { user } = useAuth();
+  const { lang, t } = useLanguage();
   const now = new Date();
   const greeting = greetingFor(now.getHours());
   const GreetingIcon = greeting.icon;
-  const firstName = (user?.name ?? "Peternak").replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
-  const dateLabel = now.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const firstName = (user?.name ?? t("auth.defaultRole")).replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
+  const dateLabel = now.toLocaleDateString(lang === "id" ? "id-ID" : "en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   const chips = [
-    { icon: CircleCheck, label: `${healthyPercent}% ternak sehat`, tone: "text-terrava-success" },
-    { icon: BellRing, label: `${activeAlerts} alert aktif`, tone: activeAlerts > 0 ? "text-terrava-warning" : "text-terrava-success" },
-    { icon: Radio, label: `${devicesOnline}/${devicesTotal} perangkat online`, tone: "text-terrava-info" },
+    { icon: CircleCheck, label: t("overview.chip.healthy", { percent: healthyPercent }), tone: "text-terrava-success" },
+    {
+      icon: BellRing,
+      label: t("overview.chip.activeAlerts", { count: activeAlerts }),
+      tone: activeAlerts > 0 ? "text-terrava-warning" : "text-terrava-success",
+    },
+    {
+      icon: Radio,
+      label: t("overview.chip.devicesOnline", { online: devicesOnline, total: devicesTotal }),
+      tone: "text-terrava-info",
+    },
   ];
 
   return (
@@ -56,12 +71,15 @@ export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnl
             {dateLabel}
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-            {greeting.text}, {firstName}.
+            {t(greeting.key, { name: firstName })}
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/80">
             {activeAlerts > 0
-              ? `Ada ${activeAlerts} alert yang menunggu tindakan Anda hari ini. Kondisi ${user?.farmName ?? "peternakan"} secara umum stabil.`
-              : `Tidak ada alert aktif. ${user?.farmName ?? "Peternakan Anda"} dalam kondisi stabil hari ini.`}
+              ? t("overview.summaryWithAlerts", {
+                  count: activeAlerts,
+                  farm: user?.farmName ?? t("overview.yourFarm"),
+                })
+              : t("overview.summaryNoAlerts", { farm: user?.farmName ?? t("overview.yourFarm") })}
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2">
@@ -82,14 +100,14 @@ export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnl
             to="/dashboard/alerts"
             className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-terrava-primary transition-all hover:-translate-y-0.5 hover:bg-terrava-light"
           >
-            Tinjau alert
+            {t("overview.reviewAlerts")}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Link>
           <Link
             to="/dashboard/monitoring"
             className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
           >
-            Live monitoring
+            {t("overview.liveMonitoring")}
           </Link>
         </div>
       </div>

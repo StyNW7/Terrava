@@ -19,16 +19,13 @@ import { batteryDistribution, deviceErrorCategory } from "@/data/dashboardChartD
 import { farms, getFarmById } from "@/data/mockFarms";
 import { getLivestockById } from "@/data/mockLivestock";
 import type { Device } from "@/types/dashboard";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const typeTabs = [
-  { value: "all", label: "All Devices" },
-  { value: "ear-tag", label: "Smart Ear Tags" },
-  { value: "gateway", label: "Gateways" },
-  { value: "environmental-sensor", label: "Environmental Sensors" },
-];
+const typeTabValues = ["all", "ear-tag", "gateway", "environmental-sensor"];
 
 export default function DeviceManagementPage() {
   const navigate = useNavigate();
+  const { t, tRel } = useLanguage();
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
@@ -54,28 +51,42 @@ export default function DeviceManagementPage() {
   const maintenanceCount = devices.filter((d) => d.status === "maintenance").length;
   const avgUptime = Math.round(devices.reduce((sum, d) => sum + d.uptime, 0) / devices.length);
 
+  const typeTabs = typeTabValues.map((value) => ({
+    value,
+    label: value === "all" ? t("devices.tab.all") : t("devices.tab." + value),
+  }));
+
   const columns: ColumnDef<Device, unknown>[] = [
-    { accessorKey: "name", header: "Device" },
-    { accessorKey: "type", header: "Type", cell: ({ getValue }) => <span className="capitalize">{(getValue() as string).replace("-", " ")}</span> },
-    { id: "assigned", header: "Assigned Livestock", cell: ({ row }) => (row.original.assignedLivestockId ? getLivestockById(row.original.assignedLivestockId)?.name : <span className="text-terrava-muted">-</span>) },
-    { id: "farm", header: "Farm", cell: ({ row }) => getFarmById(row.original.farmId)?.name.split(" ").slice(0, 2).join(" ") },
-    { accessorKey: "status", header: "Status", cell: ({ getValue }) => <DeviceStatusBadge status={getValue() as Device["status"]} /> },
-    { accessorKey: "battery", header: "Battery", cell: ({ getValue }) => `${getValue()}%` },
-    { accessorKey: "signal", header: "Signal", cell: ({ getValue }) => `${getValue()}%` },
-    { accessorKey: "firmware", header: "Firmware" },
-    { accessorKey: "lastSync", header: "Last Sync" },
+    { accessorKey: "name", header: t("devices.column.device") },
+    {
+      accessorKey: "type",
+      header: t("livestock.column.type"),
+      cell: ({ getValue }) => t("deviceType." + (getValue() as string)),
+    },
+    {
+      id: "assigned",
+      header: t("devices.column.assigned"),
+      cell: ({ row }) =>
+        row.original.assignedLivestockId ? getLivestockById(row.original.assignedLivestockId)?.name : <span className="text-terrava-muted">-</span>,
+    },
+    { id: "farm", header: t("filter.farm"), cell: ({ row }) => getFarmById(row.original.farmId)?.name.split(" ").slice(0, 2).join(" ") },
+    { accessorKey: "status", header: t("livestock.column.status"), cell: ({ getValue }) => <DeviceStatusBadge status={getValue() as Device["status"]} /> },
+    { accessorKey: "battery", header: t("devices.battery"), cell: ({ getValue }) => `${getValue()}%` },
+    { accessorKey: "signal", header: t("devices.signal"), cell: ({ getValue }) => `${getValue()}%` },
+    { accessorKey: "firmware", header: t("devices.firmware") },
+    { accessorKey: "lastSync", header: t("devices.lastSync"), cell: ({ getValue }) => tRel(getValue() as string) },
     {
       id: "actions",
       header: "",
       cell: ({ row }) => (
         <RowActionsMenu
           actions={[
-            { label: "View detail", onClick: () => navigate(`/dashboard/devices/${row.original.id}`) },
-            { label: "Assign", onClick: () => toast.success("Perangkat berhasil ditugaskan.") },
-            { label: "Unassign", onClick: () => toast.success("Penugasan perangkat dibatalkan.") },
-            { label: "Run diagnostics", onClick: () => toast.success("Diagnostik perangkat sedang berjalan.") },
-            { label: "Mark maintenance", onClick: () => toast.success("Perangkat ditandai perlu maintenance.") },
-            { label: "Restart simulation", onClick: () => toast.success("Simulasi restart perangkat berhasil.") },
+            { label: t("common.viewDetail"), onClick: () => navigate(`/dashboard/devices/${row.original.id}`) },
+            { label: t("devices.action.assign"), onClick: () => toast.success(t("devices.toast.assigned")) },
+            { label: t("devices.action.unassign"), onClick: () => toast.success(t("devices.toast.unassigned")) },
+            { label: t("devices.action.diagnostics"), onClick: () => toast.success(t("devices.toast.diagnostics")) },
+            { label: t("devices.action.markMaintenance"), onClick: () => toast.success(t("devices.toast.maintenance")) },
+            { label: t("devices.action.restart"), onClick: () => toast.success(t("devices.toast.restarted")) },
           ]}
         />
       ),
@@ -84,22 +95,22 @@ export default function DeviceManagementPage() {
 
   return (
     <div>
-      <PageHeader title="Device Management" subtitle="Kelola smart ear tag, gateway, dan sensor lingkungan." />
+      <PageHeader title={t("devices.title")} subtitle={t("devices.subtitle")} />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <MetricCard icon={Cpu} label="Total Devices" value={devices.length} />
-        <MetricCard icon={Radio} label="Online" value={onlineCount} />
-        <MetricCard icon={WifiOff} label="Offline" value={offlineCount} tone="error" />
-        <MetricCard icon={BatteryLow} label="Low Battery" value={lowBatteryCount} tone="warning" />
-        <MetricCard icon={Wrench} label="Maintenance" value={maintenanceCount} tone="warning" />
-        <MetricCard icon={Gauge} label="Avg Uptime" value={`${avgUptime}%`} />
+        <MetricCard icon={Cpu} label={t("devices.metric.total")} value={devices.length} />
+        <MetricCard icon={Radio} label={t("status.online")} value={onlineCount} />
+        <MetricCard icon={WifiOff} label={t("status.offline")} value={offlineCount} tone="error" />
+        <MetricCard icon={BatteryLow} label={t("status.low-battery")} value={lowBatteryCount} tone="warning" />
+        <MetricCard icon={Wrench} label={t("status.maintenance")} value={maintenanceCount} tone="warning" />
+        <MetricCard icon={Gauge} label={t("devices.metric.avgUptime")} value={`${avgUptime}%`} />
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <ChartCard title="Device Uptime">
+        <ChartCard title={t("chart.deviceUptime")}>
           <DeviceUptimeChart />
         </ChartCard>
-        <ChartCard title="Battery Distribution">
+        <ChartCard title={t("chart.batteryDistribution")}>
           <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie data={batteryDistribution} dataKey="value" nameKey="name" innerRadius={58} outerRadius={88} paddingAngle={2} isAnimationActive>
@@ -112,10 +123,10 @@ export default function DeviceManagementPage() {
             </PieChart>
           </ResponsiveContainer>
         </ChartCard>
-        <ChartCard title="Connectivity Trend">
+        <ChartCard title={t("chart.connectivityTrend")}>
           <DeviceUptimeChart />
         </ChartCard>
-        <ChartCard title="Device Error Category">
+        <ChartCard title={t("chart.deviceErrorCategory")}>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={deviceErrorCategory} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -131,33 +142,35 @@ export default function DeviceManagementPage() {
       <Tabs tabs={typeTabs} active={tab} onChange={setTab} />
 
       <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
-        <SearchInput value={search} onChange={setSearch} placeholder="Cari perangkat..." className="w-full sm:w-64" />
+        <SearchInput value={search} onChange={setSearch} placeholder={t("devices.searchPlaceholder")} className="w-full sm:w-64" />
         <FilterSelect
-          label="Status"
+          label={t("livestock.column.status")}
           value={status}
           onChange={setStatus}
           options={[
-            { value: "online", label: "Online" },
-            { value: "offline", label: "Offline" },
-            { value: "low-battery", label: "Low Battery" },
-            { value: "maintenance", label: "Maintenance" },
+            { value: "online", label: t("status.online") },
+            { value: "offline", label: t("status.offline") },
+            { value: "low-battery", label: t("status.low-battery") },
+            { value: "maintenance", label: t("status.maintenance") },
           ]}
         />
-        <FilterSelect label="Farm" value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
+        <FilterSelect label={t("filter.farm")} value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
       </div>
 
       <DataTable
         data={filtered}
         columns={columns}
-        emptyTitle="Tidak ada perangkat"
-        emptyDescription="Tidak ada perangkat yang sesuai dengan filter."
+        emptyTitle={t("devices.emptyTitle")}
+        emptyDescription={t("devices.emptyDescription")}
         renderMobileCard={(device) => (
           <div>
             <div className="mb-1 flex items-center justify-between">
               <p className="text-sm font-medium text-terrava-text">{device.name}</p>
               <DeviceStatusBadge status={device.status} />
             </div>
-            <p className="text-xs text-terrava-muted">Battery {device.battery}% &middot; Signal {device.signal}%</p>
+            <p className="text-xs text-terrava-muted">
+              {t("devices.battery")} {device.battery}% &middot; {t("devices.signal")} {device.signal}%
+            </p>
           </div>
         )}
       />

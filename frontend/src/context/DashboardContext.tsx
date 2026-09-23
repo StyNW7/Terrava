@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 interface DashboardContextValue {
   selectedFarmId: string;
   setSelectedFarmId: (farmId: string) => void;
+  /** Canonical date-range value; the header renders it through `t()`. */
   dateRangeLabel: string;
   setDateRangeLabel: (label: string) => void;
 }
@@ -12,7 +13,7 @@ const DashboardContext = createContext<DashboardContextValue | undefined>(undefi
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [selectedFarmId, setSelectedFarmId] = useState("all");
-  const [dateRangeLabel, setDateRangeLabel] = useState("Last 30 Days");
+  const [dateRangeLabel, setDateRangeLabel] = useState("last-30-days");
 
   const value = useMemo(
     () => ({ selectedFarmId, setSelectedFarmId, dateRangeLabel, setDateRangeLabel }),

@@ -1,4 +1,5 @@
 import { Check, X } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const permissions = [
   "View livestock",
@@ -23,21 +24,23 @@ const matrix: Record<string, boolean[]> = {
 };
 
 export default function PermissionsMatrix() {
+  const { t, tt } = useLanguage();
+
   return (
     <div className="overflow-x-auto rounded-2xl border border-terrava-border bg-white">
       <table className="w-full min-w-[840px] text-left text-sm">
         <thead className="bg-terrava-bg text-xs uppercase text-terrava-muted">
           <tr>
-            <th className="px-4 py-3">Permission</th>
+            <th className="px-4 py-3">{t("team.permission")}</th>
             {roles.map((role) => (
-              <th key={role} className="px-4 py-3 text-center">{role}</th>
+              <th key={role} className="px-4 py-3 text-center">{tt("role", role)}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {permissions.map((permission) => (
             <tr key={permission} className="border-t border-terrava-border">
-              <td className="px-4 py-3 font-medium text-terrava-text">{permission}</td>
+              <td className="px-4 py-3 font-medium text-terrava-text">{tt("permission", permission)}</td>
               {matrix[permission].map((allowed, index) => (
                 <td key={index} className="px-4 py-3 text-center">
                   {allowed ? (

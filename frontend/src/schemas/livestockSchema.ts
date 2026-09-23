@@ -1,30 +1,32 @@
 import { z } from "zod";
 
+/** Messages are dictionary keys; the form renders them through `t()`. */
+
 export const livestockSchema = z.object({
-  name: z.string().min(1, "Nama atau kode ternak wajib diisi."),
-  animalType: z.string().min(1, "Jenis ternak wajib dipilih."),
-  breed: z.string().min(1, "Ras ternak wajib dipilih."),
-  gender: z.enum(["Male", "Female"], { message: "Pilih jenis kelamin." }),
-  dateOfBirth: z.string().min(1, "Tanggal lahir wajib diisi."),
+  name: z.string().min(1, "validation.livestock.name"),
+  animalType: z.string().min(1, "validation.livestock.animalType"),
+  breed: z.string().min(1, "validation.livestock.breed"),
+  gender: z.enum(["Male", "Female"], { message: "validation.livestock.gender" }),
+  dateOfBirth: z.string().min(1, "validation.livestock.dateOfBirth"),
   estimatedAge: z.string().optional(),
 
-  internalId: z.string().min(1, "ID internal wajib diisi."),
-  earTagId: z.string().min(1, "Ear tag ID wajib diisi."),
+  internalId: z.string().min(1, "validation.livestock.internalId"),
+  earTagId: z.string().min(1, "validation.livestock.earTagId"),
   rfid: z.string().optional(),
   registrationNumber: z.string().optional(),
 
-  weightKg: z.coerce.number().min(1, "Bobot wajib diisi."),
+  weightKg: z.coerce.number().min(1, "validation.livestock.weight"),
   bodyConditionScore: z.coerce.number().min(1).max(5),
   markings: z.string().optional(),
 
-  farmId: z.string().min(1, "Farm wajib dipilih."),
-  barnId: z.string().min(1, "Barn wajib dipilih."),
-  herdGroup: z.string().min(1, "Herd group wajib dipilih."),
-  arrivalDate: z.string().min(1, "Tanggal kedatangan wajib diisi."),
-  acquisitionSource: z.string().min(1, "Sumber akuisisi wajib dipilih."),
+  farmId: z.string().min(1, "validation.livestock.farm"),
+  barnId: z.string().min(1, "validation.livestock.barn"),
+  herdGroup: z.string().min(1, "validation.livestock.herdGroup"),
+  arrivalDate: z.string().min(1, "validation.livestock.arrivalDate"),
+  acquisitionSource: z.string().min(1, "validation.livestock.acquisitionSource"),
 
-  initialHealthStatus: z.string().min(1, "Status kesehatan awal wajib dipilih."),
-  vaccinationStatus: z.string().min(1, "Status vaksinasi wajib dipilih."),
+  initialHealthStatus: z.string().min(1, "validation.livestock.initialHealthStatus"),
+  vaccinationStatus: z.string().min(1, "validation.livestock.vaccinationStatus"),
   lastExaminationDate: z.string().optional(),
   knownConditions: z.string().optional(),
   notes: z.string().optional(),

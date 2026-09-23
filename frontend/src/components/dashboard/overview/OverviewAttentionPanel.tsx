@@ -2,8 +2,10 @@ import { Link } from "react-router-dom";
 import HealthScoreBadge from "@/components/dashboard/HealthScoreBadge";
 import { livestock } from "@/data/mockLivestock";
 import { getBarnById } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function OverviewAttentionPanel() {
+  const { t } = useLanguage();
   const needsAttention = livestock
     .filter((animal) => animal.healthStatus === "attention" || animal.healthStatus === "critical")
     .sort((a, b) => a.healthScore - b.healthScore)
@@ -12,9 +14,9 @@ export default function OverviewAttentionPanel() {
   return (
     <div className="rounded-2xl border border-terrava-border bg-white p-5">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-terrava-text">Livestock Requiring Attention</h3>
+        <h3 className="text-sm font-semibold text-terrava-text">{t("overview.requiringAttention")}</h3>
         <Link to="/dashboard/livestock?health=attention" className="text-xs font-semibold text-terrava-primary">
-          View all
+          {t("common.viewAll")}
         </Link>
       </div>
       <ul className="space-y-1">

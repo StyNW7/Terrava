@@ -1,14 +1,17 @@
 import { BellRing, FileText, Radio, Building2, Stethoscope } from "lucide-react";
 import type { Livestock } from "@/types/dashboard";
 import Timeline from "@/components/dashboard/Timeline";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function LivestockTimelineTab({ animal }: { animal: Livestock }) {
+  const { t, tRel } = useLanguage();
+
   const items = [
-    { id: "1", icon: BellRing, label: "New alert detected", timestamp: "2 jam lalu" },
-    { id: "2", icon: FileText, label: "Health record added", timestamp: "1 hari lalu" },
-    { id: "3", icon: Radio, label: "Device assigned", timestamp: "3 hari lalu" },
-    { id: "4", icon: Building2, label: `Moved to ${animal.herdGroup}`, timestamp: "1 minggu lalu" },
-    { id: "5", icon: Stethoscope, label: "Examination completed", timestamp: "2 minggu lalu" },
+    { id: "1", icon: BellRing, label: t("timeline.newAlert"), timestamp: tRel("2 hours ago") },
+    { id: "2", icon: FileText, label: t("timeline.recordAdded"), timestamp: tRel("1 days ago") },
+    { id: "3", icon: Radio, label: t("timeline.deviceAssigned"), timestamp: tRel("3 days ago") },
+    { id: "4", icon: Building2, label: t("timeline.movedTo", { group: animal.herdGroup }), timestamp: tRel("1 weeks ago") },
+    { id: "5", icon: Stethoscope, label: t("timeline.examinationCompleted"), timestamp: tRel("2 weeks ago") },
   ];
 
   return (

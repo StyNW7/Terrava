@@ -1,6 +1,8 @@
 import type { StatisticItem } from "@/types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function StatisticCard({ stat }: { stat: StatisticItem }) {
+  const { tr } = useLanguage();
   const Icon = stat.icon;
 
   return (
@@ -10,14 +12,14 @@ export default function StatisticCard({ stat }: { stat: StatisticItem }) {
       </div>
       {stat.qualifier && (
         <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-terrava-muted">
-          {stat.qualifier}
+          {tr(stat.qualifier)}
         </p>
       )}
       <p className="text-2xl font-bold text-terrava-text sm:text-3xl">
         {stat.value}
-        {stat.suffix && <span className="text-terrava-primary">{stat.suffix}</span>}
+        {stat.suffix && <span className="text-terrava-primary">{tr(stat.suffix)}</span>}
       </p>
-      <p className="mt-1 text-sm text-terrava-muted">{stat.label}</p>
+      <p className="mt-1 text-sm text-terrava-muted">{tr(stat.label)}</p>
     </div>
   );
 }

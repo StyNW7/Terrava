@@ -1,6 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "@/components/common/ThemeToggle";
+import LanguageToggle from "@/components/common/LanguageToggle";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface AuthHeaderProps {
   eyebrow?: string;
@@ -10,6 +12,8 @@ interface AuthHeaderProps {
 }
 
 export default function AuthHeader({ eyebrow, title, subtitle, showBackButton = true }: AuthHeaderProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="mb-8">
       <div className="mb-8 flex items-center justify-between">
@@ -19,12 +23,15 @@ export default function AuthHeader({ eyebrow, title, subtitle, showBackButton = 
             className="group inline-flex items-center gap-1.5 text-sm font-medium text-terrava-muted transition-colors hover:text-terrava-primary"
           >
             <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" aria-hidden="true" />
-            Kembali ke Beranda
+            {t("common.backToHome")}
           </Link>
         ) : (
           <span />
         )}
-        <ThemeToggle className="h-9 w-9" />
+        <div className="flex items-center gap-2">
+          <LanguageToggle className="h-9" />
+          <ThemeToggle className="h-9 w-9" />
+        </div>
       </div>
 
       {eyebrow && (

@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import { breadcrumbLabels } from "@/data/dashboardNav";
+import { breadcrumbLabelKeys } from "@/data/dashboardNav";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export interface BreadcrumbItem {
   label: string;
@@ -13,6 +14,7 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items }: BreadcrumbProps) {
   const location = useLocation();
+  const { t } = useLanguage();
 
   const derivedItems: BreadcrumbItem[] =
     items ??
@@ -23,14 +25,14 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
         path += `/${segment}`;
         const isLast = index === segments.length - 1;
         return {
-          label: breadcrumbLabels[segment] ?? segment,
+          label: breadcrumbLabelKeys[segment] ? t(breadcrumbLabelKeys[segment]) : segment,
           href: isLast ? undefined : path,
         };
       });
     })();
 
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-terrava-muted">
+    <nav aria-label={t("dashboard.breadcrumb")} className="flex items-center gap-1.5 text-xs text-terrava-muted">
       {derivedItems.map((item, index) => (
         <span key={`${item.label}-${index}`} className="flex items-center gap-1.5">
           {index > 0 && <ChevronRight className="h-3 w-3" aria-hidden="true" />}

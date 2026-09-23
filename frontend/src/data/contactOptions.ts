@@ -13,36 +13,54 @@ export const contactOptions: ContactOption[] = [
     id: "request-demo",
     icon: MonitorPlay,
     title: "Request Demo",
-    description: "Lihat langsung bagaimana dashboard dan smart ear tag Terrava bekerja.",
+    description: {
+      id: "Lihat langsung bagaimana dashboard dan smart ear tag Terrava bekerja.",
+      en: "See exactly how the Terrava dashboard and smart ear tag work together.",
+    },
   },
   {
     id: "pilot-project",
     icon: FlaskConical,
     title: "Pilot Project",
-    description: "Ajukan program uji coba Terrava pada peternakan atau koperasi Anda.",
+    description: {
+      id: "Ajukan program uji coba Terrava pada peternakan atau koperasi Anda.",
+      en: "Apply to run a Terrava trial on your farm or within your cooperative.",
+    },
   },
   {
     id: "partnership",
     icon: Handshake,
     title: "Partnership",
-    description: "Jajaki kemitraan teknologi, distribusi, atau pendanaan bersama Terrava.",
+    description: {
+      id: "Jajaki kemitraan teknologi, distribusi, atau pendanaan bersama Terrava.",
+      en: "Explore a technology, distribution, or funding partnership with Terrava.",
+    },
   },
   {
     id: "research",
     icon: Microscope,
     title: "Research Collaboration",
-    description: "Kolaborasi riset akademik terkait AI, IoT, dan kesehatan ternak.",
+    description: {
+      id: "Kolaborasi riset akademik terkait AI, IoT, dan kesehatan ternak.",
+      en: "Academic research collaboration across AI, IoT, and livestock health.",
+    },
   },
   {
     id: "technical",
     icon: Wrench,
     title: "Technical Inquiry",
-    description: "Pertanyaan teknis seputar perangkat, integrasi, dan infrastruktur data.",
+    description: {
+      id: "Pertanyaan teknis seputar perangkat, integrasi, dan infrastruktur data.",
+      en: "Technical questions about devices, integrations, and data infrastructure.",
+    },
   },
   {
     id: "general",
     icon: MessageCircleQuestion,
     title: "General Inquiry",
-    description: "Pertanyaan umum lainnya seputar Terrava dan layanannya.",
+    description: {
+      id: "Pertanyaan umum lainnya seputar Terrava dan layanannya.",
+      en: "Any other general question about Terrava and its services.",
+    },
   },
 ];

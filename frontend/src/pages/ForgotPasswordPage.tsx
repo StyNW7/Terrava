@@ -5,8 +5,11 @@ import { Mail, LoaderCircle, CircleCheck } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthInput from "@/components/auth/AuthInput";
 import { forgotPasswordSchema, type ForgotPasswordValues } from "@/schemas/authSchemas";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ForgotPasswordPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Forgot Password | Terrava";
   }, []);
@@ -30,30 +33,30 @@ export default function ForgotPasswordPage() {
   return (
     <AuthLayout
       panelVariant="forgot"
-      eyebrow="Account Recovery"
-      title="Lupa Password"
-      subtitle="Masukkan email Anda dan kami akan mengirimkan tautan untuk membuat password baru."
-      footerText="Ingat password Anda?"
-      footerLinkText="Masuk"
+      eyebrow={t("auth.forgot.eyebrow")}
+      title={t("auth.forgot.title")}
+      subtitle={t("auth.forgot.subtitle")}
+      footerText={t("auth.forgot.footerText")}
+      footerLinkText={t("auth.login.submit")}
       footerLinkPath="/login"
     >
       {isSent ? (
         <div className="flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-8 text-center animate-fade-in-up">
           <CircleCheck className="mb-4 h-12 w-12 text-terrava-primary" aria-hidden="true" />
           <p className="text-sm leading-relaxed text-terrava-text">
-            Tautan reset password telah dikirim jika email tersebut terdaftar.
+            {t("auth.forgot.sent")}
           </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
           <AuthInput
             id="email"
-            label="Email"
+            label={t("auth.field.email")}
             type="email"
             icon={Mail}
-            placeholder="nama@perusahaan.com"
+            placeholder={t("auth.placeholder.email")}
             autoComplete="email"
-            error={errors.email?.message}
+            error={errors.email?.message && t(errors.email.message)}
             {...register("email")}
           />
 
@@ -66,10 +69,10 @@ export default function ForgotPasswordPage() {
             {isSubmitting ? (
               <>
                 <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-                Mengirim...
+                {t("auth.forgot.sending")}
               </>
             ) : (
-              "Kirim Tautan Reset"
+              t("auth.forgot.submit")
             )}
           </button>
         </form>

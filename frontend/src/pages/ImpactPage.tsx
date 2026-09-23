@@ -6,32 +6,15 @@ import ImpactChartsSection from "@/components/sections/impact/ImpactChartsSectio
 import SdgSection from "@/components/sections/SdgSection";
 import LongTermVisionSection from "@/components/sections/impact/LongTermVisionSection";
 import CTASection from "@/components/sections/CTASection";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const socialPoints = [
-  "Memberdayakan peternak lokal",
-  "Meningkatkan literasi digital",
-  "Memperluas akses terhadap teknologi",
-  "Mendukung animal welfare",
-  "Mempercepat respons terhadap risiko kesehatan",
-];
-
-const economicPoints = [
-  "Mengurangi potensi kerugian akibat keterlambatan",
-  "Meningkatkan efisiensi monitoring",
-  "Mengurangi pekerjaan manual berulang",
-  "Mendukung produktivitas ternak",
-  "Membantu keputusan berbasis data",
-];
-
-const environmentalPoints = [
-  "Efisiensi penggunaan sumber daya",
-  "Pengelolaan ternak yang lebih tepat",
-  "Dukungan terhadap monitoring kondisi lingkungan",
-  "Potensi pengelolaan limbah dan emisi pada pengembangan berikutnya",
-  "Penggunaan perangkat hemat energi",
-];
+const socialPoints = ["empower", "literacy", "access", "welfare", "response"];
+const economicPoints = ["losses", "efficiency", "manualWork", "productivity", "decisions"];
+const environmentalPoints = ["resources", "management", "monitoring", "emissions", "lowPower"];
 
 export default function ImpactPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Impact | Terrava";
   }, []);
@@ -39,22 +22,36 @@ export default function ImpactPage() {
   return (
     <>
       <PageHero
-        badge="Impact and Sustainability"
-        title="Lebih dari teknologi—Terrava membangun peternakan yang lebih tangguh."
+        badge={t("impact.hero.badge")}
+        title={t("impact.hero.title")}
       />
       <PillarsSection />
-      <ImpactDetailSection badge="Social Impact" title="Dampak sosial bagi komunitas peternak" points={socialPoints} tone="muted" />
-      <ImpactDetailSection badge="Economic Impact" title="Dampak ekonomi bagi peternakan" points={economicPoints} />
-      <ImpactDetailSection badge="Environmental Impact" title="Dampak terhadap lingkungan" points={environmentalPoints} tone="muted" />
+      <ImpactDetailSection
+        badge={t("impact.social.badge")}
+        title={t("impact.social.title")}
+        points={socialPoints.map((key) => t("impact.social.point." + key))}
+        tone="muted"
+      />
+      <ImpactDetailSection
+        badge={t("impact.economic.badge")}
+        title={t("impact.economic.title")}
+        points={economicPoints.map((key) => t("impact.economic.point." + key))}
+      />
+      <ImpactDetailSection
+        badge={t("impact.environmental.badge")}
+        title={t("impact.environmental.title")}
+        points={environmentalPoints.map((key) => t("impact.environmental.point." + key))}
+        tone="muted"
+      />
       <ImpactChartsSection />
-      <SdgSection description="Kontribusi Terrava terhadap tujuan pembangunan berkelanjutan global." />
+      <SdgSection description={t("impact.sdgDescription")} />
       <LongTermVisionSection />
       <CTASection
-        title="Partner with Terrava"
-        description="Mari berkolaborasi untuk membangun peternakan yang lebih sehat dan berkelanjutan."
-        primaryLabel="Request Demo"
+        title={t("impact.cta.title")}
+        description={t("impact.cta.description")}
+        primaryLabel={t("cta.requestDemo")}
         primaryHref="/contact"
-        secondaryLabel="Learn About Us"
+        secondaryLabel={t("cta.learnAboutUs")}
         secondaryHref="/about"
       />
     </>

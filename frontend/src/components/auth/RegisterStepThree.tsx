@@ -5,6 +5,7 @@ import CardRadioGroup from "@/components/auth/CardRadioGroup";
 import { registerStep3Schema, type RegisterStep3Values } from "@/schemas/authSchemas";
 import { notificationMethodOptions } from "@/data/auth";
 import type { RegisterStep1Values, RegisterStep2Values } from "@/schemas/authSchemas";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface RegisterStepThreeProps {
   defaultValues: RegisterStep3Values;
@@ -16,11 +17,11 @@ interface RegisterStepThreeProps {
 }
 
 const summaryFields = (accountData: RegisterStep1Values, farmData: RegisterStep2Values) => [
-  { icon: UserRound, label: "Nama Pengguna", value: accountData.fullName },
-  { icon: Mail, label: "Email", value: accountData.email },
-  { icon: Building2, label: "Farm Name", value: farmData.farmName },
-  { icon: Users, label: "Role", value: farmData.accountRole },
-  { icon: Building2, label: "Livestock Scale", value: farmData.livestockCount },
+  { icon: UserRound, key: "userName", value: accountData.fullName },
+  { icon: Mail, key: "email", value: accountData.email },
+  { icon: Building2, key: "farmName", value: farmData.farmName },
+  { icon: Users, key: "role", value: farmData.accountRole },
+  { icon: Building2, key: "livestockScale", value: farmData.livestockCount },
 ];
 
 export default function RegisterStepThree({
@@ -31,6 +32,7 @@ export default function RegisterStepThree({
   onSubmit,
   onBack,
 }: RegisterStepThreeProps) {
+  const { t } = useLanguage();
   const {
     handleSubmit,
     control,
@@ -43,20 +45,20 @@ export default function RegisterStepThree({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-      <h2 className="text-lg font-semibold text-terrava-text">Selesaikan Pendaftaran</h2>
+      <h2 className="text-lg font-semibold text-terrava-text">{t("auth.register.finish")}</h2>
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-terrava-text">Preferred Notification Method</span>
+        <span className="mb-1.5 block text-sm font-medium text-terrava-text">{t("auth.field.notificationMethod")}</span>
         <Controller
           name="notificationMethod"
           control={control}
           render={({ field }) => (
             <CardRadioGroup
-              name="Preferred Notification Method"
+              name={t("auth.field.notificationMethod")}
               options={notificationMethodOptions}
               value={field.value ?? ""}
               onChange={field.onChange}
-              error={errors.notificationMethod?.message}
+              error={errors.notificationMethod?.message && t(errors.notificationMethod.message)}
             />
           )}
         />
@@ -64,17 +66,17 @@ export default function RegisterStepThree({
 
       <label className="flex cursor-pointer items-start gap-2.5 text-sm text-terrava-text">
         <input type="checkbox" className="mt-0.5 h-4 w-4 accent-terrava-primary" {...register("productUpdates")} />
-        Saya ingin menerima informasi produk dan pembaruan fitur Terrava.
+        {t("auth.register.productUpdates")}
       </label>
 
       <div className="rounded-2xl border border-terrava-border bg-terrava-bg p-5">
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-terrava-muted">Ringkasan Pendaftaran</h3>
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-terrava-muted">{t("auth.register.summary")}</h3>
         <ul className="space-y-2.5">
           {summaryFields(accountData, farmData).map((field) => (
-            <li key={field.label} className="flex items-center justify-between gap-3 text-sm">
+            <li key={field.key} className="flex items-center justify-between gap-3 text-sm">
               <span className="flex items-center gap-2 text-terrava-muted">
                 <field.icon className="h-4 w-4" aria-hidden="true" />
-                {field.label}
+                {t("auth.summary." + field.key)}
               </span>
               <span className="font-medium text-terrava-text">{field.value || "-"}</span>
             </li>
@@ -85,11 +87,11 @@ export default function RegisterStepThree({
       <div>
         <label className="flex cursor-pointer items-start gap-2.5 text-sm text-terrava-text">
           <input type="checkbox" className="mt-0.5 h-4 w-4 accent-terrava-primary" {...register("agreeTerms")} />
-          Saya menyetujui Ketentuan Layanan dan Kebijakan Privasi Terrava.
+          {t("auth.register.agreeTerms")}
         </label>
         {errors.agreeTerms && (
           <p role="alert" className="mt-1.5 text-xs text-terrava-error">
-            {errors.agreeTerms.message}
+            {t(errors.agreeTerms.message ?? "")}
           </p>
         )}
       </div>
@@ -100,7 +102,7 @@ export default function RegisterStepThree({
           onClick={onBack}
           className="inline-flex w-full items-center justify-center rounded-xl border border-terrava-border bg-white px-6 py-3.5 text-sm font-semibold text-terrava-text transition-colors hover:border-terrava-primary/40"
         >
-          Kembali
+          {t("common.back")}
         </button>
         <button
           type="submit"
@@ -111,10 +113,10 @@ export default function RegisterStepThree({
           {isSubmitting ? (
             <>
               <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Memproses...
+              {t("auth.processing")}
             </>
           ) : (
-            "Buat Akun"
+            t("auth.createAccount")
           )}
         </button>
       </div>

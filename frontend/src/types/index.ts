@@ -1,4 +1,14 @@
 import type { LucideIcon } from "lucide-react";
+import type { Localized, LocalizedList } from "@/i18n/types";
+
+/**
+ * Content types for the public site.
+ *
+ * Prose fields are typed as `Localized` and resolved at render time with the
+ * `tr()` helper from `useLanguage()`. Fields that read identically in both
+ * locales (brand names, product terms, place names, spec values) stay plain
+ * strings.
+ */
 
 export interface NavItem {
   label: string;
@@ -9,7 +19,7 @@ export interface FeatureItem {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
   href?: string;
 }
 
@@ -17,10 +27,10 @@ export interface SolutionItem {
   id: string;
   icon: LucideIcon;
   title: string;
-  problem: string;
-  solution: string;
-  capabilities: string[];
-  benefit: string;
+  problem: Localized;
+  solution: Localized;
+  capabilities: LocalizedList;
+  benefit: Localized;
   image: string;
 }
 
@@ -28,16 +38,16 @@ export interface StatisticItem {
   id: string;
   icon: LucideIcon;
   value: string;
-  suffix?: string;
-  label: string;
-  qualifier?: string;
+  suffix?: Localized;
+  label: Localized;
+  qualifier?: Localized;
 }
 
 export interface TestimonialItem {
   id: string;
-  quote: string;
+  quote: Localized;
   name: string;
-  role: string;
+  role: Localized;
   location: string;
   image: string;
 }
@@ -52,44 +62,44 @@ export interface TeamMember {
 
 export interface TimelineEntry {
   id: string;
-  year: string;
+  year: Localized;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface SdgItem {
   id: string;
   number: number;
   title: string;
-  description: string;
+  description: Localized;
   color: string;
 }
 
 export interface FaqItem {
   id: string;
-  question: string;
-  answer: string;
+  question: Localized;
+  answer: Localized;
 }
 
 export interface ContactOption {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface ValueItem {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface RecognitionItem {
   id: string;
   year: string;
-  title: string;
-  description: string;
+  title: Localized;
+  description: Localized;
 }
 
 export interface ProcessStep {
@@ -97,7 +107,7 @@ export interface ProcessStep {
   number: number;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
   image: string;
 }
 
@@ -105,14 +115,14 @@ export interface UserRole {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface PersonaItem {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
   image: string;
 }
 
@@ -120,13 +130,13 @@ export interface SensorItem {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface AnatomyCallout {
   id: string;
   label: string;
-  description: string;
+  description: Localized;
   top: string;
   left: string;
 }
@@ -140,7 +150,7 @@ export interface ImpactPillar {
   id: string;
   icon: LucideIcon;
   title: string;
-  description: string;
+  description: Localized;
 }
 
 export interface ContactFormData {

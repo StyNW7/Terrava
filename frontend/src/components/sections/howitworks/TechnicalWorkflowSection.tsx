@@ -1,5 +1,6 @@
 import { Cpu, Radio, Antenna, Server, Database, BrainCircuit, Monitor } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const nodes = [
   { icon: Cpu, label: "IoT Device" },
@@ -12,10 +13,12 @@ const nodes = [
 ];
 
 export default function TechnicalWorkflowSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="bg-white py-20 sm:py-28">
       <div className="container">
-        <SectionHeading badge="Technical Workflow" title="Arsitektur teknis di balik Terrava" />
+        <SectionHeading badge={t("howitworks.technical.badge")} title={t("howitworks.technical.title")} />
 
         <div className="mt-14 flex flex-wrap items-center justify-center gap-3">
           {nodes.map((node, index) => (

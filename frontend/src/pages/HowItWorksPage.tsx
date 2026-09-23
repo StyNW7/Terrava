@@ -6,8 +6,11 @@ import FarmerJourneySection from "@/components/sections/howitworks/FarmerJourney
 import UserRolesSection from "@/components/sections/howitworks/UserRolesSection";
 import PlatformAccessSection from "@/components/sections/howitworks/PlatformAccessSection";
 import CTASection from "@/components/sections/CTASection";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function HowItWorksPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "How It Works | Terrava";
   }, []);
@@ -16,7 +19,7 @@ export default function HowItWorksPage() {
     <>
       <PageHero
         badge="How It Works"
-        title="Dari pemasangan perangkat hingga keputusan—semuanya dalam satu alur cerdas."
+        title={t("howitworks.hero.title")}
       />
       <JourneySection />
       <TechnicalWorkflowSection />
@@ -24,11 +27,11 @@ export default function HowItWorksPage() {
       <UserRolesSection />
       <PlatformAccessSection />
       <CTASection
-        title="See Terrava in Action"
-        description="Jadwalkan sesi demo untuk melihat alur kerja Terrava secara langsung."
-        primaryLabel="Request Demo"
+        title={t("howitworks.cta.title")}
+        description={t("howitworks.cta.description")}
+        primaryLabel={t("cta.requestDemo")}
         primaryHref="/contact"
-        secondaryLabel="View Solutions"
+        secondaryLabel={t("cta.viewSolutions")}
         secondaryHref="/solutions"
       />
     </>

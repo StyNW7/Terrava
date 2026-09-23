@@ -1,9 +1,10 @@
 import type { AuthUser } from "@/types/auth";
+import type { Localized } from "@/i18n/types";
 
 export interface DemoAccount extends AuthUser {
   password: string;
   /** Short descriptor shown on the login page persona switcher. */
-  tagline: string;
+  tagline: Localized;
 }
 
 /**
@@ -20,7 +21,7 @@ export const demoAccounts: DemoAccount[] = [
     role: "Farm Owner",
     farmName: "Terrava Farm Boyolali",
     initials: "SW",
-    tagline: "Akses penuh seluruh fitur dashboard",
+    tagline: { id: "Akses penuh seluruh fitur dashboard", en: "Full access to every dashboard feature" },
   },
   {
     id: "usr-manager",
@@ -30,17 +31,17 @@ export const demoAccounts: DemoAccount[] = [
     role: "Farm Manager",
     farmName: "Koperasi Ternak Pasuruan",
     initials: "RK",
-    tagline: "Operasional harian dan tim lapangan",
+    tagline: { id: "Operasional harian dan tim lapangan", en: "Daily operations and field teams" },
   },
   {
     id: "usr-vet",
     email: "vet@terrava.id",
     password: "Terrava123",
     name: "drh. Andi Prasetyo",
-    role: "Dokter Hewan",
+    role: "Veterinarian",
     farmName: "Terrava Farm Boyolali",
     initials: "AP",
-    tagline: "Fokus kesehatan dan rekam medis ternak",
+    tagline: { id: "Fokus kesehatan dan rekam medis ternak", en: "Focused on herd health and medical records" },
   },
 ];
 

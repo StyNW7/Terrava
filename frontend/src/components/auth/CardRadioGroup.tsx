@@ -1,6 +1,9 @@
+import type { LocalizedOption } from "@/types/auth";
+import { useLanguage } from "@/hooks/useLanguage";
+
 interface CardRadioGroupProps {
   name: string;
-  options: { value: string; label: string }[];
+  options: LocalizedOption[];
   value: string;
   onChange: (value: string) => void;
   error?: string;
@@ -15,6 +18,8 @@ export default function CardRadioGroup({
   error,
   columns = "grid-cols-2 sm:grid-cols-3",
 }: CardRadioGroupProps) {
+  const { tr } = useLanguage();
+
   return (
     <div>
       <div className={`grid gap-2.5 ${columns}`} role="radiogroup" aria-label={name}>
@@ -33,7 +38,7 @@ export default function CardRadioGroup({
                   : "border-terrava-border bg-white text-terrava-text hover:border-terrava-primary/40"
               }`}
             >
-              {option.label}
+              {tr(option.label)}
             </button>
           );
         })}

@@ -1,11 +1,14 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import ChartCard from "@/components/charts/ChartCard";
 import { batteryTrend14d, signalStrengthTrend14d, dataTransmissionTrend14d } from "@/data/dashboardChartData";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function DeviceConnectivityTab() {
+  const { t } = useLanguage();
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <ChartCard title="Battery Trend">
+      <ChartCard title={t("chart.batteryTrend")}>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={batteryTrend14d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -16,7 +19,7 @@ export default function DeviceConnectivityTab() {
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
-      <ChartCard title="Signal Strength">
+      <ChartCard title={t("chart.signalStrength")}>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={signalStrengthTrend14d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -27,7 +30,7 @@ export default function DeviceConnectivityTab() {
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
-      <ChartCard title="Data Transmission" description="Jumlah paket data terkirim per hari">
+      <ChartCard title={t("chart.dataTransmission")} description={t("chart.dataTransmissionDesc")}>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={dataTransmissionTrend14d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />

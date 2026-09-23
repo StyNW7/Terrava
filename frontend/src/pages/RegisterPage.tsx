@@ -16,6 +16,7 @@ import type {
   RegisterStep2Values,
   RegisterStep3Values,
 } from "@/schemas/authSchemas";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const step1Defaults: RegisterStep1Values = {
   fullName: "",
@@ -44,6 +45,7 @@ const step3Defaults: RegisterStep3Values = {
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { loginAs } = useAuth();
+  const { t, tr } = useLanguage();
 
   useEffect(() => {
     document.title = "Create Account | Terrava";
@@ -81,7 +83,8 @@ export default function RegisterPage() {
     markCompleted(3);
     setIsSuccess(true);
 
-    const roleLabel = accountRoleOptions.find((option) => option.value === farmData.accountRole)?.label ?? "Peternak";
+    const roleOption = accountRoleOptions.find((option) => option.value === farmData.accountRole);
+    const roleLabel = roleOption ? tr(roleOption.label) : t("auth.defaultRole");
 
     // Start the session and move to onboarding in the same tick so the guest-only
     // guard on this page does not redirect to the dashboard first.
@@ -97,7 +100,7 @@ export default function RegisterPage() {
         },
         true
       );
-      toast.success("Akun Terrava berhasil dibuat.");
+      toast.success(t("auth.register.created"));
       navigate("/onboarding", { replace: true });
     }, 1600);
   };
@@ -110,8 +113,8 @@ export default function RegisterPage() {
     return (
       <AuthLayout
         panelVariant="register"
-        title="Buat Akun Terrava"
-        subtitle="Isi informasi berikut untuk memulai."
+        title={t("auth.register.title")}
+        subtitle={t("auth.register.subtitle")}
         showBackButton={false}
       >
         <motion.div
@@ -128,8 +131,10 @@ export default function RegisterPage() {
           >
             <CheckCircle2 className="h-9 w-9 text-terrava-primary" aria-hidden="true" />
           </motion.div>
-          <h2 className="mb-2 text-xl font-semibold text-terrava-text">Akun Terrava berhasil dibuat.</h2>
-          <p className="text-sm text-terrava-muted">Selamat datang, {accountData.fullName.split(" ")[0]}. Mengarahkan Anda ke proses onboarding...</p>
+          <h2 className="mb-2 text-xl font-semibold text-terrava-text">{t("auth.register.created")}</h2>
+          <p className="text-sm text-terrava-muted">
+            {t("auth.register.redirecting", { name: accountData.fullName.split(" ")[0] })}
+          </p>
           <div className="mt-6 h-1 w-40 overflow-hidden rounded-full bg-terrava-soft">
             <motion.div
               className="h-full rounded-full bg-terrava-primary"
@@ -146,11 +151,11 @@ export default function RegisterPage() {
   return (
     <AuthLayout
       panelVariant="register"
-      eyebrow="Get Started"
-      title="Buat Akun Terrava"
-      subtitle="Isi informasi berikut untuk memulai."
-      footerText="Sudah memiliki akun?"
-      footerLinkText="Masuk"
+      eyebrow={t("auth.register.eyebrow")}
+      title={t("auth.register.title")}
+      subtitle={t("auth.register.subtitle")}
+      footerText={t("auth.register.footerText")}
+      footerLinkText={t("auth.register.footerLink")}
       footerLinkPath="/login"
       maxWidthClassName="max-w-lg"
     >

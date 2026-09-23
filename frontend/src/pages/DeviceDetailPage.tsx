@@ -13,18 +13,14 @@ import DeviceLogsTab from "@/components/devices/DeviceLogsTab";
 import DeviceMaintenanceTab from "@/components/devices/DeviceMaintenanceTab";
 import { getDeviceById } from "@/data/mockDevices";
 import { getLivestockById } from "@/data/mockLivestock";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const tabs = [
-  { value: "overview", label: "Overview" },
-  { value: "sensor", label: "Sensor Data" },
-  { value: "connectivity", label: "Connectivity" },
-  { value: "logs", label: "Logs" },
-  { value: "maintenance", label: "Maintenance" },
-];
+const tabValues = ["overview", "sensor", "connectivity", "logs", "maintenance"];
 
 export default function DeviceDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { lang, t, tRel } = useLanguage();
   const [activeTab, setActiveTab] = useState("overview");
   const device = id ? getDeviceById(id) : undefined;
 
@@ -33,14 +29,15 @@ export default function DeviceDetailPage() {
   }, [device]);
 
   if (!device) {
-    return <ErrorState title="Perangkat tidak ditemukan" onRetry={() => navigate("/dashboard/devices")} />;
+    return <ErrorState title={t("devices.notFound")} onRetry={() => navigate("/dashboard/devices")} />;
   }
 
+  const tabs = tabValues.map((value) => ({ value, label: t("devices.tab.detail." + value) }));
   const animal = device.assignedLivestockId ? getLivestockById(device.assignedLivestockId) : undefined;
 
   return (
     <div>
-      <Breadcrumb items={[{ label: "Devices", href: "/dashboard/devices" }, { label: device.name }]} />
+      <Breadcrumb items={[{ label: t("nav.item.devices"), href: "/dashboard/devices" }, { label: device.name }]} />
 
       <div className="mt-3 mb-6 flex flex-col gap-4 rounded-2xl border border-terrava-border bg-white p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -49,27 +46,31 @@ export default function DeviceDetailPage() {
             <DeviceStatusBadge status={device.status} />
           </div>
           <p className="text-sm text-terrava-muted">
-            {device.id} &middot; <span className="capitalize">{device.type.replace("-", " ")}</span>
-            {animal ? ` · Assigned to ${animal.name}` : ""}
+            {device.id} &middot; {t("deviceType." + device.type)}
+            {animal ? ` · ${t("devices.assignedTo", { name: animal.name })}` : ""}
           </p>
         </div>
         <div className="flex gap-2.5">
-          <button onClick={() => toast.success("Diagnostik perangkat sedang berjalan.")} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            Run Diagnostics
+          <button onClick={() => toast.success(t("devices.toast.diagnostics"))} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+            {t("devices.action.diagnostics")}
           </button>
-          <button onClick={() => toast.success("Simulasi restart berhasil.")} className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover">
-            Restart Simulation
+          <button onClick={() => toast.success(t("devices.toast.restarted"))} className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover">
+            {t("devices.action.restart")}
           </button>
         </div>
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <SummaryCard icon={BatteryFull} label="Battery" value={`${device.battery}%`} />
-        <SummaryCard icon={Radio} label="Signal" value={`${device.signal}%`} />
-        <SummaryCard icon={Gauge} label="Uptime" value={`${device.uptime}%`} />
-        <SummaryCard icon={Clock} label="Last Sync" value={device.lastSync} />
-        <SummaryCard icon={Cpu} label="Firmware" value={device.firmware} />
-        <SummaryCard icon={Database} label="Data Packets" value={device.dataPackets.toLocaleString("id-ID")} />
+        <SummaryCard icon={BatteryFull} label={t("devices.battery")} value={`${device.battery}%`} />
+        <SummaryCard icon={Radio} label={t("devices.signal")} value={`${device.signal}%`} />
+        <SummaryCard icon={Gauge} label={t("devices.uptime")} value={`${device.uptime}%`} />
+        <SummaryCard icon={Clock} label={t("devices.lastSync")} value={tRel(device.lastSync)} />
+        <SummaryCard icon={Cpu} label={t("devices.firmware")} value={device.firmware} />
+        <SummaryCard
+          icon={Database}
+          label={t("devices.dataPackets")}
+          value={device.dataPackets.toLocaleString(lang === "id" ? "id-ID" : "en-GB")}
+        />
       </div>
 
       <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />

@@ -35,7 +35,7 @@ export const staff: StaffMember[] = staffData.map((person, index) => ({
   role: person.role,
   farmId: farms[index % farms.length].id,
   status: person.status,
-  lastActive: person.status === "active" ? `${randomInt(random, 1, 6)} jam lalu` : "Belum aktif",
+  lastActive: person.status === "active" ? `${randomInt(random, 1, 6)} hours ago` : "Never active",
   tasksAssigned: randomInt(random, 2, 18),
   alertsAssigned: randomInt(random, 0, 9),
   resolutionRate: randomInt(random, 68, 98),

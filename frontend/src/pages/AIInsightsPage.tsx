@@ -14,17 +14,12 @@ import { aiInsights } from "@/data/mockInsights";
 import { insightCategoryDistribution, insightPriorityDistribution, taskCompletionTrend } from "@/data/dashboardChartData";
 import { getLivestockById } from "@/data/mockLivestock";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const tabs = [
-  { value: "all", label: "All Insights" },
-  { value: "health", label: "Health" },
-  { value: "behavior", label: "Behavior" },
-  { value: "environment", label: "Environment" },
-  { value: "productivity", label: "Productivity" },
-  { value: "devices", label: "Devices" },
-];
+const tabValues = ["all", "health", "behavior", "environment", "productivity", "devices"];
 
 export default function AIInsightsPage() {
+  const { t, tr } = useLanguage();
   const [tab, setTab] = useState("all");
   const [selectedInsightId, setSelectedInsightId] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -38,32 +33,37 @@ export default function AIInsightsPage() {
     [tab, dismissed]
   );
 
+  const tabs = tabValues.map((value) => ({
+    value,
+    label: value === "all" ? t("insights.tab.all") : t("category." + value),
+  }));
+
   const selectedInsight = aiInsights.find((insight) => insight.id === selectedInsightId);
   const newInsightsCount = aiInsights.filter((insight) => !insight.reviewed).length;
   const highPriorityCount = aiInsights.filter((insight) => insight.priority === "high").length;
 
   return (
     <div>
-      <PageHeader title="AI Insights" subtitle="Temukan pola, risiko, dan rekomendasi berdasarkan data peternakan." />
+      <PageHeader title={t("nav.item.aiInsights")} subtitle={t("insights.subtitle")} />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <MetricCard icon={Sparkles} label="New Insights" value={newInsightsCount} />
-        <MetricCard icon={TriangleAlert} label="High-Priority Recommendations" value={highPriorityCount} tone="warning" />
-        <MetricCard icon={Users} label="Potential Risk Groups" value={3} />
-        <MetricCard icon={ListChecks} label="Estimated Follow-up Tasks" value={12} />
+        <MetricCard icon={Sparkles} label={t("insights.metric.new")} value={newInsightsCount} />
+        <MetricCard icon={TriangleAlert} label={t("insights.metric.highPriority")} value={highPriorityCount} tone="warning" />
+        <MetricCard icon={Users} label={t("insights.metric.riskGroups")} value={3} />
+        <MetricCard icon={ListChecks} label={t("insights.metric.followUpTasks")} value={12} />
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <ChartCard title="Insight Category Distribution">
+        <ChartCard title={t("chart.insightCategory")}>
           <AlertDistributionChart data={insightCategoryDistribution} />
         </ChartCard>
-        <ChartCard title="Priority Distribution">
+        <ChartCard title={t("chart.priorityDistribution")}>
           <AlertDistributionChart data={insightPriorityDistribution} />
         </ChartCard>
-        <ChartCard title="Risk Trend" description="Tren skor kesehatan sebagai indikator risiko keseluruhan">
+        <ChartCard title={t("chart.riskTrend")} description={t("chart.riskTrendDesc")}>
           <HealthScoreChart />
         </ChartCard>
-        <ChartCard title="Recommended Action Completion" description="Tugas selesai vs tertunda dalam 14 hari terakhir">
+        <ChartCard title={t("chart.actionCompletion")} description={t("chart.actionCompletionDesc")}>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={taskCompletionTrend} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -71,8 +71,8 @@ export default function AIInsightsPage() {
               <YAxis tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid var(--chart-border)", background: "var(--chart-tooltip-bg)", color: "var(--chart-tooltip-text)", fontSize: 13 }} />
               <Legend formatter={(value) => <span className="text-xs text-terrava-muted">{value}</span>} />
-              <Bar dataKey="completed" name="Completed" stackId="a" fill="var(--chart-primary)" radius={[0, 0, 0, 0]} isAnimationActive />
-              <Bar dataKey="pending" name="Pending" stackId="a" fill="var(--chart-soft)" radius={[6, 6, 0, 0]} isAnimationActive />
+              <Bar dataKey="completed" name={t("chart.completed")} stackId="a" fill="var(--chart-primary)" radius={[0, 0, 0, 0]} isAnimationActive />
+              <Bar dataKey="pending" name={t("chart.pending")} stackId="a" fill="var(--chart-soft)" radius={[6, 6, 0, 0]} isAnimationActive />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -81,7 +81,7 @@ export default function AIInsightsPage() {
       <Tabs tabs={tabs} active={tab} onChange={setTab} />
 
       {filtered.length === 0 ? (
-        <EmptyState icon={Sparkles} title="Tidak ada insight" description="Belum ada insight AI untuk kategori ini." />
+        <EmptyState icon={Sparkles} title={t("insights.emptyTitle")} description={t("insights.emptyDescription")} />
       ) : (
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           {filtered.map((insight) => (
@@ -89,21 +89,21 @@ export default function AIInsightsPage() {
               key={insight.id}
               insight={insight}
               onReview={() => setSelectedInsightId(insight.id)}
-              onCreateTask={() => toast.success("Task berhasil dibuat dari insight ini.")}
+              onCreateTask={() => toast.success(t("insights.taskCreated"))}
               onDismiss={() => setDismissed((prev) => [...prev, insight.id])}
-              onMarkReviewed={() => toast.success("Insight ditandai sebagai sudah ditinjau.")}
+              onMarkReviewed={() => toast.success(t("insights.markedReviewed"))}
             />
           ))}
         </div>
       )}
 
-      <Drawer open={!!selectedInsight} onClose={() => setSelectedInsightId(null)} title={selectedInsight?.title ?? "Insight Detail"}>
+      <Drawer open={!!selectedInsight} onClose={() => setSelectedInsightId(null)} title={selectedInsight ? tr(selectedInsight.title) : t("insights.detailTitle")}>
         {selectedInsight && (
           <div className="space-y-5">
-            <p className="text-sm text-terrava-muted">{selectedInsight.summary}</p>
+            <p className="text-sm text-terrava-muted">{tr(selectedInsight.summary)}</p>
 
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-terrava-muted">Affected Livestock</h4>
+              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-terrava-muted">{t("insights.affectedLivestock")}</h4>
               <ul className="space-y-1.5">
                 {selectedInsight.affectedLivestock.map((id) => {
                   const animal = getLivestockById(id);
@@ -117,28 +117,28 @@ export default function AIInsightsPage() {
             </div>
 
             <div>
-              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-terrava-muted">Supporting Data</h4>
+              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-terrava-muted">{t("insights.supportingData")}</h4>
               <HealthScoreChart height={180} />
             </div>
 
             <div className="rounded-xl bg-terrava-light p-4">
-              <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-terrava-primary">AI Explanation</h4>
-              <p className="text-sm text-terrava-dark">{selectedInsight.recommendation}</p>
-              <p className="mt-2 text-xs text-terrava-muted">Confidence: {selectedInsight.confidence}%</p>
+              <h4 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-terrava-primary">{t("insights.aiExplanation")}</h4>
+              <p className="text-sm text-terrava-dark">{tr(selectedInsight.recommendation)}</p>
+              <p className="mt-2 text-xs text-terrava-muted">{t("insights.confidence")}: {selectedInsight.confidence}%</p>
             </div>
 
             <p className="text-xs text-terrava-muted">
-              AI Terrava membantu proses pengambilan keputusan dan tidak menggantikan diagnosis profesional dokter hewan.
+              {t("solutions.ai.disclaimer")}
             </p>
 
             <button
               onClick={() => {
-                toast.success("Task berhasil dibuat dari insight ini.");
+                toast.success(t("insights.taskCreated"));
                 setSelectedInsightId(null);
               }}
               className="w-full rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"
             >
-              Create Task from Insight
+              {t("insights.createTaskFrom")}
             </button>
           </div>
         )}

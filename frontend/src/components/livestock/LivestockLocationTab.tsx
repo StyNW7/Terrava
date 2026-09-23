@@ -4,8 +4,11 @@ import type { Livestock } from "@/types/dashboard";
 import { livestockMarkerIcons } from "@/utils/leafletIcons";
 import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
 import { MapPin } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function LivestockLocationTab({ animal }: { animal: Livestock }) {
+  const { t, tRel } = useLanguage();
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="overflow-hidden rounded-2xl border border-terrava-border lg:col-span-2">
@@ -15,7 +18,7 @@ export default function LivestockLocationTab({ animal }: { animal: Livestock }) 
           <Marker position={[animal.location.lat, animal.location.lng]} icon={livestockMarkerIcons[animal.healthStatus] ?? livestockMarkerIcons.healthy}>
             <Popup>
               <p className="font-semibold">{animal.name}</p>
-              <p>Health score: {animal.healthScore}</p>
+              <p>{t("livestock.column.healthScore")}: {animal.healthScore}</p>
             </Popup>
           </Marker>
         </MapContainer>
@@ -24,17 +27,17 @@ export default function LivestockLocationTab({ animal }: { animal: Livestock }) 
       <div className="space-y-6">
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-terrava-text">
-            <MapPin className="h-4 w-4 text-terrava-primary" aria-hidden="true" /> Current Position
+            <MapPin className="h-4 w-4 text-terrava-primary" aria-hidden="true" /> {t("location.currentPosition")}
           </h3>
-          <DetailInfoRow label="Latitude" value={animal.location.lat.toFixed(4)} />
-          <DetailInfoRow label="Longitude" value={animal.location.lng.toFixed(4)} />
-          <DetailInfoRow label="Geofence" value="Barn radius 150m" />
-          <DetailInfoRow label="Last Update" value={animal.lastUpdate} />
+          <DetailInfoRow label={t("location.latitude")} value={animal.location.lat.toFixed(4)} />
+          <DetailInfoRow label={t("location.longitude")} value={animal.location.lng.toFixed(4)} />
+          <DetailInfoRow label={t("map.geofence")} value={t("location.barnRadius")} />
+          <DetailInfoRow label={t("livestock.column.lastUpdate")} value={tRel(animal.lastUpdate)} />
         </div>
 
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
-          <h3 className="mb-2 text-sm font-semibold text-terrava-text">Movement History</h3>
-          <p className="text-sm text-terrava-muted">Data pergerakan 24 jam terakhir dalam radius kandang normal, tanpa pelanggaran geofence.</p>
+          <h3 className="mb-2 text-sm font-semibold text-terrava-text">{t("location.movementHistory")}</h3>
+          <p className="text-sm text-terrava-muted">{t("location.movementSummary")}</p>
         </div>
       </div>
     </div>

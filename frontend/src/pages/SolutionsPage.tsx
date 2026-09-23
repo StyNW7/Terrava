@@ -6,8 +6,11 @@ import EcosystemDiagramSection from "@/components/sections/solutions/EcosystemDi
 import ComparisonTableSection from "@/components/sections/solutions/ComparisonTableSection";
 import CTASection from "@/components/sections/CTASection";
 import { solutions } from "@/data/solutions";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SolutionsPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Solutions | Terrava Smart Livestock Ecosystem";
   }, []);
@@ -15,8 +18,8 @@ export default function SolutionsPage() {
   return (
     <>
       <PageHero
-        badge="Solutions"
-        title="Satu ekosistem untuk kesehatan, produktivitas, dan operasional peternakan."
+        badge={t("solutions.hero.badge")}
+        title={t("solutions.hero.title")}
       />
 
       <section className="py-20 sm:py-28">
@@ -32,11 +35,11 @@ export default function SolutionsPage() {
       <ComparisonTableSection />
 
       <CTASection
-        title="Find the Right Solution for Your Farm"
-        description="Konsultasikan kebutuhan peternakan Anda dengan tim Terrava."
-        primaryLabel="Request Demo"
+        title={t("solutions.cta.title")}
+        description={t("solutions.cta.description")}
+        primaryLabel={t("cta.requestDemo")}
         primaryHref="/contact"
-        secondaryLabel="See How It Works"
+        secondaryLabel={t("cta.seeHowItWorks")}
         secondaryHref="/how-it-works"
       />
     </>

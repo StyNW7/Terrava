@@ -1,3 +1,5 @@
+import type { Localized } from "@/i18n/types";
+
 export type HealthStatus = "healthy" | "attention" | "critical" | "inactive";
 
 export type AlertSeverity = "info" | "warning" | "high" | "critical";
@@ -87,12 +89,12 @@ export interface Livestock {
   vaccinationStatus: "up-to-date" | "due" | "overdue";
   arrivalDate: string;
   acquisitionSource: string;
-  notes: string;
+  notes: Localized;
 }
 
 export interface Alert {
   id: string;
-  title: string;
+  title: Localized;
   severity: AlertSeverity;
   category: AlertCategory;
   status: AlertStatus;
@@ -101,9 +103,10 @@ export interface Alert {
   barnId: string;
   detectedAt: string;
   assignedTo: string | null;
-  description: string;
+  description: Localized;
   aiConfidence: number;
-  aiCause: string;
+  aiCause: Localized;
+  /** Canonical English action labels, localized at render with `tt("action", ...)`. */
   recommendations: string[];
   dataAtDetection: {
     temperature: number;
@@ -132,7 +135,7 @@ export interface DeviceLog {
   id: string;
   deviceId: string;
   type: "connected" | "data-sent" | "warning" | "firmware-updated" | "offline";
-  message: string;
+  message: Localized;
   timestamp: string;
 }
 
@@ -154,11 +157,11 @@ export interface AIInsight {
   id: string;
   priority: "low" | "medium" | "high";
   category: "health" | "behavior" | "environment" | "productivity" | "devices";
-  title: string;
-  summary: string;
+  title: Localized;
+  summary: Localized;
   affectedLivestock: string[];
   confidence: number;
-  recommendation: string;
+  recommendation: Localized;
   generatedAt: string;
   reviewed: boolean;
 }

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface FilterBarProps {
   children: ReactNode;
@@ -20,6 +21,8 @@ interface FilterSelectProps {
 }
 
 export function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex items-center gap-1.5">
       <label className="sr-only">{label}</label>
@@ -29,7 +32,7 @@ export function FilterSelect({ label, value, onChange, options }: FilterSelectPr
         aria-label={label}
         className="rounded-xl border border-terrava-border bg-white px-3 py-2 text-xs font-medium text-terrava-text focus:border-terrava-primary focus:outline-none"
       >
-        <option value="all">{label}: All</option>
+        <option value="all">{label}: {t("common.all")}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

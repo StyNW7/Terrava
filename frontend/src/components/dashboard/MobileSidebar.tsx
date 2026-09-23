@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import UserMenuItems from "@/components/dashboard/UserMenuItems";
 import UserAvatar from "@/components/dashboard/UserAvatar";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface MobileSidebarProps {
   open: boolean;
@@ -16,6 +17,7 @@ interface MobileSidebarProps {
 
 export default function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   const { user } = useAuth();
+  const { t, tt } = useLanguage();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -34,7 +36,7 @@ export default function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menu navigasi">
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label={t("dashboard.navigationMenu")}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -56,10 +58,10 @@ export default function MobileSidebar({ open, onClose }: MobileSidebarProps) {
                 <img src={images.logoIcon} alt="Terrava" className="h-8 w-8 rounded-lg object-contain" />
                 <div>
                   <p className="text-sm font-bold text-terrava-text">Terrava</p>
-                  <p className="text-xs text-terrava-muted">Farmer Dashboard</p>
+                  <p className="text-xs text-terrava-muted">{t("dashboard.farmerDashboard")}</p>
                 </div>
               </div>
-              <button type="button" onClick={onClose} aria-label="Tutup menu" className="rounded-lg p-1.5 text-terrava-muted transition-colors hover:bg-terrava-bg">
+              <button type="button" onClick={onClose} aria-label={t("nav.closeMenu")} className="rounded-lg p-1.5 text-terrava-muted transition-colors hover:bg-terrava-bg">
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
@@ -67,15 +69,15 @@ export default function MobileSidebar({ open, onClose }: MobileSidebarProps) {
             <div className="flex items-center gap-3 border-b border-terrava-border bg-terrava-bg/60 px-4 py-3">
               <UserAvatar initials={user?.initials ?? "TV"} />
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-terrava-text">{user?.name ?? "Pengguna"}</p>
-                <p className="truncate text-xs text-terrava-muted">{user?.role ?? "Farm Owner"}</p>
+                <p className="truncate text-sm font-semibold text-terrava-text">{user?.name ?? t("nav.user")}</p>
+                <p className="truncate text-xs text-terrava-muted">{tt("role", user?.role ?? "Farm Owner")}</p>
               </div>
             </div>
 
             <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
               {dashboardNavGroups.map((group) => (
-                <div key={group.label}>
-                  <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-terrava-muted/80">{group.label}</p>
+                <div key={group.labelKey}>
+                  <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-terrava-muted/80">{t(group.labelKey)}</p>
                   <ul className="space-y-1">
                     {group.items.map((item) => (
                       <li key={item.href}>
@@ -91,7 +93,7 @@ export default function MobileSidebar({ open, onClose }: MobileSidebarProps) {
                           }
                         >
                           <item.icon className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
-                          {item.label}
+                          {t(item.labelKey)}
                         </NavLink>
                       </li>
                     ))}

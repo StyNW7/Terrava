@@ -5,6 +5,7 @@ import AuthInput from "@/components/auth/AuthInput";
 import PasswordInput from "@/components/auth/PasswordInput";
 import PasswordStrength from "@/components/auth/PasswordStrength";
 import { registerStep1Schema, type RegisterStep1Values } from "@/schemas/authSchemas";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface RegisterStepOneProps {
   defaultValues: RegisterStep1Values;
@@ -12,6 +13,7 @@ interface RegisterStepOneProps {
 }
 
 export default function RegisterStepOne({ defaultValues, onNext }: RegisterStepOneProps) {
+  const { t } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -26,32 +28,32 @@ export default function RegisterStepOne({ defaultValues, onNext }: RegisterStepO
 
   return (
     <form onSubmit={handleSubmit(onNext)} noValidate className="space-y-5">
-      <h2 className="text-lg font-semibold text-terrava-text">Informasi Akun</h2>
+      <h2 className="text-lg font-semibold text-terrava-text">{t("auth.register.accountInfo")}</h2>
 
       <AuthInput
         id="fullName"
-        label="Full Name"
+        label={t("auth.field.fullName")}
         icon={UserRound}
-        placeholder="Nama lengkap"
+        placeholder={t("auth.placeholder.fullName")}
         autoComplete="name"
-        error={errors.fullName?.message}
+        error={errors.fullName?.message && t(errors.fullName.message)}
         {...register("fullName")}
       />
 
       <AuthInput
         id="email"
-        label="Email"
+        label={t("auth.field.email")}
         type="email"
         icon={Mail}
-        placeholder="nama@perusahaan.com"
+        placeholder={t("auth.placeholder.email")}
         autoComplete="email"
-        error={errors.email?.message}
+        error={errors.email?.message && t(errors.email.message)}
         {...register("email")}
       />
 
       <div>
         <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-terrava-text">
-          Phone Number
+          {t("auth.field.phone")}
         </label>
         <div className="relative">
           <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-terrava-muted" aria-hidden="true" />
@@ -72,7 +74,7 @@ export default function RegisterStepOne({ defaultValues, onNext }: RegisterStepO
         </div>
         {errors.phone && (
           <p role="alert" className="mt-1.5 text-xs text-terrava-error">
-            {errors.phone.message}
+            {t(errors.phone.message ?? "")}
           </p>
         )}
       </div>
@@ -80,10 +82,10 @@ export default function RegisterStepOne({ defaultValues, onNext }: RegisterStepO
       <div>
         <PasswordInput
           id="password"
-          label="Password"
-          placeholder="Buat password"
+          label={t("auth.field.password")}
+          placeholder={t("auth.placeholder.newPassword")}
           autoComplete="new-password"
-          error={errors.password?.message}
+          error={errors.password?.message && t(errors.password.message)}
           {...register("password")}
         />
         <PasswordStrength password={password} />
@@ -91,10 +93,10 @@ export default function RegisterStepOne({ defaultValues, onNext }: RegisterStepO
 
       <PasswordInput
         id="confirmPassword"
-        label="Confirm Password"
-        placeholder="Ulangi password"
+        label={t("auth.field.confirmPassword")}
+        placeholder={t("auth.placeholder.confirmPassword")}
         autoComplete="new-password"
-        error={errors.confirmPassword?.message}
+        error={errors.confirmPassword?.message && t(errors.confirmPassword.message)}
         {...register("confirmPassword")}
       />
 
@@ -102,7 +104,7 @@ export default function RegisterStepOne({ defaultValues, onNext }: RegisterStepO
         type="submit"
         className="inline-flex w-full items-center justify-center rounded-xl bg-terrava-primary px-6 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-terrava-hover"
       >
-        Lanjutkan
+        {t("auth.continue")}
       </button>
     </form>
   );

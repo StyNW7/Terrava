@@ -1,5 +1,6 @@
 import { TriangleAlert } from "lucide-react";
 import Modal from "@/components/dashboard/Modal";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -17,9 +18,11 @@ export default function ConfirmDialog({
   onConfirm,
   title,
   description,
-  confirmLabel = "Confirm",
+  confirmLabel,
   tone = "default",
 }: ConfirmDialogProps) {
+  const { t } = useLanguage();
+
   return (
     <Modal
       open={open}
@@ -29,7 +32,7 @@ export default function ConfirmDialog({
       footer={
         <>
           <button type="button" onClick={onClose} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            Cancel
+            {t("common.cancel")}
           </button>
           <button
             type="button"
@@ -41,7 +44,7 @@ export default function ConfirmDialog({
               tone === "danger" ? "bg-terrava-error hover:bg-terrava-error/90" : "bg-terrava-primary hover:bg-terrava-hover"
             }`}
           >
-            {confirmLabel}
+            {confirmLabel ?? t("common.confirm")}
           </button>
         </>
       }

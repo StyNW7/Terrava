@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function BackToTopButton() {
+  const { t } = useLanguage();
   const [visible, setVisible] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -31,7 +33,7 @@ export default function BackToTopButton() {
           whileHover={{ y: -3 }}
           whileTap={{ scale: 0.94 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Kembali ke atas halaman"
+          aria-label={t("common.backToTop")}
           className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-terrava-primary text-white shadow-lift"
         >
           <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 48 48" aria-hidden="true">

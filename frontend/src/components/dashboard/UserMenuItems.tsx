@@ -3,6 +3,7 @@ import { UserRound, Settings, LogOut, HelpCircle } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
 import { useAuth } from "@/hooks/useAuth";
 import InstallAppButton from "@/components/pwa/InstallAppButton";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface UserMenuItemsProps {
   onNavigate?: () => void;
@@ -16,6 +17,7 @@ const itemClass =
 /** Shared profile / settings / logout actions used by every user menu in the dashboard. */
 export default function UserMenuItems({ onNavigate, onHelp, showHeader = true }: UserMenuItemsProps) {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const logout = useLogout();
 
   return (
@@ -27,10 +29,10 @@ export default function UserMenuItems({ onNavigate, onHelp, showHeader = true }:
         </div>
       )}
       <Link to="/dashboard/settings?tab=profile" onClick={onNavigate} className={itemClass}>
-        <UserRound className="h-4 w-4" aria-hidden="true" /> Profile
+        <UserRound className="h-4 w-4" aria-hidden="true" /> {t("dashboard.profile")}
       </Link>
       <Link to="/dashboard/settings" onClick={onNavigate} className={itemClass}>
-        <Settings className="h-4 w-4" aria-hidden="true" /> Settings
+        <Settings className="h-4 w-4" aria-hidden="true" /> {t("nav.item.settings")}
       </Link>
       <InstallAppButton />
       {onHelp && (
@@ -42,7 +44,7 @@ export default function UserMenuItems({ onNavigate, onHelp, showHeader = true }:
           }}
           className={itemClass}
         >
-          <HelpCircle className="h-4 w-4" aria-hidden="true" /> Bantuan
+          <HelpCircle className="h-4 w-4" aria-hidden="true" /> {t("dashboard.help")}
         </button>
       )}
       <button
@@ -53,7 +55,7 @@ export default function UserMenuItems({ onNavigate, onHelp, showHeader = true }:
         }}
         className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-terrava-error transition-colors hover:bg-terrava-error/10"
       >
-        <LogOut className="h-4 w-4" aria-hidden="true" /> Logout
+        <LogOut className="h-4 w-4" aria-hidden="true" /> {t("dashboard.logout")}
       </button>
     </div>
   );

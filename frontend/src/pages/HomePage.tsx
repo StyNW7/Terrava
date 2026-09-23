@@ -12,8 +12,11 @@ import TestimonialsSection from "@/components/sections/home/TestimonialsSection"
 import FaqSection from "@/components/sections/FaqSection";
 import CTASection from "@/components/sections/CTASection";
 import { homeFaqs } from "@/data/faqs";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function HomePage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Terrava | AI-Powered Smart Livestock Ecosystem";
   }, []);
@@ -33,15 +36,15 @@ export default function HomePage() {
       <FaqSection
         faqs={homeFaqs}
         badge="FAQ"
-        title="Pertanyaan seputar Terrava"
-        description="Jawaban singkat untuk pertanyaan yang paling sering diajukan peternak dan mitra."
+        title={t("home.faq.title")}
+        description={t("home.faq.description")}
       />
       <CTASection
-        title="Bangun peternakan yang lebih sehat dan produktif bersama Terrava."
-        description="Mulai dengan demo singkat atau hubungi tim kami untuk mendiskusikan kebutuhan peternakan Anda."
-        primaryLabel="Request Demo"
+        title={t("home.cta.title")}
+        description={t("home.cta.description")}
+        primaryLabel={t("cta.requestDemo")}
         primaryHref="/contact"
-        secondaryLabel="Contact Our Team"
+        secondaryLabel={t("cta.contactTeam")}
         secondaryHref="/contact"
       />
     </>

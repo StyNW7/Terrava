@@ -1,4 +1,5 @@
 import { Cloud, GraduationCap, Handshake, Landmark, Users, Sprout } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const partners = [
   { icon: Cloud, label: "Microsoft Azure" },
@@ -10,16 +11,17 @@ const partners = [
 ];
 
 export default function TrustedBySection() {
+  const { t } = useLanguage();
   const track = [...partners, ...partners];
 
   return (
     <section className="border-y border-terrava-border bg-white py-10">
       <div className="container">
         <p className="mb-6 text-center text-xs font-semibold uppercase tracking-wide text-terrava-muted">
-          Trusted and supported by
+          {t("home.trusted.title")}
         </p>
         <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-          <ul className="flex w-max animate-marquee items-center gap-12 hover:[animation-play-state:paused]" aria-label="Mitra dan pendukung">
+          <ul className="flex w-max animate-marquee items-center gap-12 hover:[animation-play-state:paused]" aria-label={t("home.trusted.ariaLabel")}>
             {track.map((partner, index) => (
               <li
                 key={`${partner.label}-${index}`}

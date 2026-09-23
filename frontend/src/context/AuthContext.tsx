@@ -47,7 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await new Promise((resolve) => setTimeout(resolve, LOGIN_DELAY_MS));
       const account = findDemoAccount(email, password);
       if (!account) {
-        return { ok: false, message: "Email atau password tidak sesuai. Silakan coba kembali." };
+        // A dictionary key; the login page renders it through `t()`.
+        return { ok: false, message: "auth.error.invalidCredentials" };
       }
       const user = toAuthUser(account);
       loginAs(user, rememberMe);

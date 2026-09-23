@@ -6,8 +6,11 @@ import RecognitionSection from "@/components/sections/about/RecognitionSection";
 import TeamSection from "@/components/sections/about/TeamSection";
 import SdgSection from "@/components/sections/SdgSection";
 import CTASection from "@/components/sections/CTASection";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function AboutPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "About Terrava | AI-Powered Smart Livestock Ecosystem";
   }, []);
@@ -15,23 +18,23 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        badge="About Terrava"
-        title="Teknologi yang tumbuh dari kebutuhan nyata peternak."
-        description="Terrava dibangun untuk menghubungkan kesehatan ternak, data, dan pengambilan keputusan dalam satu ekosistem yang modular dan mudah digunakan."
+        badge={t("about.hero.badge")}
+        title={t("about.hero.title")}
+        description={t("about.hero.description")}
         image="Images/close-up-ear-tag.png"
-        imageAlt="Tim Terrava bersama teknologi peternakan"
+        imageAlt={t("about.hero.imageAlt")}
       />
       <VisionMissionSection />
       <ValuesSection />
       <RecognitionSection />
       <TeamSection />
-      <SdgSection description="Terrava berkontribusi pada tujuan pembangunan berkelanjutan melalui inovasi teknologi peternakan." />
+      <SdgSection description={t("about.sdgDescription")} />
       <CTASection
-        title="Kenali Terrava lebih dekat"
-        description="Lihat bagaimana teknologi kami bekerja langsung di lapangan."
-        primaryLabel="Meet Terrava in Action"
+        title={t("about.cta.title")}
+        description={t("about.cta.description")}
+        primaryLabel={t("about.cta.primary")}
         primaryHref="/how-it-works"
-        secondaryLabel="Contact Our Team"
+        secondaryLabel={t("cta.contactTeam")}
         secondaryHref="/contact"
       />
     </>

@@ -7,6 +7,7 @@ import Layout from "@/layouts/root-layout";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { useTheme } from "@/hooks/useTheme";
 import PWAPrompts from "@/components/pwa/PWAPrompts";
 import ProtectedRoute, { GuestOnlyRoute } from "@/components/auth/ProtectedRoute";
@@ -78,6 +79,7 @@ function App() {
   return (
     <MotionConfig reducedMotion="user">
       <ThemeProvider>
+      <LanguageProvider>
       <AuthProvider>
         <BrowserRouter>
           <ScrollToTopFunction />
@@ -159,6 +161,7 @@ function App() {
           <PWAPrompts />
         </BrowserRouter>
       </AuthProvider>
+      </LanguageProvider>
       </ThemeProvider>
     </MotionConfig>
   );

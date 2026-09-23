@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { FaqItem } from "@/types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FAQAccordion({ faqs }: { faqs: FaqItem[] }) {
+  const { tr } = useLanguage();
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id ?? null);
 
   const toggle = (id: string) => {
@@ -31,7 +33,7 @@ export default function FAQAccordion({ faqs }: { faqs: FaqItem[] }) {
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
             >
               <span className="text-sm font-semibold text-terrava-text sm:text-base">
-                {faq.question}
+                {tr(faq.question)}
               </span>
               <ChevronDown
                 className={`h-5 w-5 shrink-0 text-terrava-primary transition-transform duration-300 ${
@@ -49,7 +51,7 @@ export default function FAQAccordion({ faqs }: { faqs: FaqItem[] }) {
             >
               <div className="overflow-hidden">
                 <p className="px-6 pb-5 text-sm leading-relaxed text-terrava-muted">
-                  {faq.answer}
+                  {tr(faq.answer)}
                 </p>
               </div>
             </div>

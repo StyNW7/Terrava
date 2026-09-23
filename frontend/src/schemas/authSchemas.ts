@@ -1,14 +1,13 @@
 import { z } from "zod";
 
+/**
+ * Validation messages are dictionary keys, not literal text. Components render
+ * them through `t()` so the same schema serves both locales.
+ */
+
 export const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email wajib diisi.")
-    .email("Gunakan format email yang valid."),
-  password: z
-    .string()
-    .min(1, "Password wajib diisi.")
-    .min(8, "Password minimal terdiri dari 8 karakter."),
+  email: z.string().min(1, "validation.emailRequired").email("validation.emailFormat"),
+  password: z.string().min(1, "validation.passwordRequired").min(8, "validation.passwordMin"),
   rememberMe: z.boolean().optional(),
 });
 
@@ -16,60 +15,54 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 const passwordRules = z
   .string()
-  .min(1, "Password wajib diisi.")
-  .min(8, "Password minimal terdiri dari 8 karakter.")
-  .regex(/[A-Z]/, "Password harus memiliki huruf besar.")
-  .regex(/[a-z]/, "Password harus memiliki huruf kecil.")
-  .regex(/[0-9]/, "Password harus memiliki angka.");
+  .min(1, "validation.passwordRequired")
+  .min(8, "validation.passwordMin")
+  .regex(/[A-Z]/, "validation.passwordUppercase")
+  .regex(/[a-z]/, "validation.passwordLowercase")
+  .regex(/[0-9]/, "validation.passwordNumber");
 
 export const registerStep1Schema = z
   .object({
-    fullName: z.string().min(1, "Nama lengkap wajib diisi."),
-    email: z
-      .string()
-      .min(1, "Email wajib diisi.")
-      .email("Gunakan format email yang valid."),
+    fullName: z.string().min(1, "validation.fullNameRequired"),
+    email: z.string().min(1, "validation.emailRequired").email("validation.emailFormat"),
     phone: z
       .string()
-      .min(1, "Nomor telepon wajib diisi.")
-      .regex(/^[0-9]{8,15}$/, "Nomor telepon harus berupa angka 8-15 digit."),
+      .min(1, "validation.phoneRequired")
+      .regex(/^[0-9]{8,15}$/, "validation.phoneFormat"),
     password: passwordRules,
-    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi."),
+    confirmPassword: z.string().min(1, "validation.confirmPasswordRequired"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Konfirmasi password tidak sama dengan password.",
+    message: "validation.passwordMismatch",
     path: ["confirmPassword"],
   });
 
 export type RegisterStep1Values = z.infer<typeof registerStep1Schema>;
 
 export const registerStep2Schema = z.object({
-  farmName: z.string().min(1, "Nama peternakan atau organisasi wajib diisi."),
-  accountRole: z.string().min(1, "Pilih peran akun Anda."),
-  farmType: z.string().min(1, "Pilih jenis peternakan."),
-  city: z.string().min(1, "Kota atau kabupaten wajib diisi."),
-  province: z.string().min(1, "Provinsi wajib diisi."),
-  livestockCount: z.string().min(1, "Pilih jumlah ternak."),
-  primaryLivestock: z.string().min(1, "Pilih jenis ternak utama."),
+  farmName: z.string().min(1, "validation.farmNameRequired"),
+  accountRole: z.string().min(1, "validation.accountRoleRequired"),
+  farmType: z.string().min(1, "validation.farmTypeRequired"),
+  city: z.string().min(1, "validation.cityRequired"),
+  province: z.string().min(1, "validation.provinceRequired"),
+  livestockCount: z.string().min(1, "validation.livestockCountRequired"),
+  primaryLivestock: z.string().min(1, "validation.primaryLivestockRequired"),
 });
 
 export type RegisterStep2Values = z.infer<typeof registerStep2Schema>;
 
 export const registerStep3Schema = z.object({
-  notificationMethod: z.string().min(1, "Pilih metode notifikasi."),
+  notificationMethod: z.string().min(1, "validation.notificationMethodRequired"),
   productUpdates: z.boolean().optional(),
   agreeTerms: z.boolean().refine((value) => value === true, {
-    message: "Anda harus menyetujui Ketentuan Layanan dan Kebijakan Privasi.",
+    message: "validation.agreeTermsRequired",
   }),
 });
 
 export type RegisterStep3Values = z.infer<typeof registerStep3Schema>;
 
 export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email wajib diisi.")
-    .email("Gunakan format email yang valid."),
+  email: z.string().min(1, "validation.emailRequired").email("validation.emailFormat"),
 });
 
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
@@ -77,10 +70,10 @@ export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export const resetPasswordSchema = z
   .object({
     password: passwordRules,
-    confirmPassword: z.string().min(1, "Konfirmasi password wajib diisi."),
+    confirmPassword: z.string().min(1, "validation.confirmPasswordRequired"),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Konfirmasi password tidak sama dengan password.",
+    message: "validation.passwordMismatch",
     path: ["confirmPassword"],
   });
 

@@ -2,12 +2,14 @@ import type { Farm } from "@/types/dashboard";
 import LivestockGridCard from "@/components/livestock/LivestockGridCard";
 import EmptyState from "@/components/dashboard/EmptyState";
 import { getLivestockByFarm } from "@/data/mockLivestock";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmLivestockTab({ farm }: { farm: Farm }) {
+  const { t } = useLanguage();
   const animals = getLivestockByFarm(farm.id);
 
   if (animals.length === 0) {
-    return <EmptyState title="Belum ada ternak" description="Farm ini belum memiliki data ternak." />;
+    return <EmptyState title={t("farms.noLivestockTitle")} description={t("farms.noLivestockDescription")} />;
   }
 
   return (

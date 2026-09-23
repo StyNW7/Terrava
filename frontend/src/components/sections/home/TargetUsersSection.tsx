@@ -1,15 +1,18 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { targetPersonas } from "@/data/roles";
 import { StaggerGrid } from "@/components/motion/Stagger";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function TargetUsersSection() {
+  const { t, tr } = useLanguage();
+
   return (
     <section className="bg-white py-20 sm:py-28">
       <div className="container">
         <SectionHeading
-          badge="Who Terrava Serves"
-          title="Dirancang untuk berbagai skala peternakan"
-          description="Dari peternak individu hingga lembaga pemerintah, Terrava dapat disesuaikan dengan kebutuhan Anda."
+          badge={t("home.users.badge")}
+          title={t("home.users.title")}
+          description={t("home.users.description")}
         />
 
         <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -29,7 +32,7 @@ export default function TargetUsersSection() {
                   <persona.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <h3 className="mb-1.5 text-sm font-semibold text-terrava-text">{persona.title}</h3>
-                <p className="text-xs leading-relaxed text-terrava-muted">{persona.description}</p>
+                <p className="text-xs leading-relaxed text-terrava-muted">{tr(persona.description)}</p>
               </div>
             </div>
           ))}

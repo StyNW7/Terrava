@@ -14,6 +14,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import LoadingSkeleton from "@/components/dashboard/LoadingSkeleton";
 import EmptyState from "@/components/dashboard/EmptyState";
 import Pagination from "@/components/dashboard/Pagination";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface DataTableProps<T> {
   data: T[];
@@ -32,14 +33,15 @@ export default function DataTable<T extends { id: string }>({
   data,
   columns,
   loading = false,
-  emptyTitle = "Tidak ada data",
-  emptyDescription = "Belum ada data yang tersedia untuk filter ini.",
+  emptyTitle,
+  emptyDescription,
   enableRowSelection = false,
   onSelectionChange,
   pageSize = 10,
   renderMobileCard,
   bulkActions,
 }: DataTableProps<T>) {
+  const { t } = useLanguage();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize });
@@ -68,7 +70,12 @@ export default function DataTable<T extends { id: string }>({
   if (loading) return <LoadingSkeleton variant="table" rows={6} />;
 
   if (data.length === 0) {
-    return <EmptyState title={emptyTitle} description={emptyDescription} />;
+    return (
+      <EmptyState
+        title={emptyTitle ?? t("dashboard.emptyTitle")}
+        description={emptyDescription ?? t("dashboard.emptyDescription")}
+      />
+    );
   }
 
   const selectedCount = Object.keys(rowSelection).length;
@@ -77,7 +84,7 @@ export default function DataTable<T extends { id: string }>({
     <div className="rounded-2xl border border-terrava-border bg-white">
       {enableRowSelection && selectedCount > 0 && bulkActions && (
         <div className="flex items-center justify-between border-b border-terrava-border bg-terrava-light px-4 py-2.5">
-          <span className="text-xs font-semibold text-terrava-primary">{selectedCount} dipilih</span>
+          <span className="text-xs font-semibold text-terrava-primary">{t("dashboard.selectedCount", { count: selectedCount })}</span>
           <div className="flex items-center gap-2">{bulkActions}</div>
         </div>
       )}

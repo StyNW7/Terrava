@@ -1,7 +1,10 @@
 import { contactOptions } from "@/data/contactOptions";
 import { StaggerGrid } from "@/components/motion/Stagger";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ContactOptionsSection() {
+  const { tr } = useLanguage();
+
   return (
     <section className="py-16 sm:py-20">
       <div className="container">
@@ -12,7 +15,7 @@ export default function ContactOptionsSection() {
                 <option.icon className="h-5 w-5" aria-hidden="true" />
               </div>
               <h3 className="mb-2 text-sm font-semibold text-terrava-text">{option.title}</h3>
-              <p className="text-sm leading-relaxed text-terrava-muted">{option.description}</p>
+              <p className="text-sm leading-relaxed text-terrava-muted">{tr(option.description)}</p>
             </div>
           ))}
         </StaggerGrid>

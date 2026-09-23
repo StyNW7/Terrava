@@ -1,24 +1,19 @@
 import { CheckCircle2 } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const scenario = [
-  "Sapi mengalami peningkatan suhu dan penurunan aktivitas",
-  "Sensor mengirimkan data ke cloud melalui gateway",
-  "AI mendeteksi pola abnormal dibandingkan baseline",
-  "Peternak menerima alert melalui dashboard dan notifikasi",
-  "Terrava memberikan rekomendasi tindakan awal",
-  "Peternak mencatat tindak lanjut yang dilakukan",
-  "Data tersimpan sebagai riwayat kesehatan ternak",
-];
+const scenario = ["step1", "step2", "step3", "step4", "step5", "step6", "step7"];
 
 export default function FarmerJourneySection() {
+  const { t } = useLanguage();
+
   return (
     <section className="py-20 sm:py-28">
       <div className="container">
         <SectionHeading
-          badge="Farmer Journey"
-          title="Contoh skenario penggunaan sehari-hari"
-          description="Ilustrasi bagaimana Terrava membantu peternak merespons perubahan kondisi ternak."
+          badge={t("howitworks.journeyScenario.badge")}
+          title={t("howitworks.journeyScenario.title")}
+          description={t("howitworks.journeyScenario.description")}
         />
 
         <div className="mx-auto mt-14 max-w-2xl">
@@ -28,7 +23,7 @@ export default function FarmerJourneySection() {
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-terrava-light text-xs font-bold text-terrava-primary">
                   {index + 1}
                 </span>
-                <p className="text-sm text-terrava-text">{step}</p>
+                <p className="text-sm text-terrava-text">{t("howitworks.journeyScenario." + step)}</p>
                 <CheckCircle2 className="ml-auto h-4 w-4 shrink-0 text-terrava-primary" aria-hidden="true" />
               </li>
             ))}

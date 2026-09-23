@@ -11,20 +11,14 @@ import AlertThresholdsTab from "@/components/settings/AlertThresholdsTab";
 import AppearanceTab from "@/components/settings/AppearanceTab";
 import SecurityTab from "@/components/settings/SecurityTab";
 import DataPrivacyTab from "@/components/settings/DataPrivacyTab";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const tabs = [
-  { value: "profile", label: "Profile" },
-  { value: "farm", label: "Farm Settings" },
-  { value: "notifications", label: "Notifications" },
-  { value: "thresholds", label: "Alert Thresholds" },
-  { value: "appearance", label: "Appearance" },
-  { value: "security", label: "Security" },
-  { value: "privacy", label: "Data and Privacy" },
-];
+const tabKeys = ["profile", "farm", "notifications", "thresholds", "appearance", "security", "privacy"];
 
-const tabValues = new Set(tabs.map((tab) => tab.value));
+const tabValues = new Set(tabKeys);
 
 export default function SettingsPage() {
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get("tab");
   const activeTab = requestedTab && tabValues.has(requestedTab) ? requestedTab : "profile";
@@ -42,12 +36,14 @@ export default function SettingsPage() {
 
   const handleSave = () => {
     setIsDirty(false);
-    toast.success("Settings updated.");
+    toast.success(t("settings.saved"));
   };
+
+  const tabs = tabKeys.map((value) => ({ value, label: t("settings.tab." + value) }));
 
   return (
     <div className="pb-6">
-      <PageHeader title="Settings" subtitle="Kelola profil, preferensi farm, dan keamanan akun Anda." />
+      <PageHeader title={t("nav.item.settings")} subtitle={t("settings.subtitle")} />
 
       <Tabs tabs={tabs} active={activeTab} onChange={setActiveTab} />
 
@@ -69,13 +65,13 @@ export default function SettingsPage() {
             className="sticky bottom-4 z-40 mt-6"
           >
             <div className="glass flex flex-col gap-3 rounded-2xl px-4 py-3.5 shadow-lift sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-terrava-text">Anda memiliki perubahan yang belum disimpan.</p>
+              <p className="text-sm text-terrava-text">{t("settings.unsavedChanges")}</p>
               <div className="flex gap-2.5">
                 <button onClick={() => setIsDirty(false)} className="rounded-xl border border-terrava-border bg-white px-4 py-2 text-sm font-semibold text-terrava-text transition-colors hover:bg-terrava-bg">
-                  Discard
+                  {t("settings.discard")}
                 </button>
                 <button onClick={handleSave} className="rounded-xl bg-terrava-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-terrava-hover">
-                  Save Changes
+                  {t("common.saveChanges")}
                 </button>
               </div>
             </div>

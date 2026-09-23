@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { images } from "@/data/images";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const INSTALL_BANNER_DELAY_MS = 6000;
 const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
@@ -15,6 +16,7 @@ const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
  * the install banner, and an offline indicator.
  */
 export default function PWAPrompts() {
+  const { t } = useLanguage();
   const online = useOnlineStatus();
   const { canInstall, install, dismiss } = useInstallPrompt();
   const [showInstall, setShowInstall] = useState(false);
@@ -33,9 +35,9 @@ export default function PWAPrompts() {
 
   useEffect(() => {
     if (!offlineReady) return;
-    toast.success("Terrava siap digunakan secara offline.", { id: "pwa-offline-ready" });
+    toast.success(t("pwa.offlineReady"), { id: "pwa-offline-ready" });
     setOfflineReady(false);
-  }, [offlineReady, setOfflineReady]);
+  }, [offlineReady, setOfflineReady, t]);
 
   // Do not interrupt the first seconds of a visit with the install banner.
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function PWAPrompts() {
   const handleInstall = async () => {
     const outcome = await install();
     setShowInstall(false);
-    if (outcome === "accepted") toast.success("Terrava berhasil dipasang di perangkat Anda.");
+    if (outcome === "accepted") toast.success(t("pwa.installed"));
   };
 
   const handleDismiss = () => {
@@ -73,7 +75,7 @@ export default function PWAPrompts() {
             className="fixed inset-x-0 top-0 z-[90] flex items-center justify-center gap-2 bg-terrava-warning px-4 py-2 text-center text-xs font-semibold text-white shadow-lift"
           >
             <WifiOff className="h-3.5 w-3.5" aria-hidden="true" />
-            Anda sedang offline. Data yang ditampilkan berasal dari cache terakhir.
+            {t("pwa.offlineNotice")}
           </motion.div>
         )}
       </AnimatePresence>
@@ -84,7 +86,7 @@ export default function PWAPrompts() {
           <motion.div
             key="update"
             role="alertdialog"
-            aria-label="Versi baru tersedia"
+            aria-label={t("pwa.updateTitle")}
             initial={{ y: 24, opacity: 0, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 24, opacity: 0, scale: 0.98 }}
@@ -96,22 +98,22 @@ export default function PWAPrompts() {
                 <RefreshCw className="h-5 w-5" aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-terrava-text">Versi baru Terrava tersedia</p>
-                <p className="mt-0.5 text-xs text-terrava-muted">Muat ulang untuk mendapatkan pembaruan terbaru.</p>
+                <p className="text-sm font-semibold text-terrava-text">{t("pwa.updateTitle")}</p>
+                <p className="mt-0.5 text-xs text-terrava-muted">{t("pwa.updateDescription")}</p>
                 <div className="mt-3 flex gap-2">
                   <button
                     type="button"
                     onClick={() => updateServiceWorker(true)}
                     className="rounded-lg bg-terrava-primary px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-terrava-hover"
                   >
-                    Perbarui sekarang
+                    {t("pwa.updateNow")}
                   </button>
                   <button
                     type="button"
                     onClick={() => setNeedRefresh(false)}
                     className="rounded-lg px-3.5 py-2 text-xs font-semibold text-terrava-muted transition-colors hover:bg-terrava-bg hover:text-terrava-text"
                   >
-                    Nanti
+                    {t("pwa.later")}
                   </button>
                 </div>
               </div>
@@ -126,7 +128,7 @@ export default function PWAPrompts() {
           <motion.div
             key="install"
             role="dialog"
-            aria-label="Pasang aplikasi Terrava"
+            aria-label={t("pwa.installTitle")}
             initial={{ y: 24, opacity: 0, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 24, opacity: 0, scale: 0.98 }}
@@ -136,7 +138,7 @@ export default function PWAPrompts() {
             <button
               type="button"
               onClick={handleDismiss}
-              aria-label="Tutup"
+              aria-label={t("common.close")}
               className="absolute right-2.5 top-2.5 rounded-lg p-1 text-terrava-muted transition-colors hover:bg-terrava-bg hover:text-terrava-text"
             >
               <X className="h-4 w-4" aria-hidden="true" />
@@ -144,10 +146,8 @@ export default function PWAPrompts() {
             <div className="flex items-start gap-3 pr-6">
               <img src={images.logoIcon} alt="" className="h-11 w-11 shrink-0 rounded-xl bg-terrava-light object-contain p-1" />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-terrava-text">Pasang Terrava di perangkat Anda</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-terrava-muted">
-                  Akses dashboard lebih cepat dari layar utama, tampil layar penuh tanpa browser, dan tetap bisa dibuka saat offline.
-                </p>
+                <p className="text-sm font-semibold text-terrava-text">{t("pwa.installTitle")}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-terrava-muted">{t("pwa.installDescription")}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
                     type="button"
@@ -155,7 +155,7 @@ export default function PWAPrompts() {
                     className="inline-flex items-center gap-1.5 rounded-lg bg-terrava-primary px-3.5 py-2 text-xs font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5 hover:bg-terrava-hover"
                   >
                     <Download className="h-3.5 w-3.5" aria-hidden="true" />
-                    Pasang aplikasi
+                    {t("pwa.install")}
                   </button>
                   <button
                     type="button"
@@ -163,7 +163,7 @@ export default function PWAPrompts() {
                     className="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-semibold text-terrava-muted transition-colors hover:bg-terrava-bg hover:text-terrava-text"
                   >
                     <Smartphone className="h-3.5 w-3.5" aria-hidden="true" />
-                    Lain kali
+                    {t("pwa.maybeLater")}
                   </button>
                 </div>
               </div>

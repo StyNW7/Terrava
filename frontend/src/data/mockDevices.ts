@@ -1,4 +1,5 @@
 import type { Device, DeviceLog, DeviceStatus } from "@/types/dashboard";
+import type { Localized } from "@/i18n/types";
 import { createSeededRandom, pick, randomInt } from "@/utils/seededRandom";
 import { farms } from "@/data/mockFarms";
 import { livestock } from "@/data/mockLivestock";
@@ -20,7 +21,7 @@ const earTagDevices: Device[] = Array.from({ length: 12 }).map((_, index) => {
     battery: status === "low-battery" ? randomInt(random, 8, 22) : randomInt(random, 45, 100),
     signal: status === "offline" ? randomInt(random, 0, 10) : randomInt(random, 55, 100),
     firmware: pick(random, ["v2.4.1", "v2.4.0", "v2.3.5"]),
-    lastSync: status === "offline" ? `${randomInt(random, 3, 20)} jam lalu` : `${randomInt(random, 1, 45)} menit lalu`,
+    lastSync: status === "offline" ? `${randomInt(random, 3, 20)} hours ago` : `${randomInt(random, 1, 45)} minutes ago`,
     uptime: randomInt(random, 82, 99),
     dataPackets: randomInt(random, 1200, 8600),
   };
@@ -36,7 +37,7 @@ const gatewayDevices: Device[] = farms.map((farm, index) => ({
   battery: 100,
   signal: randomInt(random, 80, 100),
   firmware: "v1.8.2",
-  lastSync: `${randomInt(random, 1, 10)} menit lalu`,
+  lastSync: `${randomInt(random, 1, 10)} minutes ago`,
   uptime: randomInt(random, 95, 100),
   dataPackets: randomInt(random, 15000, 42000),
 }));
@@ -51,7 +52,7 @@ const sensorDevices: Device[] = farms.map((farm, index) => ({
   battery: randomInt(random, 30, 100),
   signal: randomInt(random, 60, 100),
   firmware: "v1.2.0",
-  lastSync: `${randomInt(random, 1, 30)} menit lalu`,
+  lastSync: `${randomInt(random, 1, 30)} minutes ago`,
   uptime: randomInt(random, 88, 100),
   dataPackets: randomInt(random, 5000, 12000),
 }));
@@ -66,12 +67,27 @@ earTagDevices.forEach((device, index) => {
 });
 
 const logTypes: DeviceLog["type"][] = ["connected", "data-sent", "warning", "firmware-updated", "offline"];
-const logMessages: Record<DeviceLog["type"], string[]> = {
-  connected: ["Perangkat berhasil terhubung ke gateway.", "Koneksi LoRa dipulihkan."],
-  "data-sent": ["Data sensor berhasil dikirim ke cloud.", "Paket data terkirim tanpa error."],
-  warning: ["Sinyal lemah terdeteksi.", "Suhu perangkat lebih tinggi dari batas normal."],
-  "firmware-updated": ["Firmware diperbarui ke versi terbaru.", "Pembaruan konfigurasi berhasil diterapkan."],
-  offline: ["Perangkat kehilangan koneksi.", "Tidak ada data diterima dalam 2 jam terakhir."],
+const logMessages: Record<DeviceLog["type"], Localized[]> = {
+  connected: [
+    { id: "Perangkat berhasil terhubung ke gateway.", en: "Device connected to the gateway successfully." },
+    { id: "Koneksi LoRa dipulihkan.", en: "LoRa connection restored." },
+  ],
+  "data-sent": [
+    { id: "Data sensor berhasil dikirim ke cloud.", en: "Sensor data uploaded to the cloud successfully." },
+    { id: "Paket data terkirim tanpa error.", en: "Data packet transmitted without errors." },
+  ],
+  warning: [
+    { id: "Sinyal lemah terdeteksi.", en: "Weak signal detected." },
+    { id: "Suhu perangkat lebih tinggi dari batas normal.", en: "Device temperature is above the normal limit." },
+  ],
+  "firmware-updated": [
+    { id: "Firmware diperbarui ke versi terbaru.", en: "Firmware updated to the latest version." },
+    { id: "Pembaruan konfigurasi berhasil diterapkan.", en: "Configuration update applied successfully." },
+  ],
+  offline: [
+    { id: "Perangkat kehilangan koneksi.", en: "Device lost its connection." },
+    { id: "Tidak ada data diterima dalam 2 jam terakhir.", en: "No data received in the last two hours." },
+  ],
 };
 
 export const deviceLogs: DeviceLog[] = devices.flatMap((device) =>
@@ -82,7 +98,7 @@ export const deviceLogs: DeviceLog[] = devices.flatMap((device) =>
       deviceId: device.id,
       type,
       message: pick(random, logMessages[type]),
-      timestamp: `${randomInt(random, 1, 72)} jam lalu`,
+      timestamp: `${randomInt(random, 1, 72)} hours ago`,
     };
   })
 );

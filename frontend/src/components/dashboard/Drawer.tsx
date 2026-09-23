@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface DrawerProps {
   open: boolean;
@@ -11,6 +12,8 @@ interface DrawerProps {
 }
 
 export default function Drawer({ open, onClose, title, children, widthClassName = "max-w-md" }: DrawerProps) {
+  const { t } = useLanguage();
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -33,7 +36,7 @@ export default function Drawer({ open, onClose, title, children, widthClassName 
       >
         <div className="flex items-center justify-between border-b border-terrava-border px-5 py-4">
           <h2 className="text-base font-semibold text-terrava-text">{title}</h2>
-          <button type="button" onClick={onClose} aria-label="Tutup" className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg">
+          <button type="button" onClick={onClose} aria-label={t("common.close")} className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg">
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>

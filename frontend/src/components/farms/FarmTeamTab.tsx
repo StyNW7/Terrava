@@ -1,7 +1,9 @@
 import type { Farm } from "@/types/dashboard";
 import { staff } from "@/data/mockTeam";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmTeamTab({ farm }: { farm: Farm }) {
+  const { tt } = useLanguage();
   const farmStaff = staff.filter((member) => member.farmId === farm.id);
 
   return (
@@ -11,7 +13,7 @@ export default function FarmTeamTab({ farm }: { farm: Farm }) {
           <img src={member.avatar} alt={member.name} className="h-11 w-11 rounded-full object-cover" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-terrava-text">{member.name}</p>
-            <p className="truncate text-xs text-terrava-muted">{member.role}</p>
+            <p className="truncate text-xs text-terrava-muted">{tt("role", member.role)}</p>
           </div>
         </div>
       ))}

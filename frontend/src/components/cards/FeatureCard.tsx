@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import type { FeatureItem } from "@/types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FeatureCard({ feature }: { feature: FeatureItem }) {
+  const { t, tr } = useLanguage();
   const Icon = feature.icon;
 
   return (
@@ -12,14 +14,14 @@ export default function FeatureCard({ feature }: { feature: FeatureItem }) {
       </div>
       <h3 className="mb-2 text-lg font-semibold text-terrava-text">{feature.title}</h3>
       <p className="mb-5 flex-1 text-sm leading-relaxed text-terrava-muted">
-        {feature.description}
+        {tr(feature.description)}
       </p>
       {feature.href && (
         <Link
           to={feature.href}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-terrava-primary"
         >
-          Learn more
+          {t("common.learnMoreShort")}
           <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
       )}

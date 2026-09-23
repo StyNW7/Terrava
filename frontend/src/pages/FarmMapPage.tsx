@@ -11,8 +11,10 @@ import { livestock } from "@/data/mockLivestock";
 import { farms, barns, getBarnById } from "@/data/mockFarms";
 import { alerts } from "@/data/mockAlerts";
 import { devices } from "@/data/mockDevices";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmMapPage() {
+  const { lang, t } = useLanguage();
   const [farmFilter, setFarmFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showGeofence, setShowGeofence] = useState(true);
@@ -43,8 +45,8 @@ export default function FarmMapPage() {
   return (
     <div>
       <PageHeader
-        title="Farm Map and Tracking"
-        subtitle="Pantau lokasi ternak dan infrastruktur peternakan secara real-time."
+        title={t("map.title")}
+        subtitle={t("map.subtitle")}
         actions={
           <button
             type="button"
@@ -52,22 +54,22 @@ export default function FarmMapPage() {
             className="inline-flex items-center gap-2 rounded-xl border border-terrava-border bg-white px-3.5 py-2.5 text-sm font-medium text-terrava-text hover:bg-terrava-bg"
           >
             <RotateCw className="h-4 w-4" aria-hidden="true" />
-            Refresh
+            {t("common.refresh")}
           </button>
         }
       />
 
       <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
-        <FilterSelect label="Farm" value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
+        <FilterSelect label={t("filter.farm")} value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
         <FilterSelect
-          label="Status"
+          label={t("livestock.column.status")}
           value={statusFilter}
           onChange={setStatusFilter}
           options={[
-            { value: "healthy", label: "Healthy" },
-            { value: "attention", label: "Needs Attention" },
-            { value: "critical", label: "Critical" },
-            { value: "inactive", label: "Offline" },
+            { value: "healthy", label: t("status.healthy") },
+            { value: "attention", label: t("status.attention") },
+            { value: "critical", label: t("status.critical") },
+            { value: "inactive", label: t("status.offline") },
           ]}
         />
         <button
@@ -75,9 +77,11 @@ export default function FarmMapPage() {
           onClick={() => setShowGeofence((prev) => !prev)}
           className={`rounded-xl px-3.5 py-2 text-xs font-semibold ${showGeofence ? "bg-terrava-light text-terrava-primary" : "border border-terrava-border text-terrava-text"}`}
         >
-          Geofence {showGeofence ? "On" : "Off"}
+          {t("map.geofence")} {showGeofence ? t("map.on") : t("map.off")}
         </button>
-        <span className="ml-auto text-xs text-terrava-muted">Last update: {lastUpdate.toLocaleTimeString("id-ID")}</span>
+        <span className="ml-auto text-xs text-terrava-muted">
+          {t("map.lastUpdate", { time: lastUpdate.toLocaleTimeString(lang === "id" ? "id-ID" : "en-GB") })}
+        </span>
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-4">
@@ -92,7 +96,7 @@ export default function FarmMapPage() {
                 <Marker key={barn.id} position={[lat, lng]} icon={facilityIcon}>
                   <Popup>
                     <p className="font-semibold">{barn.name}</p>
-                    <p>Occupancy: {barn.occupancy}/{barn.capacity}</p>
+                    <p>{t("farms.occupancy")}: {barn.occupancy}/{barn.capacity}</p>
                   </Popup>
                 </Marker>
               );
@@ -115,11 +119,11 @@ export default function FarmMapPage() {
                 <Marker position={[animal.location.lat, animal.location.lng]} icon={livestockMarkerIcons[animal.healthStatus] ?? livestockMarkerIcons.healthy}>
                   <Popup>
                     <p className="font-semibold">{animal.name}</p>
-                    <p>Health score: {animal.healthScore}</p>
-                    <p>Temperature: {animal.temperature}°C</p>
-                    <p>Battery: {animal.deviceId ? `${animal.batteryLevel}%` : "-"}</p>
+                    <p>{t("livestock.column.healthScore")}: {animal.healthScore}</p>
+                    <p>{t("vitals.temperature")}: {animal.temperature}°C</p>
+                    <p>{t("devices.battery")}: {animal.deviceId ? `${animal.batteryLevel}%` : "-"}</p>
                     <Link to={`/dashboard/livestock/${animal.id}`} className="text-terrava-primary underline">
-                      View detail
+                      {t("common.viewDetail")}
                     </Link>
                   </Popup>
                 </Marker>
@@ -128,28 +132,28 @@ export default function FarmMapPage() {
           </MapContainer>
 
           <div className="flex flex-wrap items-center gap-4 border-t border-terrava-border bg-white px-4 py-3 text-xs text-terrava-muted">
-            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-primary" /> Healthy</span>
-            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-warning" /> Needs Attention</span>
-            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-error" /> Critical</span>
-            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-neutral" /> Offline</span>
-            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-dark" /> Barn / Facility</span>
-            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-info" /> Gateway</span>
+            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-primary" /> {t("status.healthy")}</span>
+            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-warning" /> {t("status.attention")}</span>
+            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-error" /> {t("status.critical")}</span>
+            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-neutral" /> {t("status.offline")}</span>
+            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-dark" /> {t("map.barnFacility")}</span>
+            <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-terrava-info" /> {t("deviceType.gateway")}</span>
           </div>
         </div>
 
         <div className="space-y-5">
-          <SearchInput value={search} onChange={setSearch} placeholder="Cari livestock..." />
+          <SearchInput value={search} onChange={setSearch} placeholder={t("map.searchPlaceholder")} />
 
           <div className="rounded-2xl border border-terrava-border bg-white p-4">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-terrava-text">
-              <TriangleAlert className="h-4 w-4 text-terrava-error" aria-hidden="true" /> Active Alerts ({activeAlerts.length})
+              <TriangleAlert className="h-4 w-4 text-terrava-error" aria-hidden="true" /> {t("dashboard.activeAlerts")} ({activeAlerts.length})
             </h3>
-            <p className="text-xs text-terrava-muted">Lihat detail lengkap pada halaman Alerts Center.</p>
+            <p className="text-xs text-terrava-muted">{t("map.alertsHint")}</p>
           </div>
 
           <div className="rounded-2xl border border-terrava-border bg-white p-4">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-terrava-text">
-              <WifiOff className="h-4 w-4 text-terrava-muted" aria-hidden="true" /> Offline Devices ({offlineDevices.length})
+              <WifiOff className="h-4 w-4 text-terrava-muted" aria-hidden="true" /> {t("map.offlineDevices")} ({offlineDevices.length})
             </h3>
             <ul className="space-y-1 text-xs text-terrava-muted">
               {offlineDevices.slice(0, 4).map((device) => (
@@ -160,7 +164,7 @@ export default function FarmMapPage() {
 
           <div className="rounded-2xl border border-terrava-border bg-white p-4">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-terrava-text">
-              <MapPinned className="h-4 w-4 text-terrava-primary" aria-hidden="true" /> Livestock List ({filteredLivestock.length})
+              <MapPinned className="h-4 w-4 text-terrava-primary" aria-hidden="true" /> {t("map.livestockList")} ({filteredLivestock.length})
             </h3>
             <ul className="max-h-80 space-y-1 overflow-y-auto">
               {filteredLivestock.map((animal) => (

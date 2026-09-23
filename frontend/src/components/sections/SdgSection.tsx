@@ -1,20 +1,20 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { sdgItems } from "@/data/sdgs";
 import { StaggerGrid } from "@/components/motion/Stagger";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface SdgSectionProps {
   title?: string;
   description?: string;
 }
 
-export default function SdgSection({
-  title = "Kontribusi terhadap Sustainable Development Goals",
-  description,
-}: SdgSectionProps) {
+export default function SdgSection({ title, description }: SdgSectionProps) {
+  const { t, tr } = useLanguage();
+
   return (
     <section className="bg-white py-20 sm:py-28">
       <div className="container">
-        <SectionHeading badge="SDG Contribution" title={title} description={description} />
+        <SectionHeading badge="SDG Contribution" title={title ?? t("sdg.defaultTitle")} description={description} />
 
         <StaggerGrid className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {sdgItems.map((sdg) => (
@@ -27,7 +27,7 @@ export default function SdgSection({
                 SDG {sdg.number}
               </span>
               <h3 className="mt-2 mb-1.5 text-sm font-semibold text-terrava-text">{sdg.title}</h3>
-              <p className="text-xs leading-relaxed text-terrava-muted">{sdg.description}</p>
+              <p className="text-xs leading-relaxed text-terrava-muted">{tr(sdg.description)}</p>
             </div>
           ))}
         </StaggerGrid>

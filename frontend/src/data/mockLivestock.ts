@@ -12,10 +12,12 @@ const names = [
   "Ayu", "Bagus", "Citra", "Dharma", "Endah", "Fajar", "Gita", "Hana", "Indra", "Jelita",
 ];
 
-const livestockTypes = ["Sapi Perah", "Sapi Potong"];
+// Canonical values; localized at render with `tt("livestockType", ...)`.
+const livestockTypes = ["Dairy Cattle", "Beef Cattle"];
 const breeds = ["Friesian Holstein", "Limousin", "Simmental", "Brahman", "Ongole"];
 const herdGroups = ["Herd 1", "Herd 2", "Herd 3"];
-const acquisitionSources = ["Breeding internal", "Pembelian mitra", "Program koperasi", "Transfer antar farm"];
+// Canonical values; localized at render with `tt("acquisition", ...)`.
+const acquisitionSources = ["Internal breeding", "Partner purchase", "Cooperative program", "Inter-farm transfer"];
 
 const healthStatusPool: HealthStatus[] = [
   "healthy", "healthy", "healthy", "healthy", "healthy", "healthy", "healthy",
@@ -73,7 +75,7 @@ export const livestock: Livestock[] = Array.from({ length: 40 }).map((_, index) 
     deviceId: hasDevice ? `DEV-${String(index + 1).padStart(3, "0")}` : null,
     deviceStatus,
     batteryLevel: hasDevice ? randomInt(random, 15, 100) : 0,
-    lastUpdate: `${randomInt(random, 1, 58)} menit lalu`,
+    lastUpdate: `${randomInt(random, 1, 58)} minutes ago`,
     location: {
       lat: baseLat - randomFloat(random, 0, 0.6, 4),
       lng: baseLng + randomFloat(random, 0, 0.6, 4),
@@ -83,7 +85,10 @@ export const livestock: Livestock[] = Array.from({ length: 40 }).map((_, index) 
       randomInt(random, 1, 28)
     ).padStart(2, "0")}`,
     acquisitionSource: pick(random, acquisitionSources),
-    notes: "Data prototype untuk keperluan demo Terrava.",
+    notes: {
+      id: "Data prototype untuk keperluan demo Terrava.",
+      en: "Prototype data used for the Terrava demo.",
+    },
   };
 });
 

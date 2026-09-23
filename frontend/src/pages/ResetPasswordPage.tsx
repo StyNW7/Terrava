@@ -7,8 +7,11 @@ import PasswordInput from "@/components/auth/PasswordInput";
 import PasswordStrength from "@/components/auth/PasswordStrength";
 import PrimaryButton from "@/components/common/PrimaryButton";
 import { resetPasswordSchema, type ResetPasswordValues } from "@/schemas/authSchemas";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ResetPasswordPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Reset Password | Terrava";
   }, []);
@@ -35,17 +38,17 @@ export default function ResetPasswordPage() {
   return (
     <AuthLayout
       panelVariant="reset"
-      eyebrow="New Password"
-      title="Perbarui Password"
-      subtitle="Buat password baru yang kuat untuk mengamankan akun Terrava Anda."
+      eyebrow={t("auth.reset.eyebrow")}
+      title={t("auth.reset.title")}
+      subtitle={t("auth.reset.subtitle")}
       showBackButton={!isSuccess}
     >
       {isSuccess ? (
         <div className="flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-8 text-center animate-fade-in-up">
           <CircleCheck className="mb-4 h-12 w-12 text-terrava-primary" aria-hidden="true" />
-          <p className="mb-6 text-sm leading-relaxed text-terrava-text">Password berhasil diperbarui.</p>
+          <p className="mb-6 text-sm leading-relaxed text-terrava-text">{t("auth.reset.success")}</p>
           <PrimaryButton href="/login" showArrow={false}>
-            Masuk ke Terrava
+            {t("auth.reset.goToLogin")}
           </PrimaryButton>
         </div>
       ) : (
@@ -53,10 +56,10 @@ export default function ResetPasswordPage() {
           <div>
             <PasswordInput
               id="password"
-              label="New Password"
-              placeholder="Masukkan password baru"
+              label={t("auth.field.newPassword")}
+              placeholder={t("auth.placeholder.newPasswordEnter")}
               autoComplete="new-password"
-              error={errors.password?.message}
+              error={errors.password?.message && t(errors.password.message)}
               {...register("password")}
             />
             <PasswordStrength password={password} />
@@ -64,10 +67,10 @@ export default function ResetPasswordPage() {
 
           <PasswordInput
             id="confirmPassword"
-            label="Confirm New Password"
-            placeholder="Ulangi password baru"
+            label={t("auth.field.confirmNewPassword")}
+            placeholder={t("auth.placeholder.confirmNewPassword")}
             autoComplete="new-password"
-            error={errors.confirmPassword?.message}
+            error={errors.confirmPassword?.message && t(errors.confirmPassword.message)}
             {...register("confirmPassword")}
           />
 
@@ -80,10 +83,10 @@ export default function ResetPasswordPage() {
             {isSubmitting ? (
               <>
                 <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-                Memproses...
+                {t("auth.processing")}
               </>
             ) : (
-              "Perbarui Password"
+              t("auth.reset.submit")
             )}
           </button>
         </form>

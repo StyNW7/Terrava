@@ -2,12 +2,15 @@ import { Award } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
 import { recognitionTimeline } from "@/data/timeline";
 import { StaggerGrid } from "@/components/motion/Stagger";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function RecognitionSection() {
+  const { t, tr } = useLanguage();
+
   return (
     <section className="bg-white py-20 sm:py-28">
       <div className="container">
-        <SectionHeading badge="Recognition" title="Pencapaian dan langkah kolaborasi kami" />
+        <SectionHeading badge={t("about.recognition.badge")} title={t("about.recognition.title")} />
 
         <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3">
           {recognitionTimeline.map((item) => (
@@ -18,8 +21,8 @@ export default function RecognitionSection() {
                   {item.year}
                 </span>
               </div>
-              <h3 className="mb-2 text-sm font-semibold text-terrava-text">{item.title}</h3>
-              <p className="text-sm leading-relaxed text-terrava-muted">{item.description}</p>
+              <h3 className="mb-2 text-sm font-semibold text-terrava-text">{tr(item.title)}</h3>
+              <p className="text-sm leading-relaxed text-terrava-muted">{tr(item.description)}</p>
             </div>
           ))}
         </StaggerGrid>

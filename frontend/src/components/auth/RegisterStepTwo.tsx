@@ -10,6 +10,7 @@ import {
   livestockCountOptions,
   primaryLivestockOptions,
 } from "@/data/auth";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface RegisterStepTwoProps {
   defaultValues: RegisterStep2Values;
@@ -18,6 +19,7 @@ interface RegisterStepTwoProps {
 }
 
 export default function RegisterStepTwo({ defaultValues, onNext, onBack }: RegisterStepTwoProps) {
+  const { t, tr } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -30,45 +32,45 @@ export default function RegisterStepTwo({ defaultValues, onNext, onBack }: Regis
 
   return (
     <form onSubmit={handleSubmit(onNext)} noValidate className="space-y-5">
-      <h2 className="text-lg font-semibold text-terrava-text">Informasi Peternakan</h2>
+      <h2 className="text-lg font-semibold text-terrava-text">{t("auth.register.farmInfo")}</h2>
 
       <AuthInput
         id="farmName"
-        label="Farm or Organization Name"
-        placeholder="Nama peternakan atau organisasi"
-        error={errors.farmName?.message}
+        label={t("auth.field.farmName")}
+        placeholder={t("auth.placeholder.farmName")}
+        error={errors.farmName?.message && t(errors.farmName.message)}
         {...register("farmName")}
       />
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-terrava-text">Account Role</span>
+        <span className="mb-1.5 block text-sm font-medium text-terrava-text">{t("auth.field.accountRole")}</span>
         <Controller
           name="accountRole"
           control={control}
           render={({ field }) => (
             <CardRadioGroup
-              name="Account Role"
+              name={t("auth.field.accountRole")}
               options={accountRoleOptions}
               value={field.value ?? ""}
               onChange={field.onChange}
-              error={errors.accountRole?.message}
+              error={errors.accountRole?.message && t(errors.accountRole.message)}
             />
           )}
         />
       </div>
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-terrava-text">Farm Type</span>
+        <span className="mb-1.5 block text-sm font-medium text-terrava-text">{t("auth.field.farmType")}</span>
         <Controller
           name="farmType"
           control={control}
           render={({ field }) => (
             <CardRadioGroup
-              name="Farm Type"
+              name={t("auth.field.farmType")}
               options={farmTypeOptions}
               value={field.value ?? ""}
               onChange={field.onChange}
-              error={errors.farmType?.message}
+              error={errors.farmType?.message && t(errors.farmType.message)}
             />
           )}
         />
@@ -77,18 +79,18 @@ export default function RegisterStepTwo({ defaultValues, onNext, onBack }: Regis
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <AuthInput
           id="city"
-          label="City or Regency"
+          label={t("auth.field.city")}
           icon={MapPin}
-          placeholder="Kota atau kabupaten"
-          error={errors.city?.message}
+          placeholder={t("auth.placeholder.city")}
+          error={errors.city?.message && t(errors.city.message)}
           {...register("city")}
         />
         <AuthInput
           id="province"
-          label="Province"
+          label={t("auth.field.province")}
           icon={MapPin}
-          placeholder="Provinsi"
-          error={errors.province?.message}
+          placeholder={t("auth.placeholder.province")}
+          error={errors.province?.message && t(errors.province.message)}
           {...register("province")}
         />
       </div>
@@ -96,7 +98,7 @@ export default function RegisterStepTwo({ defaultValues, onNext, onBack }: Regis
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="livestockCount" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Number of Livestock
+            {t("auth.field.livestockCount")}
           </label>
           <select
             id="livestockCount"
@@ -106,23 +108,23 @@ export default function RegisterStepTwo({ defaultValues, onNext, onBack }: Regis
             }`}
             {...register("livestockCount")}
           >
-            <option value="">Pilih jumlah</option>
+            <option value="">{t("auth.placeholder.selectCount")}</option>
             {livestockCountOptions.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {tr(option.label)}
               </option>
             ))}
           </select>
           {errors.livestockCount && (
             <p role="alert" className="mt-1.5 text-xs text-terrava-error">
-              {errors.livestockCount.message}
+              {t(errors.livestockCount.message ?? "")}
             </p>
           )}
         </div>
 
         <div>
           <label htmlFor="primaryLivestock" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Primary Livestock
+            {t("auth.field.primaryLivestock")}
           </label>
           <select
             id="primaryLivestock"
@@ -132,16 +134,16 @@ export default function RegisterStepTwo({ defaultValues, onNext, onBack }: Regis
             }`}
             {...register("primaryLivestock")}
           >
-            <option value="">Pilih jenis ternak</option>
+            <option value="">{t("auth.placeholder.selectLivestock")}</option>
             {primaryLivestockOptions.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {tr(option.label)}
               </option>
             ))}
           </select>
           {errors.primaryLivestock && (
             <p role="alert" className="mt-1.5 text-xs text-terrava-error">
-              {errors.primaryLivestock.message}
+              {t(errors.primaryLivestock.message ?? "")}
             </p>
           )}
         </div>
@@ -153,13 +155,13 @@ export default function RegisterStepTwo({ defaultValues, onNext, onBack }: Regis
           onClick={onBack}
           className="inline-flex w-full items-center justify-center rounded-xl border border-terrava-border bg-white px-6 py-3.5 text-sm font-semibold text-terrava-text transition-colors hover:border-terrava-primary/40"
         >
-          Kembali
+          {t("common.back")}
         </button>
         <button
           type="submit"
           className="inline-flex w-full items-center justify-center rounded-xl bg-terrava-primary px-6 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-terrava-hover"
         >
-          Lanjutkan
+          {t("auth.continue")}
         </button>
       </div>
     </form>

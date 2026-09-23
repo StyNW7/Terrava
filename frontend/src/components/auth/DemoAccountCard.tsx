@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { demoAccounts, primaryDemoAccount } from "@/data/demoAccounts";
 import type { DemoAccount } from "@/data/demoAccounts";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface DemoAccountCardProps {
   /** Fill the login form with the given credentials without submitting. */
@@ -15,16 +16,17 @@ interface DemoAccountCardProps {
 }
 
 function CopyValue({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Mail }) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
-      toast.success(`${label} disalin.`);
+      toast.success(t("auth.demo.copied", { label }));
       setTimeout(() => setCopied(false), 1600);
     } catch {
-      toast.error("Clipboard tidak tersedia di browser ini.");
+      toast.error(t("auth.demo.clipboardUnavailable"));
     }
   };
 
@@ -32,7 +34,7 @@ function CopyValue({ label, value, icon: Icon }: { label: string; value: string;
     <button
       type="button"
       onClick={handleCopy}
-      aria-label={`Salin ${label.toLowerCase()}`}
+      aria-label={t("auth.demo.copyAria", { label: label.toLowerCase() })}
       className="group flex w-full items-center gap-2.5 rounded-xl border border-terrava-border bg-white px-3 py-2 text-left transition-colors hover:border-terrava-primary/40 hover:bg-terrava-light/40"
     >
       <Icon className="h-3.5 w-3.5 shrink-0 text-terrava-muted" aria-hidden="true" />
@@ -50,6 +52,7 @@ function CopyValue({ label, value, icon: Icon }: { label: string; value: string;
 }
 
 export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: DemoAccountCardProps) {
+  const { t, tr, tt } = useLanguage();
   const [selectedId, setSelectedId] = useState(primaryDemoAccount.id);
   const [personaOpen, setPersonaOpen] = useState(false);
   const account = demoAccounts.find((item) => item.id === selectedId) ?? primaryDemoAccount;
@@ -69,8 +72,8 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
             <Sparkles className="h-4 w-4" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-sm font-semibold text-terrava-text">Akun Demo Tersedia</p>
-            <p className="text-xs text-terrava-muted">Coba dashboard tanpa perlu mendaftar.</p>
+            <p className="text-sm font-semibold text-terrava-text">{t("auth.demo.title")}</p>
+            <p className="text-xs text-terrava-muted">{t("auth.demo.subtitle")}</p>
           </div>
         </div>
         <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-terrava-primary shadow-sm">
@@ -92,7 +95,7 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
             <span>
               <span className="block text-sm font-semibold text-terrava-text">{account.name}</span>
               <span className="block text-xs text-terrava-muted">
-                {account.role} &middot; {account.tagline}
+                {tt("role", account.role)} &middot; {tr(account.tagline)}
               </span>
             </span>
           </span>
@@ -111,7 +114,7 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
               transition={{ duration: 0.22 }}
               className="mt-2 overflow-hidden rounded-xl border border-terrava-border bg-white p-1.5"
               role="listbox"
-              aria-label="Pilih persona demo"
+              aria-label={t("auth.demo.selectPersona")}
             >
               {demoAccounts.map((item) => {
                 const active = item.id === account.id;
@@ -136,7 +139,7 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">{item.name}</span>
-                        <span className="block truncate text-xs text-terrava-muted">{item.role}</span>
+                        <span className="block truncate text-xs text-terrava-muted">{tt("role", item.role)}</span>
                       </span>
                       {active && <Check className="h-4 w-4 shrink-0" aria-hidden="true" />}
                     </button>
@@ -149,8 +152,8 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
       </div>
 
       <div className="relative mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <CopyValue label="Email" value={account.email} icon={Mail} />
-        <CopyValue label="Password" value={account.password} icon={KeyRound} />
+        <CopyValue label={t("auth.field.email")} value={account.email} icon={Mail} />
+        <CopyValue label={t("auth.field.password")} value={account.password} icon={KeyRound} />
       </div>
 
       <div className="relative mt-3 flex flex-col gap-2 sm:flex-row">
@@ -160,7 +163,7 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
           onClick={() => onFill(account)}
           className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-terrava-primary/30 bg-white px-4 py-2.5 text-sm font-semibold text-terrava-primary transition-all hover:bg-terrava-light disabled:opacity-60"
         >
-          Isi otomatis
+          {t("auth.demo.autofill")}
         </button>
         <button
           type="button"
@@ -169,7 +172,7 @@ export default function DemoAccountCard({ onFill, onQuickLogin, disabled }: Demo
           className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5 hover:bg-terrava-hover disabled:pointer-events-none disabled:opacity-60"
         >
           <Zap className="h-4 w-4" aria-hidden="true" />
-          Masuk langsung
+          {t("auth.demo.quickLogin")}
         </button>
       </div>
     </motion.div>

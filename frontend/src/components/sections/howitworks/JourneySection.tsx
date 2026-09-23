@@ -1,15 +1,18 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { journeySteps } from "@/data/processSteps";
 import { StaggerGrid } from "@/components/motion/Stagger";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function JourneySection() {
+  const { t, tr } = useLanguage();
+
   return (
     <section className="py-20 sm:py-28">
       <div className="container">
         <SectionHeading
-          badge="Step by Step"
-          title="Dari pendaftaran hingga tindakan nyata"
-          description="Tujuh langkah utama yang membawa peternak dari pendaftaran akun hingga pengambilan keputusan berbasis data."
+          badge={t("howitworks.steps.badge")}
+          title={t("howitworks.steps.title")}
+          description={t("howitworks.steps.description")}
         />
 
         <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -24,7 +27,7 @@ export default function JourneySection() {
                   <step.icon className="h-5 w-5 text-terrava-primary" aria-hidden="true" />
                 </div>
                 <h3 className="mb-1.5 text-sm font-semibold text-terrava-text">{step.title}</h3>
-                <p className="text-xs leading-relaxed text-terrava-muted">{step.description}</p>
+                <p className="text-xs leading-relaxed text-terrava-muted">{tr(step.description)}</p>
               </div>
             </div>
           ))}

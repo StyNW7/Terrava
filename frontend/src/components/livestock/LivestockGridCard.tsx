@@ -4,8 +4,10 @@ import type { Livestock } from "@/types/dashboard";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import HealthScoreBadge from "@/components/dashboard/HealthScoreBadge";
 import { getBarnById } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function LivestockGridCard({ animal }: { animal: Livestock }) {
+  const { t, tRel } = useLanguage();
   const barn = getBarnById(animal.barnId);
 
   return (
@@ -27,14 +29,14 @@ export default function LivestockGridCard({ animal }: { animal: Livestock }) {
         <div className="mt-3 flex items-center justify-between border-t border-terrava-border pt-2.5 text-xs text-terrava-muted">
           <span className="flex items-center gap-1">
             <Radio className="h-3.5 w-3.5" aria-hidden="true" />
-            {animal.deviceStatus === "unassigned" ? "No device" : animal.deviceStatus}
+            {animal.deviceStatus === "unassigned" ? t("livestock.noDevice") : t("status." + animal.deviceStatus)}
           </span>
           <span className="flex items-center gap-1">
             <BatteryFull className="h-3.5 w-3.5" aria-hidden="true" />
             {animal.deviceId ? `${animal.batteryLevel}%` : "-"}
           </span>
         </div>
-        <p className="mt-1.5 text-[11px] text-terrava-muted">Updated {animal.lastUpdate}</p>
+        <p className="mt-1.5 text-[11px] text-terrava-muted">{t("monitoring.updated", { time: tRel(animal.lastUpdate) })}</p>
       </div>
     </Link>
   );

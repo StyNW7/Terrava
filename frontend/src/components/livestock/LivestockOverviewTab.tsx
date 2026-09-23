@@ -5,8 +5,10 @@ import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
 import SeverityBadge from "@/components/dashboard/SeverityBadge";
 import { alerts } from "@/data/mockAlerts";
 import { getFarmById, getBarnById } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function LivestockOverviewTab({ animal }: { animal: Livestock }) {
+  const { t, tr, tt } = useLanguage();
   const relatedAlerts = alerts.filter((alert) => alert.livestockId === animal.id).slice(0, 3);
 
   return (
@@ -15,38 +17,42 @@ export default function LivestockOverviewTab({ animal }: { animal: Livestock }) 
         <div className="rounded-2xl border border-terrava-border bg-terrava-light p-5">
           <div className="mb-2 flex items-center gap-2">
             <BrainCircuit className="h-4 w-4 text-terrava-primary" aria-hidden="true" />
-            <span className="text-xs font-semibold uppercase tracking-wide text-terrava-primary">AI Health Summary</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-terrava-primary">{t("livestock.aiHealthSummary")}</span>
           </div>
           <p className="text-sm text-terrava-dark">
-            {animal.name} menunjukkan kondisi {animal.healthStatus === "healthy" ? "stabil dengan tren positif" : "yang memerlukan pemantauan lebih lanjut"} berdasarkan data 7 hari
-            terakhir. Suhu tubuh dan detak jantung berada {animal.healthStatus === "critical" ? "di luar" : "dalam"} rentang normal.
+            {t("livestock.aiSummaryText", {
+              name: animal.name,
+              condition:
+                animal.healthStatus === "healthy" ? t("livestock.conditionStable") : t("livestock.conditionWatch"),
+              range: animal.healthStatus === "critical" ? t("livestock.outsideRange") : t("livestock.withinRange"),
+            })}
           </p>
         </div>
 
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
-          <h3 className="mb-2 text-sm font-semibold text-terrava-text">Latest Observations</h3>
+          <h3 className="mb-2 text-sm font-semibold text-terrava-text">{t("livestock.latestObservations")}</h3>
           <ul className="space-y-2 text-sm text-terrava-text">
-            <li>Suhu tubuh tercatat {animal.temperature}°C pada pembaruan terakhir.</li>
-            <li>Tingkat aktivitas berada di angka {animal.activityLevel} dari skala 100.</li>
-            <li>Kadar oksigen darah tercatat {animal.oxygenLevel}%.</li>
+            <li>{t("livestock.observation.temperature", { value: animal.temperature })}</li>
+            <li>{t("livestock.observation.activity", { value: animal.activityLevel })}</li>
+            <li>{t("livestock.observation.oxygen", { value: animal.oxygenLevel })}</li>
           </ul>
         </div>
 
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-terrava-text">Recent Alerts</h3>
+            <h3 className="text-sm font-semibold text-terrava-text">{t("overview.recentAlerts")}</h3>
             <Link to="#" className="text-xs font-semibold text-terrava-primary">
-              View all
+              {t("common.viewAll")}
             </Link>
           </div>
           {relatedAlerts.length === 0 ? (
-            <p className="text-sm text-terrava-muted">Tidak ada alert terbaru untuk ternak ini.</p>
+            <p className="text-sm text-terrava-muted">{t("livestock.noRecentAlerts")}</p>
           ) : (
             <ul className="space-y-2">
               {relatedAlerts.map((alert) => (
                 <li key={alert.id}>
                   <Link to={`/dashboard/alerts/${alert.id}`} className="flex items-center justify-between rounded-xl px-2.5 py-2 hover:bg-terrava-bg">
-                    <span className="text-sm text-terrava-text">{alert.title}</span>
+                    <span className="text-sm text-terrava-text">{tr(alert.title)}</span>
                     <SeverityBadge severity={alert.severity} />
                   </Link>
                 </li>
@@ -58,28 +64,28 @@ export default function LivestockOverviewTab({ animal }: { animal: Livestock }) 
 
       <div className="space-y-6">
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
-          <h3 className="mb-3 text-sm font-semibold text-terrava-text">Basic Profile</h3>
-          <DetailInfoRow label="Breed" value={animal.breed} />
-          <DetailInfoRow label="Gender" value={animal.gender} />
-          <DetailInfoRow label="Age" value={`${animal.ageMonths} bulan`} />
-          <DetailInfoRow label="Weight" value={`${animal.weightKg} kg`} />
-          <DetailInfoRow label="Body Condition" value={`${animal.bodyConditionScore}/5`} />
+          <h3 className="mb-3 text-sm font-semibold text-terrava-text">{t("livestock.basicProfile")}</h3>
+          <DetailInfoRow label={t("livestock.column.breed")} value={animal.breed} />
+          <DetailInfoRow label={t("livestock.column.gender")} value={tt("gender", animal.gender)} />
+          <DetailInfoRow label={t("livestock.column.age")} value={t("livestock.months", { count: animal.ageMonths })} />
+          <DetailInfoRow label={t("livestock.weight")} value={`${animal.weightKg} kg`} />
+          <DetailInfoRow label={t("livestock.bodyCondition")} value={`${animal.bodyConditionScore}/5`} />
         </div>
 
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
-          <h3 className="mb-3 text-sm font-semibold text-terrava-text">Farm Assignment</h3>
-          <DetailInfoRow label="Farm" value={getFarmById(animal.farmId)?.name} />
-          <DetailInfoRow label="Barn" value={getBarnById(animal.barnId)?.name} />
-          <DetailInfoRow label="Herd Group" value={animal.herdGroup} />
-          <DetailInfoRow label="Arrival Date" value={animal.arrivalDate} />
+          <h3 className="mb-3 text-sm font-semibold text-terrava-text">{t("livestock.farmAssignment")}</h3>
+          <DetailInfoRow label={t("filter.farm")} value={getFarmById(animal.farmId)?.name} />
+          <DetailInfoRow label={t("farms.barn")} value={getBarnById(animal.barnId)?.name} />
+          <DetailInfoRow label={t("livestock.herdGroup")} value={animal.herdGroup} />
+          <DetailInfoRow label={t("livestock.arrivalDate")} value={animal.arrivalDate} />
         </div>
 
         <div className="rounded-2xl border border-terrava-border bg-white p-5">
           <div className="mb-2 flex items-center gap-2">
             <Syringe className="h-4 w-4 text-terrava-primary" aria-hidden="true" />
-            <h3 className="text-sm font-semibold text-terrava-text">Upcoming Care Schedule</h3>
+            <h3 className="text-sm font-semibold text-terrava-text">{t("livestock.upcomingCare")}</h3>
           </div>
-          <p className="text-sm text-terrava-muted">Pemeriksaan rutin berikutnya dijadwalkan dalam 5 hari.</p>
+          <p className="text-sm text-terrava-muted">{t("livestock.nextCheckup")}</p>
         </div>
       </div>
     </div>

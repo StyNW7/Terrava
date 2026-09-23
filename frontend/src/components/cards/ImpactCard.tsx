@@ -1,6 +1,8 @@
 import type { ImpactPillar } from "@/types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ImpactCard({ pillar }: { pillar: ImpactPillar }) {
+  const { tr } = useLanguage();
   const Icon = pillar.icon;
 
   return (
@@ -9,7 +11,7 @@ export default function ImpactCard({ pillar }: { pillar: ImpactPillar }) {
         <Icon className="h-6 w-6" aria-hidden="true" />
       </div>
       <h3 className="mb-2 text-lg font-semibold text-terrava-text">{pillar.title}</h3>
-      <p className="text-sm leading-relaxed text-terrava-muted">{pillar.description}</p>
+      <p className="text-sm leading-relaxed text-terrava-muted">{tr(pillar.description)}</p>
     </div>
   );
 }

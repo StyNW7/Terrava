@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SettingsToggleRow } from "@/components/settings/SettingsField";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const defaultToggles = {
   inApp: true,
@@ -13,6 +14,7 @@ const defaultToggles = {
 };
 
 export default function NotificationsTab({ onDirty }: { onDirty: () => void }) {
+  const { t } = useLanguage();
   const [toggles, setToggles] = useState(defaultToggles);
 
   const update = (key: keyof typeof defaultToggles) => (value: boolean) => {
@@ -22,17 +24,17 @@ export default function NotificationsTab({ onDirty }: { onDirty: () => void }) {
 
   return (
     <div className="rounded-2xl border border-terrava-border bg-white p-6">
-      <h3 className="mb-1 text-base font-semibold text-terrava-text">Notifications</h3>
-      <p className="mb-4 text-sm text-terrava-muted">Atur bagaimana dan kapan Anda menerima notifikasi.</p>
+      <h3 className="mb-1 text-base font-semibold text-terrava-text">{t("settings.tab.notifications")}</h3>
+      <p className="mb-4 text-sm text-terrava-muted">{t("settings.notifications.description")}</p>
       <div className="divide-y divide-terrava-border">
-        <SettingsToggleRow label="In-App Notifications" checked={toggles.inApp} onChange={update("inApp")} />
-        <SettingsToggleRow label="Email Notifications" checked={toggles.email} onChange={update("email")} />
-        <SettingsToggleRow label="WhatsApp Notifications" checked={toggles.whatsapp} onChange={update("whatsapp")} />
-        <SettingsToggleRow label="Critical Alerts" description="Selalu aktif untuk kondisi darurat" checked={toggles.criticalAlerts} onChange={update("criticalAlerts")} />
-        <SettingsToggleRow label="Device Alerts" checked={toggles.deviceAlerts} onChange={update("deviceAlerts")} />
-        <SettingsToggleRow label="Weather Alerts" checked={toggles.weatherAlerts} onChange={update("weatherAlerts")} />
-        <SettingsToggleRow label="Daily Summary" checked={toggles.dailySummary} onChange={update("dailySummary")} />
-        <SettingsToggleRow label="Weekly Report" checked={toggles.weeklyReport} onChange={update("weeklyReport")} />
+        <SettingsToggleRow label={t("settings.notifications.inApp")} checked={toggles.inApp} onChange={update("inApp")} />
+        <SettingsToggleRow label={t("settings.notifications.email")} checked={toggles.email} onChange={update("email")} />
+        <SettingsToggleRow label={t("settings.notifications.whatsapp")} checked={toggles.whatsapp} onChange={update("whatsapp")} />
+        <SettingsToggleRow label={t("settings.notifications.criticalAlerts")} description={t("settings.notifications.criticalAlertsDescription")} checked={toggles.criticalAlerts} onChange={update("criticalAlerts")} />
+        <SettingsToggleRow label={t("settings.notifications.deviceAlerts")} checked={toggles.deviceAlerts} onChange={update("deviceAlerts")} />
+        <SettingsToggleRow label={t("settings.notifications.weatherAlerts")} checked={toggles.weatherAlerts} onChange={update("weatherAlerts")} />
+        <SettingsToggleRow label={t("settings.notifications.dailySummary")} checked={toggles.dailySummary} onChange={update("dailySummary")} />
+        <SettingsToggleRow label={t("settings.notifications.weeklyReport")} checked={toggles.weeklyReport} onChange={update("weeklyReport")} />
       </div>
     </div>
   );

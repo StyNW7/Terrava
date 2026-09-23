@@ -1,4 +1,5 @@
 import { Search, X } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface SearchInputProps {
   value: string;
@@ -7,7 +8,10 @@ interface SearchInputProps {
   className?: string;
 }
 
-export default function SearchInput({ value, onChange, placeholder = "Search...", className = "" }: SearchInputProps) {
+export default function SearchInput({ value, onChange, placeholder, className = "" }: SearchInputProps) {
+  const { t } = useLanguage();
+  const resolvedPlaceholder = placeholder ?? t("dashboard.searchDefault");
+
   return (
     <div className={`relative flex items-center ${className}`}>
       <Search className="pointer-events-none absolute left-3 h-4 w-4 text-terrava-muted" aria-hidden="true" />
@@ -15,15 +19,15 @@ export default function SearchInput({ value, onChange, placeholder = "Search..."
         type="text"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        aria-label={placeholder}
+        placeholder={resolvedPlaceholder}
+        aria-label={resolvedPlaceholder}
         className="w-full rounded-xl border border-terrava-border bg-white py-2.5 pl-9 pr-9 text-sm text-terrava-text placeholder:text-terrava-muted focus:border-terrava-primary focus:outline-none focus:ring-2 focus:ring-terrava-primary/20"
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange("")}
-          aria-label="Clear search"
+          aria-label={t("dashboard.clearSearch")}
           className="absolute right-2.5 rounded-md p-0.5 text-terrava-muted hover:text-terrava-primary"
         >
           <X className="h-4 w-4" aria-hidden="true" />

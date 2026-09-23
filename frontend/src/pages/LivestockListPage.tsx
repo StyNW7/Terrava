@@ -18,23 +18,15 @@ import EmptyState from "@/components/dashboard/EmptyState";
 import { livestock } from "@/data/mockLivestock";
 import { farms, getBarnById, getFarmById } from "@/data/mockFarms";
 import type { Livestock } from "@/types/dashboard";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const typeOptions = [...new Set(livestock.map((a) => a.type))].map((type) => ({ value: type, label: type }));
-const healthOptions = [
-  { value: "healthy", label: "Healthy" },
-  { value: "attention", label: "Needs Attention" },
-  { value: "critical", label: "Critical" },
-  { value: "inactive", label: "Inactive" },
-];
-const deviceOptions = [
-  { value: "online", label: "Online" },
-  { value: "offline", label: "Offline" },
-  { value: "low-battery", label: "Low Battery" },
-  { value: "unassigned", label: "Unassigned" },
-];
+const livestockTypes = [...new Set(livestock.map((a) => a.type))];
+const healthValues = ["healthy", "attention", "critical", "inactive"];
+const deviceValues = ["online", "offline", "low-battery", "unassigned"];
 
 export default function LivestockListPage() {
   const navigate = useNavigate();
+  const { t, tt, tRel } = useLanguage();
   const [search, setSearch] = useState("");
   const [farmFilter, setFarmFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -64,10 +56,14 @@ export default function LivestockListPage() {
     });
   }, [search, farmFilter, typeFilter, healthFilter, deviceFilter]);
 
+  const typeOptions = livestockTypes.map((type) => ({ value: type, label: tt("livestockType", type) }));
+  const healthOptions = healthValues.map((value) => ({ value, label: t("status." + value) }));
+  const deviceOptions = deviceValues.map((value) => ({ value, label: t("status." + value) }));
+
   const columns: ColumnDef<Livestock, unknown>[] = [
     {
       accessorKey: "name",
-      header: "Livestock",
+      header: t("nav.item.livestock"),
       cell: ({ row }) => (
         <div className="flex items-center gap-2.5">
           <img src={row.original.photo} alt={row.original.name} className="h-9 w-9 rounded-lg object-cover" />
@@ -78,14 +74,27 @@ export default function LivestockListPage() {
         </div>
       ),
     },
-    { accessorKey: "code", header: "ID" },
-    { accessorKey: "type", header: "Type" },
-    { accessorKey: "breed", header: "Breed" },
-    { accessorFn: (row) => `${row.ageMonths} mo`, id: "age", header: "Age" },
-    { accessorKey: "gender", header: "Gender" },
+    { accessorKey: "code", header: t("livestock.column.id") },
+    {
+      accessorKey: "type",
+      header: t("livestock.column.type"),
+      cell: ({ getValue }) => tt("livestockType", getValue() as string),
+    },
+    { accessorKey: "breed", header: t("livestock.column.breed") },
+    {
+      accessorFn: (row) => row.ageMonths,
+      id: "age",
+      header: t("livestock.column.age"),
+      cell: ({ getValue }) => t("livestock.months", { count: getValue() as number }),
+    },
+    {
+      accessorKey: "gender",
+      header: t("livestock.column.gender"),
+      cell: ({ getValue }) => tt("gender", getValue() as string),
+    },
     {
       id: "farmBarn",
-      header: "Farm / Barn",
+      header: t("livestock.column.farmBarn"),
       cell: ({ row }) => (
         <div className="text-xs">
           <p className="font-medium text-terrava-text">{getFarmById(row.original.farmId)?.name.split(" ").slice(0, 2).join(" ")}</p>
@@ -95,34 +104,52 @@ export default function LivestockListPage() {
     },
     {
       accessorKey: "healthScore",
-      header: "Health Score",
+      header: t("livestock.column.healthScore"),
       cell: ({ getValue }) => <HealthScoreBadge score={getValue() as number} />,
     },
     {
       accessorKey: "healthStatus",
-      header: "Status",
+      header: t("livestock.column.status"),
       cell: ({ getValue }) => <StatusBadge status={getValue() as Livestock["healthStatus"]} />,
     },
     {
       accessorKey: "deviceStatus",
-      header: "Device",
+      header: t("livestock.column.device"),
       cell: ({ getValue }) => {
         const value = getValue() as Livestock["deviceStatus"];
-        return value === "unassigned" ? <span className="text-xs text-terrava-muted">Unassigned</span> : <DeviceStatusBadge status={value} />;
+        return value === "unassigned" ? (
+          <span className="text-xs text-terrava-muted">{t("status.unassigned")}</span>
+        ) : (
+          <DeviceStatusBadge status={value} />
+        );
       },
     },
-    { accessorKey: "lastUpdate", header: "Last Update" },
+    {
+      accessorKey: "lastUpdate",
+      header: t("livestock.column.lastUpdate"),
+      cell: ({ getValue }) => tRel(getValue() as string),
+    },
     {
       id: "actions",
       header: "",
       cell: ({ row }) => (
         <RowActionsMenu
           actions={[
-            { label: "View detail", onClick: () => navigate(`/dashboard/livestock/${row.original.id}`) },
-            { label: "Edit", onClick: () => toast.success(`Membuka form edit ${row.original.name}.`) },
-            { label: "Assign device", onClick: () => toast.success(`Perangkat ditugaskan ke ${row.original.name}.`) },
-            { label: "Move barn", onClick: () => toast.success(`${row.original.name} dipindahkan ke kandang baru.`) },
-            { label: "Archive", onClick: () => toast.success(`${row.original.name} diarsipkan.`), danger: true },
+            { label: t("common.viewDetail"), onClick: () => navigate(`/dashboard/livestock/${row.original.id}`) },
+            { label: t("common.edit"), onClick: () => toast.success(t("livestock.toast.edit", { name: row.original.name })) },
+            {
+              label: t("livestock.action.assignDevice"),
+              onClick: () => toast.success(t("livestock.toast.assignDevice", { name: row.original.name })),
+            },
+            {
+              label: t("livestock.action.moveBarn"),
+              onClick: () => toast.success(t("livestock.toast.moveBarn", { name: row.original.name })),
+            },
+            {
+              label: t("livestock.action.archive"),
+              onClick: () => toast.success(t("livestock.toast.archive", { name: row.original.name })),
+              danger: true,
+            },
           ]}
         />
       ),
@@ -132,35 +159,35 @@ export default function LivestockListPage() {
   return (
     <div>
       <PageHeader
-        title="Livestock"
-        subtitle="Kelola seluruh data ternak dan status kesehatannya."
+        title={t("nav.item.livestock")}
+        subtitle={t("livestock.subtitle")}
         actions={
           <>
-            <ExportButton label="Export CSV" />
+            <ExportButton />
             <button
               type="button"
               onClick={() => navigate("/dashboard/livestock/add")}
               className="inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"
             >
               <PlusCircle className="h-4 w-4" aria-hidden="true" />
-              Add Livestock
+              {t("nav.item.addLivestock")}
             </button>
           </>
         }
       />
 
       <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
-        <SearchInput value={search} onChange={setSearch} placeholder="Cari nama, ID, atau ear tag..." className="w-full sm:w-64" />
-        <FilterSelect label="Farm" value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
-        <FilterSelect label="Type" value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
-        <FilterSelect label="Health" value={healthFilter} onChange={setHealthFilter} options={healthOptions} />
-        <FilterSelect label="Device" value={deviceFilter} onChange={setDeviceFilter} options={deviceOptions} />
+        <SearchInput value={search} onChange={setSearch} placeholder={t("livestock.searchPlaceholder")} className="w-full sm:w-64" />
+        <FilterSelect label={t("filter.farm")} value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
+        <FilterSelect label={t("filter.type")} value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
+        <FilterSelect label={t("filter.health")} value={healthFilter} onChange={setHealthFilter} options={healthOptions} />
+        <FilterSelect label={t("filter.device")} value={deviceFilter} onChange={setDeviceFilter} options={deviceOptions} />
 
         <div className="ml-auto flex items-center gap-1 rounded-xl border border-terrava-border p-1">
           <button
             type="button"
             onClick={() => setView("table")}
-            aria-label="Table view"
+            aria-label={t("view.table")}
             className={`rounded-lg p-1.5 ${view === "table" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}
           >
             <ListIcon className="h-4 w-4" aria-hidden="true" />
@@ -168,7 +195,7 @@ export default function LivestockListPage() {
           <button
             type="button"
             onClick={() => setView("grid")}
-            aria-label="Grid view"
+            aria-label={t("view.grid")}
             className={`rounded-lg p-1.5 ${view === "grid" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}
           >
             <LayoutGrid className="h-4 w-4" aria-hidden="true" />
@@ -179,7 +206,7 @@ export default function LivestockListPage() {
       {loading ? (
         <LoadingSkeleton variant={view === "table" ? "table" : "cards"} rows={8} />
       ) : filtered.length === 0 ? (
-        <EmptyState title="Tidak ada ternak ditemukan" description="Coba ubah filter atau kata kunci pencarian Anda." />
+        <EmptyState title={t("livestock.emptyTitle")} description={t("livestock.emptyDescription")} />
       ) : view === "table" ? (
         <DataTable
           data={filtered}
@@ -187,17 +214,17 @@ export default function LivestockListPage() {
           enableRowSelection
           bulkActions={
             <>
-              <button onClick={() => toast.success("Ternak dipindahkan ke grup baru.")} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
-                Move to group
+              <button onClick={() => toast.success(t("livestock.toast.bulkMove"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
+                {t("livestock.action.moveToGroup")}
               </button>
-              <button onClick={() => toast.success("Perangkat ditugaskan ke ternak terpilih.")} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
-                Assign device
+              <button onClick={() => toast.success(t("livestock.toast.bulkAssign"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
+                {t("livestock.action.assignDevice")}
               </button>
-              <button onClick={() => toast.success("Data ternak terpilih diekspor.")} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
-                Export
+              <button onClick={() => toast.success(t("livestock.toast.bulkExport"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
+                {t("common.export")}
               </button>
-              <button onClick={() => toast.success("Ternak terpilih diarsipkan.")} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-error hover:bg-white">
-                Archive
+              <button onClick={() => toast.success(t("livestock.toast.bulkArchive"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-error hover:bg-white">
+                {t("livestock.action.archive")}
               </button>
             </>
           }

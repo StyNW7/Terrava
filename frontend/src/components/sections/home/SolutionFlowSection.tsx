@@ -1,5 +1,6 @@
 import { Radio, Antenna, Cloud, BrainCircuit, Monitor, Users, ChevronRight } from "lucide-react";
 import SectionHeading from "@/components/common/SectionHeading";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const flowSteps = [
   { icon: Radio, label: "Smart Ear Tag" },
@@ -11,10 +12,12 @@ const flowSteps = [
 ];
 
 export default function SolutionFlowSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="bg-white py-20 sm:py-28">
       <div className="container">
-        <SectionHeading title="Dari data ternak menjadi tindakan yang lebih tepat." />
+        <SectionHeading title={t("home.flow.title")} />
 
         <div className="mt-14 flex flex-col items-stretch gap-4 overflow-x-auto lg:flex-row lg:items-center lg:justify-between lg:gap-2">
           {flowSteps.map((step, index) => (

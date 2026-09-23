@@ -19,18 +19,22 @@ import { useAuth } from "@/hooks/useAuth";
 import { images } from "@/data/images";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "@/components/common/ThemeToggle";
+import LanguageToggle from "@/components/common/LanguageToggle";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const steps = [
-  { id: 1, label: "Profil Peternakan", icon: Building2 },
-  { id: 2, label: "Hubungkan Perangkat", icon: Radio },
-  { id: 3, label: "Undang Tim", icon: Users },
+  { id: 1, key: "farmProfile", icon: Building2 },
+  { id: 2, key: "connectDevice", icon: Radio },
+  { id: 3, key: "inviteTeam", icon: Users },
 ];
 
-const pairingStages = ["Mencari gateway LoRa...", "Gateway ditemukan", "Menyinkronkan smart ear tag", "Kalibrasi sensor", "Perangkat siap"];
+const pairingStageKeys = ["searching", "found", "syncing", "calibrating", "ready"];
 
 function StepIndicator({ current }: { current: number }) {
+  const { t } = useLanguage();
+
   return (
-    <ol className="flex items-center gap-2 sm:gap-3" aria-label="Progres onboarding">
+    <ol className="flex items-center gap-2 sm:gap-3" aria-label={t("onboarding.progress")}>
       {steps.map((step, index) => {
         const done = current > step.id;
         const active = current === step.id;
@@ -48,7 +52,7 @@ function StepIndicator({ current }: { current: number }) {
                 {done ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : step.id}
               </span>
               <span className={cn("hidden text-sm font-medium sm:block", active ? "text-terrava-text" : "text-terrava-muted")}>
-                {step.label}
+                {t("onboarding.step." + step.key)}
               </span>
             </div>
             {index < steps.length - 1 && (
@@ -64,6 +68,7 @@ function StepIndicator({ current }: { current: number }) {
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
+  const { t } = useLanguage();
   const [step, setStep] = useState(1);
   const [farmName, setFarmName] = useState(user?.farmName ?? "");
   const [location, setLocation] = useState("Boyolali, Jawa Tengah");
@@ -78,19 +83,19 @@ export default function OnboardingPage() {
     document.title = "Onboarding | Terrava";
   }, []);
 
-  const firstName = (user?.name ?? "Peternak").replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
-  const paired = pairStage >= pairingStages.length - 1;
+  const firstName = (user?.name ?? t("auth.defaultRole")).replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
+  const paired = pairStage >= pairingStageKeys.length - 1;
 
   const startPairing = () => {
     if (pairing || paired) return;
     setPairing(true);
     setPairStage(0);
-    pairingStages.forEach((_, index) => {
+    pairingStageKeys.forEach((_, index) => {
       setTimeout(() => {
         setPairStage(index);
-        if (index === pairingStages.length - 1) {
+        if (index === pairingStageKeys.length - 1) {
           setPairing(false);
-          toast.success("Smart ear tag berhasil terhubung.");
+          toast.success(t("onboarding.pairingSuccess"));
         }
       }, 650 * (index + 1));
     });
@@ -100,11 +105,11 @@ export default function OnboardingPage() {
     const value = inviteInput.trim().toLowerCase();
     if (!value) return;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      toast.error("Gunakan format email yang valid.");
+      toast.error(t("validation.emailFormat"));
       return;
     }
     if (invites.includes(value)) {
-      toast.error("Email tersebut sudah ditambahkan.");
+      toast.error(t("onboarding.emailAlreadyAdded"));
       return;
     }
     setInvites((prev) => [...prev, value]);
@@ -115,7 +120,9 @@ export default function OnboardingPage() {
     setFinishing(true);
     if (farmName.trim()) updateUser({ farmName: farmName.trim() });
     await new Promise((resolve) => setTimeout(resolve, 900));
-    toast.success(invites.length > 0 ? `Undangan terkirim ke ${invites.length} anggota tim.` : "Workspace Terrava Anda siap digunakan.");
+    toast.success(
+      invites.length > 0 ? t("onboarding.invitesSent", { count: invites.length }) : t("onboarding.workspaceReady")
+    );
     navigate("/dashboard", { replace: true });
   };
 
@@ -131,13 +138,14 @@ export default function OnboardingPage() {
             <span className="text-xl font-bold text-terrava-text">Terrava</span>
           </Link>
           <div className="flex items-center gap-3">
+            <LanguageToggle className="h-9" />
             <ThemeToggle className="h-9 w-9" />
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
               className="text-sm font-medium text-terrava-muted transition-colors hover:text-terrava-primary"
             >
-              Lewati untuk sekarang
+              {t("onboarding.skip")}
             </button>
           </div>
         </div>
@@ -152,13 +160,13 @@ export default function OnboardingPage() {
         >
           <span className="inline-flex items-center gap-1.5 rounded-full bg-terrava-light px-3.5 py-1 text-xs font-semibold uppercase tracking-wide text-terrava-primary">
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-            Langkah {step} dari {steps.length}
+            {t("onboarding.stepOf", { current: step, total: steps.length })}
           </span>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-terrava-text sm:text-4xl">
-            Selamat datang, {firstName}. Mari siapkan workspace Anda.
+            {t("onboarding.title", { name: firstName })}
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-terrava-muted sm:text-base">
-            Tiga langkah singkat agar dashboard Terrava langsung relevan dengan kondisi peternakan Anda.
+            {t("onboarding.subtitle")}
           </p>
 
           <div className="mt-8">
@@ -181,23 +189,23 @@ export default function OnboardingPage() {
                       <Building2 className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <div>
-                      <h2 className="text-lg font-semibold text-terrava-text">Profil peternakan</h2>
-                      <p className="text-sm text-terrava-muted">Informasi dasar untuk menyesuaikan dashboard Anda.</p>
+                      <h2 className="text-lg font-semibold text-terrava-text">{t("onboarding.step.farmProfile")}</h2>
+                      <p className="text-sm text-terrava-muted">{t("onboarding.farmProfileDescription")}</p>
                     </div>
                   </div>
 
                   <div className="grid gap-5 sm:grid-cols-2">
                     <label className="block sm:col-span-2">
-                      <span className="mb-1.5 block text-sm font-medium text-terrava-text">Nama peternakan</span>
+                      <span className="mb-1.5 block text-sm font-medium text-terrava-text">{t("onboarding.farmName")}</span>
                       <input
                         value={farmName}
                         onChange={(event) => setFarmName(event.target.value)}
-                        placeholder="Contoh: Terrava Farm Boyolali"
+                        placeholder={t("onboarding.farmNamePlaceholder")}
                         className="w-full rounded-xl border border-terrava-border bg-white px-4 py-3 text-sm text-terrava-text transition-colors focus:border-terrava-primary focus:outline-none focus:ring-2 focus:ring-terrava-primary/20"
                       />
                     </label>
                     <label className="block">
-                      <span className="mb-1.5 block text-sm font-medium text-terrava-text">Lokasi</span>
+                      <span className="mb-1.5 block text-sm font-medium text-terrava-text">{t("category.location")}</span>
                       <div className="relative">
                         <MapPin className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-terrava-muted" aria-hidden="true" />
                         <input
@@ -208,7 +216,7 @@ export default function OnboardingPage() {
                       </div>
                     </label>
                     <label className="block">
-                      <span className="mb-1.5 block text-sm font-medium text-terrava-text">Perkiraan jumlah ternak</span>
+                      <span className="mb-1.5 block text-sm font-medium text-terrava-text">{t("onboarding.estimatedHerdSize")}</span>
                       <div className="relative">
                         <PawPrint className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-terrava-muted" aria-hidden="true" />
                         <select
@@ -216,11 +224,11 @@ export default function OnboardingPage() {
                           onChange={(event) => setLivestockCount(event.target.value)}
                           className="w-full appearance-none rounded-xl border border-terrava-border bg-white py-3 pl-10 pr-4 text-sm text-terrava-text transition-colors focus:border-terrava-primary focus:outline-none focus:ring-2 focus:ring-terrava-primary/20"
                         >
-                          <option value="1-10">1 - 10 ekor</option>
-                          <option value="11-50">11 - 50 ekor</option>
-                          <option value="51-100">51 - 100 ekor</option>
-                          <option value="101-500">101 - 500 ekor</option>
-                          <option value="500+">Lebih dari 500 ekor</option>
+                          <option value="1-10">{t("onboarding.herd.range", { range: "1 - 10" })}</option>
+                          <option value="11-50">{t("onboarding.herd.range", { range: "11 - 50" })}</option>
+                          <option value="51-100">{t("onboarding.herd.range", { range: "51 - 100" })}</option>
+                          <option value="101-500">{t("onboarding.herd.range", { range: "101 - 500" })}</option>
+                          <option value="500+">{t("onboarding.herd.moreThan", { count: 500 })}</option>
                         </select>
                       </div>
                     </label>
@@ -242,8 +250,8 @@ export default function OnboardingPage() {
                       <Radio className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <div>
-                      <h2 className="text-lg font-semibold text-terrava-text">Hubungkan smart ear tag</h2>
-                      <p className="text-sm text-terrava-muted">Simulasi pairing perangkat pertama Anda ke gateway Terrava.</p>
+                      <h2 className="text-lg font-semibold text-terrava-text">{t("onboarding.connectTitle")}</h2>
+                      <p className="text-sm text-terrava-muted">{t("onboarding.connectDescription")}</p>
                     </div>
                   </div>
 
@@ -266,10 +274,14 @@ export default function OnboardingPage() {
                         </span>
                       </div>
                       <p className="mt-5 text-sm font-semibold text-terrava-text">
-                        {paired ? "TAG-0001 terhubung" : pairing ? "Menghubungkan..." : "Belum ada perangkat"}
+                        {paired
+                          ? t("onboarding.tagConnected", { tag: "TAG-0001" })
+                          : pairing
+                          ? t("onboarding.connecting")
+                          : t("onboarding.noDeviceYet")}
                       </p>
                       <p className="mt-1 text-center text-xs text-terrava-muted">
-                        {paired ? "Sinyal kuat · Baterai 100%" : "Tekan tombol pairing pada gateway, lalu mulai."}
+                        {paired ? t("onboarding.deviceMeta") : t("onboarding.pairingHint")}
                       </p>
                       <button
                         type="button"
@@ -278,12 +290,12 @@ export default function OnboardingPage() {
                         className="mt-5 inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-terrava-hover disabled:pointer-events-none disabled:opacity-60"
                       >
                         {pairing && <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />}
-                        {paired ? "Perangkat siap" : pairing ? "Memproses" : "Mulai pairing"}
+                        {paired ? t("onboarding.stage.ready") : pairing ? t("onboarding.processing") : t("onboarding.startPairing")}
                       </button>
                     </div>
 
                     <ol className="space-y-2.5">
-                      {pairingStages.map((stage, index) => {
+                      {pairingStageKeys.map((stage, index) => {
                         const done = pairStage > index || paired;
                         const active = pairStage === index && !paired;
                         return (
@@ -304,7 +316,7 @@ export default function OnboardingPage() {
                             >
                               {done ? <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" /> : active ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : index + 1}
                             </span>
-                            {stage}
+                            {t("onboarding.stage." + stage)}
                           </li>
                         );
                       })}
@@ -327,8 +339,8 @@ export default function OnboardingPage() {
                       <Users className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <div>
-                      <h2 className="text-lg font-semibold text-terrava-text">Undang anggota tim</h2>
-                      <p className="text-sm text-terrava-muted">Opsional. Anda bisa menambahkannya nanti dari menu Team and Staff.</p>
+                      <h2 className="text-lg font-semibold text-terrava-text">{t("onboarding.inviteTitle")}</h2>
+                      <p className="text-sm text-terrava-muted">{t("onboarding.inviteDescription")}</p>
                     </div>
                   </div>
 
@@ -343,7 +355,7 @@ export default function OnboardingPage() {
                           addInvite();
                         }
                       }}
-                      placeholder="nama@peternakan.id"
+                      placeholder={t("onboarding.invitePlaceholder")}
                       className="flex-1 rounded-xl border border-terrava-border bg-white px-4 py-3 text-sm text-terrava-text transition-colors focus:border-terrava-primary focus:outline-none focus:ring-2 focus:ring-terrava-primary/20"
                     />
                     <button
@@ -351,7 +363,7 @@ export default function OnboardingPage() {
                       onClick={addInvite}
                       className="rounded-xl border border-terrava-primary/30 bg-terrava-light px-5 py-3 text-sm font-semibold text-terrava-primary transition-colors hover:bg-terrava-soft"
                     >
-                      Tambah
+                      {t("common.add")}
                     </button>
                   </div>
 
@@ -382,7 +394,7 @@ export default function OnboardingPage() {
                               onClick={() => setInvites((prev) => prev.filter((item) => item !== email))}
                               className="text-xs font-semibold text-terrava-muted hover:text-terrava-error"
                             >
-                              Hapus
+                              {t("common.delete")}
                             </button>
                           </motion.li>
                         ))}
@@ -391,19 +403,21 @@ export default function OnboardingPage() {
                   </AnimatePresence>
 
                   <div className="mt-6 rounded-2xl border border-terrava-border bg-terrava-bg p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-terrava-muted">Ringkasan</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-terrava-muted">{t("onboarding.summary")}</p>
                     <dl className="mt-2 grid gap-2 text-sm sm:grid-cols-3">
                       <div>
-                        <dt className="text-terrava-muted">Peternakan</dt>
-                        <dd className="font-semibold text-terrava-text">{farmName || "Belum diisi"}</dd>
+                        <dt className="text-terrava-muted">{t("onboarding.summary.farm")}</dt>
+                        <dd className="font-semibold text-terrava-text">{farmName || t("onboarding.notFilled")}</dd>
                       </div>
                       <div>
-                        <dt className="text-terrava-muted">Lokasi</dt>
+                        <dt className="text-terrava-muted">{t("category.location")}</dt>
                         <dd className="font-semibold text-terrava-text">{location || "-"}</dd>
                       </div>
                       <div>
-                        <dt className="text-terrava-muted">Perangkat</dt>
-                        <dd className="font-semibold text-terrava-text">{paired ? "1 terhubung" : "Belum terhubung"}</dd>
+                        <dt className="text-terrava-muted">{t("category.device")}</dt>
+                        <dd className="font-semibold text-terrava-text">
+                          {paired ? t("onboarding.oneConnected") : t("onboarding.notConnected")}
+                        </dd>
                       </div>
                     </dl>
                   </div>
@@ -419,7 +433,7 @@ export default function OnboardingPage() {
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-terrava-muted transition-colors hover:text-terrava-primary disabled:invisible"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                Kembali
+                {t("common.back")}
               </button>
 
               {step < steps.length ? (
@@ -428,7 +442,7 @@ export default function OnboardingPage() {
                   onClick={() => setStep((prev) => prev + 1)}
                   className="group inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5 hover:bg-terrava-hover"
                 >
-                  Lanjutkan
+                  {t("auth.continue")}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                 </button>
               ) : (
@@ -439,7 +453,7 @@ export default function OnboardingPage() {
                   className="group inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5 hover:bg-terrava-hover disabled:pointer-events-none disabled:opacity-70"
                 >
                   {finishing ? <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-                  Masuk ke Dashboard
+                  {t("onboarding.goToDashboard")}
                   {!finishing && <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />}
                 </button>
               )}

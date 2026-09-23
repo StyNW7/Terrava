@@ -7,6 +7,7 @@ import { authPanelCopy } from "@/data/auth";
 import { images } from "@/data/images";
 import type { AuthBenefit, AuthPanelVariant, AuthTestimonialData } from "@/types/auth";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface AuthLayoutProps {
   panelVariant: AuthPanelVariant;
@@ -37,6 +38,7 @@ export default function AuthLayout({
   featureItems,
   maxWidthClassName = "max-w-md",
 }: AuthLayoutProps) {
+  const { tr } = useLanguage();
   const copy = authPanelCopy[panelVariant];
 
   return (
@@ -61,7 +63,7 @@ export default function AuthLayout({
               </span>
             </span>
           </Link>
-          <p className="hidden max-w-[220px] text-right text-xs leading-snug text-white/80 sm:block">{copy.heading}</p>
+          <p className="hidden max-w-[220px] text-right text-xs leading-snug text-white/80 sm:block">{tr(copy.heading)}</p>
         </div>
       </div>
 

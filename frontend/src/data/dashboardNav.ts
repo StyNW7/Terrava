@@ -15,67 +15,69 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 export interface DashboardNavItem {
-  label: string;
+  /** Dictionary key resolved with `t()` at render time. */
+  labelKey: string;
   href: string;
   icon: LucideIcon;
 }
 
 export interface DashboardNavGroup {
-  label: string;
+  labelKey: string;
   items: DashboardNavItem[];
 }
 
 export const dashboardNavGroups: DashboardNavGroup[] = [
   {
-    label: "Overview",
-    items: [{ label: "Dashboard", href: "/dashboard", icon: LayoutDashboard }],
+    labelKey: "nav.group.overview",
+    items: [{ labelKey: "nav.item.dashboard", href: "/dashboard", icon: LayoutDashboard }],
   },
   {
-    label: "Livestock",
+    labelKey: "nav.group.livestock",
     items: [
-      { label: "Livestock", href: "/dashboard/livestock", icon: PawPrint },
-      { label: "Add Livestock", href: "/dashboard/livestock/add", icon: PlusCircle },
-      { label: "Monitoring", href: "/dashboard/monitoring", icon: Activity },
-      { label: "Alerts", href: "/dashboard/alerts", icon: BellRing },
-      { label: "AI Insights", href: "/dashboard/ai-insights", icon: BrainCircuit },
+      { labelKey: "nav.item.livestock", href: "/dashboard/livestock", icon: PawPrint },
+      { labelKey: "nav.item.addLivestock", href: "/dashboard/livestock/add", icon: PlusCircle },
+      { labelKey: "nav.item.monitoring", href: "/dashboard/monitoring", icon: Activity },
+      { labelKey: "nav.item.alerts", href: "/dashboard/alerts", icon: BellRing },
+      { labelKey: "nav.item.aiInsights", href: "/dashboard/ai-insights", icon: BrainCircuit },
     ],
   },
   {
-    label: "Farm Operations",
+    labelKey: "nav.group.farmOperations",
     items: [
-      { label: "Farm Map", href: "/dashboard/map", icon: MapPinned },
-      { label: "Farms and Barns", href: "/dashboard/farms", icon: Building2 },
+      { labelKey: "nav.item.farmMap", href: "/dashboard/map", icon: MapPinned },
+      { labelKey: "nav.item.farms", href: "/dashboard/farms", icon: Building2 },
     ],
   },
   {
-    label: "IoT Management",
-    items: [{ label: "Devices", href: "/dashboard/devices", icon: Cpu }],
+    labelKey: "nav.group.iot",
+    items: [{ labelKey: "nav.item.devices", href: "/dashboard/devices", icon: Cpu }],
   },
   {
-    label: "Organization",
-    items: [{ label: "Team and Staff", href: "/dashboard/team", icon: Users }],
+    labelKey: "nav.group.organization",
+    items: [{ labelKey: "nav.item.team", href: "/dashboard/team", icon: Users }],
   },
   {
-    label: "Intelligence",
-    items: [{ label: "Reports and Analytics", href: "/dashboard/reports", icon: BarChart3 }],
+    labelKey: "nav.group.intelligence",
+    items: [{ labelKey: "nav.item.reports", href: "/dashboard/reports", icon: BarChart3 }],
   },
   {
-    label: "System",
-    items: [{ label: "Settings", href: "/dashboard/settings", icon: Settings }],
+    labelKey: "nav.group.system",
+    items: [{ labelKey: "nav.item.settings", href: "/dashboard/settings", icon: Settings }],
   },
 ];
 
-export const breadcrumbLabels: Record<string, string> = {
-  dashboard: "Dashboard",
-  livestock: "Livestock",
-  add: "Add Livestock",
-  monitoring: "Monitoring",
-  alerts: "Alerts",
-  "ai-insights": "AI Insights",
-  map: "Farm Map",
-  farms: "Farms and Barns",
-  devices: "Devices",
-  team: "Team and Staff",
-  reports: "Reports and Analytics",
-  settings: "Settings",
+/** URL segment to dictionary key, used by the breadcrumb. */
+export const breadcrumbLabelKeys: Record<string, string> = {
+  dashboard: "nav.item.dashboard",
+  livestock: "nav.item.livestock",
+  add: "nav.item.addLivestock",
+  monitoring: "nav.item.monitoring",
+  alerts: "nav.item.alerts",
+  "ai-insights": "nav.item.aiInsights",
+  map: "nav.item.farmMap",
+  farms: "nav.item.farms",
+  devices: "nav.item.devices",
+  team: "nav.item.team",
+  reports: "nav.item.reports",
+  settings: "nav.item.settings",
 };

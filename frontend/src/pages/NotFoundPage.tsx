@@ -3,11 +3,14 @@ import { motion } from "framer-motion";
 import { MapPinned } from "lucide-react";
 import PrimaryButton from "@/components/common/PrimaryButton";
 import SecondaryButton from "@/components/common/SecondaryButton";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function NotFoundPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
-    document.title = "Terrava | Halaman Tidak Ditemukan";
-  }, []);
+    document.title = "Terrava | " + t("notFound.title");
+  }, [t]);
 
   return (
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-4 py-24">
@@ -28,14 +31,13 @@ export default function NotFoundPage() {
         >
           <MapPinned className="h-8 w-8" aria-hidden="true" />
         </motion.div>
-        <h1 className="text-3xl font-bold text-terrava-text sm:text-4xl">Halaman tidak ditemukan</h1>
+        <h1 className="text-3xl font-bold text-terrava-text sm:text-4xl">{t("notFound.title")}</h1>
         <p className="mt-4 text-sm leading-relaxed text-terrava-muted">
-          Halaman yang Anda cari mungkin telah dipindahkan atau tidak tersedia. Kembali ke beranda atau
-          hubungi tim kami untuk bantuan lebih lanjut.
+          {t("notFound.description")}
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <PrimaryButton href="/">Back to Home</PrimaryButton>
-          <SecondaryButton href="/contact">Contact Support</SecondaryButton>
+          <PrimaryButton href="/">{t("common.backToHome")}</PrimaryButton>
+          <SecondaryButton href="/contact">{t("notFound.contactSupport")}</SecondaryButton>
         </div>
       </motion.div>
     </section>

@@ -1,11 +1,14 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import ChartCard from "@/components/charts/ChartCard";
 import { environmentTrend30d } from "@/data/dashboardChartData";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmEnvironmentTab() {
+  const { t } = useLanguage();
+
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <ChartCard title="Temperature">
+      <ChartCard title={t("vitals.temperature")}>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={environmentTrend30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -16,7 +19,7 @@ export default function FarmEnvironmentTab() {
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
-      <ChartCard title="Humidity">
+      <ChartCard title={t("vitals.humidity")}>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={environmentTrend30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -27,7 +30,7 @@ export default function FarmEnvironmentTab() {
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
-      <ChartCard title="Ammonia Level">
+      <ChartCard title={t("chart.ammoniaLevel")}>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={environmentTrend30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
@@ -38,7 +41,7 @@ export default function FarmEnvironmentTab() {
           </LineChart>
         </ResponsiveContainer>
       </ChartCard>
-      <ChartCard title="Heat Stress Index">
+      <ChartCard title={t("chart.heatStressIndex")}>
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={environmentTrend30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />

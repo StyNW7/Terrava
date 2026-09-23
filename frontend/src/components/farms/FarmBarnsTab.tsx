@@ -1,7 +1,9 @@
 import type { Farm } from "@/types/dashboard";
 import { getBarnsByFarm } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmBarnsTab({ farm }: { farm: Farm }) {
+  const { t } = useLanguage();
   const farmBarns = getBarnsByFarm(farm.id);
 
   return (
@@ -12,22 +14,24 @@ export default function FarmBarnsTab({ farm }: { farm: Farm }) {
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-lg bg-terrava-bg p-2.5">
               <p className="font-semibold text-terrava-text">{barn.occupancy}/{barn.capacity}</p>
-              <p className="text-terrava-muted">Occupancy</p>
+              <p className="text-terrava-muted">{t("farms.occupancy")}</p>
             </div>
             <div className="rounded-lg bg-terrava-bg p-2.5">
               <p className="font-semibold text-terrava-text">{barn.healthScore}</p>
-              <p className="text-terrava-muted">Health Score</p>
+              <p className="text-terrava-muted">{t("livestock.column.healthScore")}</p>
             </div>
             <div className="rounded-lg bg-terrava-bg p-2.5">
               <p className="font-semibold text-terrava-text">{barn.temperature}°C</p>
-              <p className="text-terrava-muted">Temperature</p>
+              <p className="text-terrava-muted">{t("vitals.temperature")}</p>
             </div>
             <div className="rounded-lg bg-terrava-bg p-2.5">
               <p className="font-semibold text-terrava-text">{barn.humidity}%</p>
-              <p className="text-terrava-muted">Humidity</p>
+              <p className="text-terrava-muted">{t("vitals.humidity")}</p>
             </div>
           </div>
-          <p className="mt-3 text-xs text-terrava-muted">{barn.alertCount} active alerts &middot; Manager: {barn.manager}</p>
+          <p className="mt-3 text-xs text-terrava-muted">
+            {t("farms.activeAlertsCount", { count: barn.alertCount })} &middot; {t("farms.manager")}: {barn.manager}
+          </p>
         </div>
       ))}
     </div>

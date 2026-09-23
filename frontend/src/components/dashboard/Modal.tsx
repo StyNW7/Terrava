@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { X } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ModalProps {
   open: boolean;
@@ -12,6 +13,8 @@ interface ModalProps {
 }
 
 export default function Modal({ open, onClose, title, children, footer, widthClassName = "max-w-lg" }: ModalProps) {
+  const { t } = useLanguage();
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
@@ -30,7 +33,7 @@ export default function Modal({ open, onClose, title, children, footer, widthCla
           <h2 id="modal-title" className="text-lg font-semibold text-terrava-text">
             {title}
           </h2>
-          <button type="button" onClick={onClose} aria-label="Tutup" className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg">
+          <button type="button" onClick={onClose} aria-label={t("common.close")} className="rounded-lg p-1.5 text-terrava-muted hover:bg-terrava-bg">
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>

@@ -1,11 +1,14 @@
 import SectionHeading from "@/components/common/SectionHeading";
 import { specifications } from "@/data/earTag";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SpecsSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="py-20 sm:py-28">
       <div className="container">
-        <SectionHeading badge="Specifications" title="Spesifikasi teknis smart ear tag" />
+        <SectionHeading badge={t("eartag.specs.badge")} title={t("eartag.specs.title")} />
 
         <div className="mx-auto mt-14 max-w-3xl overflow-x-auto rounded-2xl border border-terrava-border">
           <table className="w-full min-w-[420px] border-collapse text-left text-sm">

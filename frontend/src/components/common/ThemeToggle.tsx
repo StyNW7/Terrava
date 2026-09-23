@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/lib/utils";
 
 interface ThemeToggleProps {
@@ -12,14 +13,15 @@ interface ThemeToggleProps {
 /** Animated sun/moon switch between light and dark mode. */
 export default function ThemeToggle({ className, inverted = false }: ThemeToggleProps) {
   const { isDark, toggle } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={isDark ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
+      aria-label={isDark ? t("theme.toLight") : t("theme.toDark")}
       aria-pressed={isDark}
-      title={isDark ? "Mode terang" : "Mode gelap"}
+      title={isDark ? t("theme.light") : t("theme.dark")}
       className={cn(
         "relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border transition-all duration-300",
         inverted

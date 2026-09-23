@@ -4,8 +4,11 @@ import ContactOptionsSection from "@/components/sections/contact/ContactOptionsS
 import ContactInfoSection from "@/components/sections/contact/ContactInfoSection";
 import FaqSection from "@/components/sections/FaqSection";
 import { contactFaqs } from "@/data/faqs";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ContactPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Contact Terrava | Request Demo and Pilot Project";
   }, []);
@@ -13,16 +16,16 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        badge="Contact Terrava"
-        title="Mari bangun masa depan peternakan bersama."
-        description="Hubungi tim Terrava untuk demo, pilot project, kemitraan teknologi, kolaborasi riset, atau implementasi pada peternakan dan koperasi."
+        badge={t("contact.hero.badge")}
+        title={t("contact.hero.title")}
+        description={t("contact.hero.description")}
       />
       <ContactOptionsSection />
       <ContactInfoSection />
       <FaqSection
         faqs={contactFaqs}
         badge="Quick FAQ"
-        title="Pertanyaan seputar demo dan kemitraan"
+        title={t("contact.faq.title")}
         tone="muted"
       />
     </>

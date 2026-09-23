@@ -8,8 +8,10 @@ import { FilterSelect } from "@/components/dashboard/FilterBar";
 import ExportButton from "@/components/dashboard/ExportButton";
 import FarmCard from "@/components/farms/FarmCard";
 import { farms, barns, getFarmById } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function FarmManagementPage() {
+  const { t } = useLanguage();
   const [search, setSearch] = useState("");
   const [region, setRegion] = useState("all");
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -34,40 +36,40 @@ export default function FarmManagementPage() {
   return (
     <div>
       <PageHeader
-        title="Farms and Barns"
-        subtitle="Kelola seluruh peternakan, kandang, dan kapasitas operasional Anda."
+        title={t("nav.item.farms")}
+        subtitle={t("farms.subtitle")}
         actions={
           <>
             <ExportButton />
             <button
               type="button"
-              onClick={() => toast.success("Form tambah farm baru dibuka.")}
+              onClick={() => toast.success(t("farms.toast.addFarm"))}
               className="inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"
             >
               <PlusCircle className="h-4 w-4" aria-hidden="true" />
-              Add Farm
+              {t("farms.addFarm")}
             </button>
           </>
         }
       />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        <MetricCard icon={Building2} label="Total Farms" value={farms.length} />
-        <MetricCard icon={Warehouse} label="Total Barns" value={barns.length} />
-        <MetricCard icon={Warehouse} label="Total Capacity" value={totalCapacity} />
-        <MetricCard icon={PawPrint} label="Total Livestock" value={totalLivestock} />
-        <MetricCard icon={TriangleAlert} label="Active Alerts" value={totalAlerts} tone="warning" />
-        <MetricCard icon={Radio} label="Device Coverage" value={`${avgCoverage}%`} />
+        <MetricCard icon={Building2} label={t("farms.metric.totalFarms")} value={farms.length} />
+        <MetricCard icon={Warehouse} label={t("farms.metric.totalBarns")} value={barns.length} />
+        <MetricCard icon={Warehouse} label={t("farms.metric.totalCapacity")} value={totalCapacity} />
+        <MetricCard icon={PawPrint} label={t("metric.totalLivestock")} value={totalLivestock} />
+        <MetricCard icon={TriangleAlert} label={t("dashboard.activeAlerts")} value={totalAlerts} tone="warning" />
+        <MetricCard icon={Radio} label={t("farms.metric.deviceCoverage")} value={`${avgCoverage}%`} />
       </div>
 
       <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
-        <SearchInput value={search} onChange={setSearch} placeholder="Cari farm..." className="w-full sm:w-64" />
-        <FilterSelect label="Region" value={region} onChange={setRegion} options={[...new Set(farms.map((f) => f.region))].map((r) => ({ value: r, label: r }))} />
+        <SearchInput value={search} onChange={setSearch} placeholder={t("farms.searchPlaceholder")} className="w-full sm:w-64" />
+        <FilterSelect label={t("filter.region")} value={region} onChange={setRegion} options={[...new Set(farms.map((f) => f.region))].map((r) => ({ value: r, label: r }))} />
         <div className="ml-auto flex items-center gap-1 rounded-xl border border-terrava-border p-1">
-          <button type="button" onClick={() => setView("grid")} aria-label="Grid view" className={`rounded-lg p-1.5 ${view === "grid" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}>
+          <button type="button" onClick={() => setView("grid")} aria-label={t("view.grid")} className={`rounded-lg p-1.5 ${view === "grid" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}>
             <LayoutGrid className="h-4 w-4" aria-hidden="true" />
           </button>
-          <button type="button" onClick={() => setView("list")} aria-label="List view" className={`rounded-lg p-1.5 ${view === "list" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}>
+          <button type="button" onClick={() => setView("list")} aria-label={t("view.list")} className={`rounded-lg p-1.5 ${view === "list" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}>
             <ListIcon className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
@@ -79,20 +81,20 @@ export default function FarmManagementPage() {
         ))}
       </div>
 
-      <h2 className="mb-4 text-lg font-semibold text-terrava-text">Barn Overview</h2>
+      <h2 className="mb-4 text-lg font-semibold text-terrava-text">{t("farms.barnOverview")}</h2>
       <div className="overflow-x-auto rounded-2xl border border-terrava-border bg-white">
         <table className="w-full min-w-[760px] text-left text-sm">
           <thead className="bg-terrava-bg text-xs uppercase text-terrava-muted">
             <tr>
-              <th className="px-4 py-3">Barn</th>
-              <th className="px-4 py-3">Farm</th>
-              <th className="px-4 py-3">Capacity</th>
-              <th className="px-4 py-3">Occupancy</th>
-              <th className="px-4 py-3">Health Score</th>
-              <th className="px-4 py-3">Temperature</th>
-              <th className="px-4 py-3">Humidity</th>
-              <th className="px-4 py-3">Alerts</th>
-              <th className="px-4 py-3">Manager</th>
+              <th className="px-4 py-3">{t("farms.barn")}</th>
+              <th className="px-4 py-3">{t("filter.farm")}</th>
+              <th className="px-4 py-3">{t("farms.capacity")}</th>
+              <th className="px-4 py-3">{t("farms.occupancy")}</th>
+              <th className="px-4 py-3">{t("livestock.column.healthScore")}</th>
+              <th className="px-4 py-3">{t("vitals.temperature")}</th>
+              <th className="px-4 py-3">{t("vitals.humidity")}</th>
+              <th className="px-4 py-3">{t("nav.item.alerts")}</th>
+              <th className="px-4 py-3">{t("farms.manager")}</th>
             </tr>
           </thead>
           <tbody>

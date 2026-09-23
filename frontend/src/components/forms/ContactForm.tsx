@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Loader2, Send, CircleCheck, CircleAlert } from "lucide-react";
 import type { ContactFormData, ContactFormErrors } from "@/types";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const initialData: ContactFormData = {
   fullName: "",
@@ -16,6 +17,7 @@ const initialData: ContactFormData = {
   consent: false,
 };
 
+/** Canonical inquiry values; the visible label comes from `contactOption.*`. */
 const inquiryTypes = [
   "Request Demo",
   "Pilot Project",
@@ -25,6 +27,8 @@ const inquiryTypes = [
   "General Inquiry",
 ];
 
+const contactMethods = ["email", "phone", "whatsapp"];
+
 const inputBase =
   "w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-terrava-text placeholder:text-terrava-muted/70 transition-colors focus:outline-none focus:ring-2 focus:ring-terrava-primary/30";
 
@@ -33,6 +37,7 @@ function fieldClass(hasError: boolean) {
 }
 
 export default function ContactForm() {
+  const { t, tt } = useLanguage();
   const [formData, setFormData] = useState<ContactFormData>(initialData);
   const [errors, setErrors] = useState<ContactFormErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
@@ -45,16 +50,16 @@ export default function ContactForm() {
   const validate = (): boolean => {
     const nextErrors: ContactFormErrors = {};
 
-    if (!formData.fullName.trim()) nextErrors.fullName = "Nama lengkap wajib diisi.";
+    if (!formData.fullName.trim()) nextErrors.fullName = t("contact.form.error.fullName");
     if (!formData.email.trim()) {
-      nextErrors.email = "Email wajib diisi.";
+      nextErrors.email = t("contact.form.error.emailRequired");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      nextErrors.email = "Format email tidak valid.";
+      nextErrors.email = t("contact.form.error.emailInvalid");
     }
-    if (!formData.phone.trim()) nextErrors.phone = "Nomor telepon wajib diisi.";
-    if (!formData.inquiryType) nextErrors.inquiryType = "Pilih jenis pengajuan.";
-    if (!formData.message.trim()) nextErrors.message = "Pesan tidak boleh kosong.";
-    if (!formData.consent) nextErrors.consent = "Persetujuan diperlukan untuk melanjutkan.";
+    if (!formData.phone.trim()) nextErrors.phone = t("contact.form.error.phone");
+    if (!formData.inquiryType) nextErrors.inquiryType = t("contact.form.error.inquiryType");
+    if (!formData.message.trim()) nextErrors.message = t("contact.form.error.message");
+    if (!formData.consent) nextErrors.consent = t("contact.form.error.consent");
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -74,16 +79,14 @@ export default function ContactForm() {
     return (
       <div className="flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-10 text-center shadow-card">
         <CircleCheck className="mb-4 h-12 w-12 text-terrava-primary" aria-hidden="true" />
-        <h3 className="mb-2 text-xl font-semibold text-terrava-text">Terima kasih.</h3>
-        <p className="max-w-sm text-sm text-terrava-muted">
-          Tim Terrava akan menghubungi Anda melalui kontak yang diberikan.
-        </p>
+        <h3 className="mb-2 text-xl font-semibold text-terrava-text">{t("contact.form.successTitle")}</h3>
+        <p className="max-w-sm text-sm text-terrava-muted">{t("contact.form.successDescription")}</p>
         <button
           type="button"
           onClick={() => setStatus("idle")}
           className="mt-6 text-sm font-semibold text-terrava-primary"
         >
-          Kirim pesan lain
+          {t("contact.form.sendAnother")}
         </button>
       </div>
     );
@@ -98,7 +101,7 @@ export default function ContactForm() {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Full Name
+            {t("contact.form.fullName")}
           </label>
           <input
             id="fullName"
@@ -118,7 +121,7 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Email
+            {t("contact.form.email")}
           </label>
           <input
             id="email"
@@ -138,7 +141,7 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Phone Number
+            {t("contact.form.phone")}
           </label>
           <input
             id="phone"
@@ -158,7 +161,7 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="organization" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Organization
+            {t("contact.form.organization")}
           </label>
           <input
             id="organization"
@@ -171,12 +174,12 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Role
+            {t("contact.form.role")}
           </label>
           <input
             id="role"
             type="text"
-            placeholder="Peternak, Manajer, Dokter Hewan, dll."
+            placeholder={t("contact.form.rolePlaceholder")}
             value={formData.role}
             onChange={(event) => updateField("role", event.target.value)}
             className={fieldClass(false)}
@@ -185,7 +188,7 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="inquiryType" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Inquiry Type
+            {t("contact.form.inquiryType")}
           </label>
           <select
             id="inquiryType"
@@ -194,10 +197,10 @@ export default function ContactForm() {
             className={fieldClass(!!errors.inquiryType)}
             aria-invalid={!!errors.inquiryType}
           >
-            <option value="">Pilih jenis pengajuan</option>
+            <option value="">{t("contact.form.inquiryPlaceholder")}</option>
             {inquiryTypes.map((type) => (
               <option key={type} value={type}>
-                {type}
+                {tt("contactOption", type)}
               </option>
             ))}
           </select>
@@ -210,7 +213,7 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="farmLocation" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Farm Location
+            {t("contact.form.farmLocation")}
           </label>
           <input
             id="farmLocation"
@@ -223,7 +226,7 @@ export default function ContactForm() {
 
         <div>
           <label htmlFor="livestockCount" className="mb-1.5 block text-sm font-medium text-terrava-text">
-            Number of Livestock
+            {t("contact.form.livestockCount")}
           </label>
           <input
             id="livestockCount"
@@ -238,7 +241,7 @@ export default function ContactForm() {
 
       <div>
         <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-terrava-text">
-          Message
+          {t("contact.form.message")}
         </label>
         <textarea
           id="message"
@@ -256,10 +259,12 @@ export default function ContactForm() {
       </div>
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-terrava-text">Preferred Contact Method</span>
+        <span className="mb-1.5 block text-sm font-medium text-terrava-text">
+          {t("contact.form.preferredContact")}
+        </span>
         <div className="flex flex-wrap gap-4">
-          {["email", "phone", "whatsapp"].map((method) => (
-            <label key={method} className="flex items-center gap-2 text-sm capitalize text-terrava-text">
+          {contactMethods.map((method) => (
+            <label key={method} className="flex items-center gap-2 text-sm text-terrava-text">
               <input
                 type="radio"
                 name="preferredContact"
@@ -268,7 +273,7 @@ export default function ContactForm() {
                 onChange={(event) => updateField("preferredContact", event.target.value)}
                 className="h-4 w-4 accent-terrava-primary"
               />
-              {method}
+              {t("contact.form.method." + method)}
             </label>
           ))}
         </div>
@@ -283,7 +288,7 @@ export default function ContactForm() {
             className="mt-0.5 h-4 w-4 accent-terrava-primary"
             aria-invalid={!!errors.consent}
           />
-          Saya menyetujui Terrava menghubungi saya terkait pengajuan ini.
+          {t("contact.form.consent")}
         </label>
         {errors.consent && (
           <p className="mt-1.5 flex items-center gap-1 text-xs text-terrava-error">
@@ -299,11 +304,11 @@ export default function ContactForm() {
       >
         {status === "loading" ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" /> Mengirim...
+            <Loader2 className="h-4 w-4 animate-spin" /> {t("contact.form.sending")}
           </>
         ) : (
           <>
-            Send Message
+            {t("contact.form.submit")}
             <Send className="h-4 w-4" />
           </>
         )}

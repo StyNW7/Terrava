@@ -8,7 +8,9 @@ import PrimaryButton from "@/components/common/PrimaryButton";
 import SecondaryButton from "@/components/common/SecondaryButton";
 import UserAvatar from "@/components/dashboard/UserAvatar";
 import ThemeToggle from "@/components/common/ThemeToggle";
+import LanguageToggle from "@/components/common/LanguageToggle";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/lib/utils";
 
 export default function Navbar() {
@@ -16,6 +18,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 12);
@@ -57,7 +60,7 @@ export default function Navbar() {
       <div className={cn("container flex items-center justify-between transition-all duration-300", scrolled ? "h-16" : "h-20")}>
         <Logo />
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigasi utama">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label={t("nav.main")}>
           {mainNavItems.map((item) => {
             const active = isActive(item.href);
             return (
@@ -85,21 +88,22 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <LanguageToggle />
           <ThemeToggle />
           {isAuthenticated ? (
             <PrimaryButton href="/dashboard" showArrow={false} className="gap-2.5 py-2 pl-2 pr-4">
               <UserAvatar initials={user?.initials ?? "TV"} size="sm" online={false} className="[&>span]:ring-white/40" />
               <span className="flex flex-col items-start leading-tight">
-                <span className="text-[10px] font-medium uppercase tracking-wide text-white/70">Masuk sebagai</span>
-                <span className="text-sm">{user?.name?.split(" ")[0] ?? "Pengguna"}</span>
+                <span className="text-[10px] font-medium uppercase tracking-wide text-white/70">{t("nav.signedInAs")}</span>
+                <span className="text-sm">{user?.name?.split(" ")[0] ?? t("nav.user")}</span>
               </span>
               <LayoutDashboard className="ml-1 h-4 w-4" aria-hidden="true" />
             </PrimaryButton>
           ) : (
             <>
-              <SecondaryButton href="/register">Daftar</SecondaryButton>
+              <SecondaryButton href="/register">{t("nav.register")}</SecondaryButton>
               <PrimaryButton href="/login" showArrow={false}>
-                Login
+                {t("nav.login")}
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
               </PrimaryButton>
             </>
@@ -107,6 +111,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
+        <LanguageToggle compact />
         <ThemeToggle />
         <button
           type="button"
@@ -114,7 +119,7 @@ export default function Navbar() {
           onClick={() => setIsOpen((prev) => !prev)}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
-          aria-label={isOpen ? "Tutup menu" : "Buka menu"}
+          aria-label={isOpen ? t("nav.closeMenu") : t("nav.openMenu")}
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
@@ -142,7 +147,7 @@ export default function Navbar() {
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden border-t border-terrava-border bg-white lg:hidden"
           >
-            <nav className="container flex max-h-[calc(100vh-5rem)] flex-col gap-1 overflow-y-auto py-4" aria-label="Navigasi mobile">
+            <nav className="container flex max-h-[calc(100vh-5rem)] flex-col gap-1 overflow-y-auto py-4" aria-label={t("nav.mobile")}>
               {mainNavItems.map((item, index) => (
                 <motion.div
                   key={item.href}
@@ -164,15 +169,15 @@ export default function Navbar() {
               <div className="mt-3 flex flex-col gap-3 px-4 pb-2">
                 {isAuthenticated ? (
                   <PrimaryButton href="/dashboard" className="w-full justify-center">
-                    Buka Dashboard
+                    {t("nav.openDashboard")}
                   </PrimaryButton>
                 ) : (
                   <>
                     <SecondaryButton href="/register" className="w-full justify-center">
-                      Daftar
+                      {t("nav.register")}
                     </SecondaryButton>
                     <PrimaryButton href="/login" className="w-full justify-center">
-                      Login
+                      {t("nav.login")}
                     </PrimaryButton>
                   </>
                 )}

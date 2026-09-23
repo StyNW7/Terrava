@@ -19,8 +19,10 @@ import SeverityBadge from "@/components/dashboard/SeverityBadge";
 import { livestock } from "@/data/mockLivestock";
 import { alerts } from "@/data/mockAlerts";
 import { farms } from "@/data/mockFarms";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function MonitoringPage() {
+  const { lang, t, tr, tRel } = useLanguage();
   const [paused, setPaused] = useState(false);
   const [compact, setCompact] = useState(false);
   const [tableMode, setTableMode] = useState(false);
@@ -53,8 +55,8 @@ export default function MonitoringPage() {
   return (
     <div className={fullscreen ? "fixed inset-0 z-50 overflow-y-auto bg-terrava-bg p-6" : ""}>
       <PageHeader
-        title="Live Monitoring"
-        subtitle="Pantau data vital dan aktivitas ternak secara real-time."
+        title={t("monitoring.title")}
+        subtitle={t("monitoring.subtitle")}
         actions={
           <>
             <button
@@ -63,7 +65,7 @@ export default function MonitoringPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-terrava-border bg-white px-3.5 py-2.5 text-sm font-medium text-terrava-text hover:bg-terrava-bg"
             >
               {paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
-              {paused ? "Resume" : "Pause"}
+              {paused ? t("monitoring.resume") : t("monitoring.pause")}
             </button>
             <button
               type="button"
@@ -71,7 +73,7 @@ export default function MonitoringPage() {
               className="inline-flex items-center gap-2 rounded-xl border border-terrava-border bg-white px-3.5 py-2.5 text-sm font-medium text-terrava-text hover:bg-terrava-bg"
             >
               {fullscreen ? <Minimize2 className="h-4 w-4" aria-hidden="true" /> : <Maximize2 className="h-4 w-4" aria-hidden="true" />}
-              {fullscreen ? "Exit Fullscreen" : "Control Room Mode"}
+              {fullscreen ? t("monitoring.exitFullscreen") : t("monitoring.controlRoom")}
             </button>
           </>
         }
@@ -80,25 +82,27 @@ export default function MonitoringPage() {
       {criticalCount > 0 && (
         <div className="mb-5 flex items-center gap-2.5 rounded-2xl border border-terrava-error/30 bg-terrava-error/5 px-4 py-3 text-sm font-medium text-terrava-error">
           <TriangleAlert className="h-4 w-4" aria-hidden="true" />
-          {criticalCount} livestock require immediate attention.
+          {t("monitoring.criticalNotice", { count: criticalCount })}
         </div>
       )}
 
       <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
         <span className="flex items-center gap-1.5 rounded-full bg-terrava-primary/10 px-3 py-1.5 text-xs font-semibold text-terrava-primary">
           <span className={`h-2 w-2 rounded-full bg-terrava-primary ${paused ? "" : "animate-pulse"}`} aria-hidden="true" />
-          {paused ? "Paused" : "Live"}
+          {paused ? t("monitoring.paused") : t("monitoring.live")}
         </span>
-        <span className="text-xs text-terrava-muted">Last sync: {lastSync.toLocaleTimeString("id-ID")}</span>
-        <FilterSelect label="Farm" value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
+        <span className="text-xs text-terrava-muted">
+          {t("monitoring.lastSync", { time: lastSync.toLocaleTimeString(lang === "id" ? "id-ID" : "en-GB") })}
+        </span>
+        <FilterSelect label={t("filter.farm")} value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
         <FilterSelect
-          label="Health"
+          label={t("filter.health")}
           value={healthFilter}
           onChange={setHealthFilter}
           options={[
-            { value: "healthy", label: "Healthy" },
-            { value: "attention", label: "Needs Attention" },
-            { value: "critical", label: "Critical" },
+            { value: "healthy", label: t("status.healthy") },
+            { value: "attention", label: t("status.attention") },
+            { value: "critical", label: t("status.critical") },
           ]}
         />
         <div className="ml-auto flex items-center gap-2">
@@ -107,12 +111,12 @@ export default function MonitoringPage() {
             onClick={() => setCompact((prev) => !prev)}
             className={`rounded-lg px-3 py-1.5 text-xs font-semibold ${compact ? "bg-terrava-light text-terrava-primary" : "border border-terrava-border text-terrava-text"}`}
           >
-            Compact
+            {t("monitoring.compact")}
           </button>
           <button
             type="button"
             onClick={() => setTableMode(false)}
-            aria-label="Grid mode"
+            aria-label={t("view.grid")}
             className={`rounded-lg p-1.5 ${!tableMode ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}
           >
             <LayoutGrid className="h-4 w-4" aria-hidden="true" />
@@ -120,7 +124,7 @@ export default function MonitoringPage() {
           <button
             type="button"
             onClick={() => setTableMode(true)}
-            aria-label="Table mode"
+            aria-label={t("view.table")}
             className={`rounded-lg p-1.5 ${tableMode ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}
           >
             <TableIcon className="h-4 w-4" aria-hidden="true" />
@@ -135,12 +139,12 @@ export default function MonitoringPage() {
               <table className="w-full min-w-[720px] text-left text-sm">
                 <thead className="bg-terrava-bg text-xs uppercase text-terrava-muted">
                   <tr>
-                    <th className="px-4 py-3">Name</th>
-                    <th className="px-4 py-3">Temp</th>
-                    <th className="px-4 py-3">Heart Rate</th>
-                    <th className="px-4 py-3">Activity</th>
-                    <th className="px-4 py-3">Battery</th>
-                    <th className="px-4 py-3">Updated</th>
+                    <th className="px-4 py-3">{t("monitoring.column.name")}</th>
+                    <th className="px-4 py-3">{t("monitoring.column.temp")}</th>
+                    <th className="px-4 py-3">{t("monitoring.column.heartRate")}</th>
+                    <th className="px-4 py-3">{t("monitoring.column.activity")}</th>
+                    <th className="px-4 py-3">{t("monitoring.column.battery")}</th>
+                    <th className="px-4 py-3">{t("monitoring.column.updated")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -151,7 +155,7 @@ export default function MonitoringPage() {
                       <td className="px-4 py-3">{animal.heartRate} bpm</td>
                       <td className="px-4 py-3">{animal.activityLevel}</td>
                       <td className="px-4 py-3">{animal.deviceId ? `${animal.batteryLevel}%` : "-"}</td>
-                      <td className="px-4 py-3 text-terrava-muted">{animal.lastUpdate}</td>
+                      <td className="px-4 py-3 text-terrava-muted">{tRel(animal.lastUpdate)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -167,19 +171,19 @@ export default function MonitoringPage() {
         </div>
 
         <div className="space-y-6">
-          <ChartCard title="Live Temperature Trend">
+          <ChartCard title={t("chart.liveTemperature")}>
             <TemperatureTrendChart height={200} />
           </ChartCard>
-          <ChartCard title="Average Barn Health Score">
+          <ChartCard title={t("chart.avgBarnHealth")}>
             <HealthScoreChart height={200} />
           </ChartCard>
 
           <div className="rounded-2xl border border-terrava-border bg-white p-5">
-            <h3 className="mb-3 text-sm font-semibold text-terrava-text">Alert Panel</h3>
+            <h3 className="mb-3 text-sm font-semibold text-terrava-text">{t("monitoring.alertPanel")}</h3>
             <ul className="space-y-2">
               {activeAlerts.map((alert) => (
                 <li key={alert.id} className="flex items-center justify-between rounded-xl bg-terrava-bg px-3 py-2">
-                  <span className="truncate text-xs text-terrava-text">{alert.title}</span>
+                  <span className="truncate text-xs text-terrava-text">{tr(alert.title)}</span>
                   <SeverityBadge severity={alert.severity} />
                 </li>
               ))}
@@ -189,7 +193,7 @@ export default function MonitoringPage() {
       </div>
 
       <div className="mt-6">
-        <ChartCard title="Activity Over Time">
+        <ChartCard title={t("chart.activityOverTime")}>
           <ActivityTrendChart height={220} />
         </ChartCard>
       </div>

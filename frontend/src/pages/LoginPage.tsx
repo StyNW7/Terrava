@@ -14,6 +14,7 @@ import { loginSchema, type LoginFormValues } from "@/schemas/authSchemas";
 import { useAuth } from "@/hooks/useAuth";
 import { primaryDemoAccount, toAuthUser } from "@/data/demoAccounts";
 import type { DemoAccount } from "@/data/demoAccounts";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const firstName = (name: string) => name.replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
 
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, loginAs } = useAuth();
+  const { t } = useLanguage();
   const [authError, setAuthError] = useState<string | null>(null);
   const [shake, setShake] = useState(false);
   const [quickLoading, setQuickLoading] = useState<"demo" | "google" | "microsoft" | null>(null);
@@ -45,7 +47,7 @@ export default function LoginPage() {
   const busy = isSubmitting || quickLoading !== null;
 
   const finishLogin = (name: string) => {
-    toast.success(`Selamat datang kembali, ${firstName(name)}!`);
+    toast.success(t("auth.welcomeBack", { name: firstName(name) }));
     navigate(redirectTo, { replace: true });
   };
 
@@ -58,7 +60,7 @@ export default function LoginPage() {
       return;
     }
 
-    setAuthError(result.message ?? "Terjadi kesalahan. Silakan coba kembali.");
+    setAuthError(t(result.message ?? "auth.error.generic"));
     setShake(true);
     setTimeout(() => setShake(false), 400);
   };
@@ -68,7 +70,7 @@ export default function LoginPage() {
     clearErrors();
     setValue("email", account.email, { shouldValidate: false, shouldDirty: true });
     setValue("password", account.password, { shouldValidate: false, shouldDirty: true });
-    toast.success("Kredensial demo terisi. Klik Masuk untuk melanjutkan.");
+    toast.success(t("auth.demo.filled"));
   };
 
   const quickLogin = async (account: DemoAccount) => {
@@ -84,23 +86,23 @@ export default function LoginPage() {
     setAuthError(null);
     setQuickLoading(provider);
     const label = provider === "google" ? "Google" : "Microsoft";
-    const pending = toast.loading(`Menghubungkan dengan ${label}...`);
+    const pending = toast.loading(t("auth.social.connecting", { provider: label }));
     await new Promise((resolve) => setTimeout(resolve, 1300));
     toast.dismiss(pending);
     loginAs(toAuthUser(primaryDemoAccount), true);
     setQuickLoading(null);
-    toast.success(`Masuk dengan ${label} (mode demo).`);
+    toast.success(t("auth.social.signedIn", { provider: label }));
     navigate(redirectTo, { replace: true });
   };
 
   return (
     <AuthLayout
       panelVariant="login"
-      eyebrow="Welcome Back"
-      title="Masuk ke Terrava"
-      subtitle="Akses dashboard peternakan Anda."
-      footerText="Belum memiliki akun?"
-      footerLinkText="Daftar sekarang"
+      eyebrow={t("auth.login.eyebrow")}
+      title={t("auth.login.title")}
+      subtitle={t("auth.login.subtitle")}
+      footerText={t("auth.login.footerText")}
+      footerLinkText={t("auth.login.footerLink")}
       footerLinkPath="/register"
     >
       <div className="mb-6">
@@ -109,7 +111,7 @@ export default function LoginPage() {
 
       <div className="relative mb-6 text-center">
         <span className="relative bg-terrava-bg px-3 text-xs font-medium uppercase tracking-wide text-terrava-muted">
-          atau masuk manual
+          {t("auth.login.orManual")}
         </span>
         <div className="absolute left-0 top-1/2 -z-10 h-px w-full bg-terrava-border" aria-hidden="true" />
       </div>
@@ -138,31 +140,31 @@ export default function LoginPage() {
 
         <AuthInput
           id="email"
-          label="Email"
+          label={t("auth.field.email")}
           type="email"
           icon={Mail}
-          placeholder="nama@perusahaan.com"
+          placeholder={t("auth.placeholder.email")}
           autoComplete="email"
-          error={errors.email?.message}
+          error={errors.email?.message && t(errors.email.message)}
           {...register("email")}
         />
 
         <div>
           <PasswordInput
             id="password"
-            label="Password"
-            placeholder="Masukkan password"
+            label={t("auth.field.password")}
+            placeholder={t("auth.placeholder.password")}
             autoComplete="current-password"
-            error={errors.password?.message}
+            error={errors.password?.message && t(errors.password.message)}
             {...register("password")}
           />
           <div className="mt-2 flex items-center justify-between">
             <label className="flex cursor-pointer items-center gap-2.5 text-sm text-terrava-text">
               <input type="checkbox" className="h-4 w-4 rounded accent-terrava-primary" {...register("rememberMe")} />
-              Ingat saya
+              {t("auth.login.rememberMe")}
             </label>
             <Link to="/forgot-password" className="text-sm font-medium text-terrava-primary hover:text-terrava-hover">
-              Lupa password?
+              {t("auth.login.forgotPassword")}
             </Link>
           </div>
         </div>
@@ -176,11 +178,11 @@ export default function LoginPage() {
           {isSubmitting ? (
             <>
               <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Memverifikasi...
+              {t("auth.login.verifying")}
             </>
           ) : (
             <>
-              Masuk
+              {t("auth.login.submit")}
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
             </>
           )}
@@ -188,7 +190,7 @@ export default function LoginPage() {
 
         <div className="relative py-1 text-center">
           <span className="relative bg-terrava-bg px-3 text-xs font-medium uppercase tracking-wide text-terrava-muted">
-            atau lanjutkan dengan
+            {t("auth.login.orContinueWith")}
           </span>
           <div className="absolute left-0 top-1/2 -z-10 h-px w-full bg-terrava-border" aria-hidden="true" />
         </div>
@@ -196,14 +198,14 @@ export default function LoginPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <SocialLoginButton
             icon={Chrome}
-            label="Continue with Google"
+            label={t("auth.social.google")}
             loading={quickLoading === "google"}
             disabled={busy}
             onClick={() => socialLogin("google")}
           />
           <SocialLoginButton
             icon={AppWindow}
-            label="Continue with Microsoft"
+            label={t("auth.social.microsoft")}
             loading={quickLoading === "microsoft"}
             disabled={busy}
             onClick={() => socialLogin("microsoft")}
@@ -211,7 +213,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs leading-relaxed text-terrava-muted">
-          Dengan masuk, Anda menyetujui Ketentuan Layanan dan Kebijakan Privasi Terrava.
+          {t("auth.login.terms")}
         </p>
       </form>
     </AuthLayout>

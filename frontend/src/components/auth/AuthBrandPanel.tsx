@@ -3,24 +3,26 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import type { Variants } from "framer-motion";
 import type { AuthBenefit, AuthTestimonialData } from "@/types/auth";
+import type { Localized } from "@/i18n/types";
 import AuthBenefitItem from "@/components/auth/AuthBenefitItem";
 import AuthTestimonial from "@/components/auth/AuthTestimonial";
 import RotatingMessage from "@/components/auth/RotatingMessage";
 import { trustRowItems } from "@/data/auth";
 import { images } from "@/data/images";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface AuthBrandPanelProps {
-  heading: string;
-  description: string;
+  heading: Localized;
+  description: Localized;
   benefits: AuthBenefit[];
   testimonial?: AuthTestimonialData;
 }
 
 const floatingCards = [
-  { icon: HeartPulse, label: "Health Score", value: "92 / 100", meta: "Stable", tone: "text-terrava-success" },
-  { icon: Thermometer, label: "Temperature", value: "38.4°C", meta: "Normal range", tone: "text-terrava-primary" },
-  { icon: Radio, label: "Device Status", value: "128 Connected", meta: "99.2% uptime", tone: "text-terrava-info" },
-  { icon: BellRing, label: "Active Alerts", value: "2 Need Attention", meta: "1 critical", tone: "text-terrava-warning" },
+  { icon: HeartPulse, key: "healthScore", value: "92 / 100", tone: "text-terrava-success" },
+  { icon: Thermometer, key: "temperature", value: "38.4°C", tone: "text-terrava-primary" },
+  { icon: Radio, key: "deviceStatus", valueKey: "connected", tone: "text-terrava-info" },
+  { icon: BellRing, key: "activeAlerts", valueKey: "needAttention", tone: "text-terrava-warning" },
 ];
 
 const container: Variants = {
@@ -34,6 +36,8 @@ const item: Variants = {
 };
 
 export default function AuthBrandPanel({ heading, description, benefits, testimonial }: AuthBrandPanelProps) {
+  const { t, tr } = useLanguage();
+
   return (
     <div className="relative hidden overflow-hidden bg-gradient-to-br from-terrava-dark to-terrava-primary lg:flex lg:flex-col">
       <div
@@ -74,10 +78,10 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
 
         <div className="max-w-md">
           <motion.h1 variants={item} className="text-3xl font-bold leading-tight text-white xl:text-[2.15rem]">
-            {heading}
+            {tr(heading)}
           </motion.h1>
           <motion.p variants={item} className="mt-4 text-sm leading-relaxed text-white/80">
-            {description}
+            {tr(description)}
           </motion.p>
 
           <motion.div variants={item} className="mt-5">
@@ -96,15 +100,17 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
             <div className="grid grid-cols-2 gap-3">
               {floatingCards.map((card, index) => (
                 <motion.div
-                  key={card.label}
+                  key={card.key}
                   animate={{ y: [0, -6, 0] }}
                   transition={{ duration: 4 + index * 0.6, repeat: Infinity, ease: "easeInOut", delay: index * 0.4 }}
                   className="rounded-2xl border border-white/15 bg-white/95 p-4 shadow-soft backdrop-blur"
                 >
                   <card.icon className={`mb-2 h-4 w-4 ${card.tone}`} aria-hidden="true" />
-                  <p className="text-[11px] font-medium text-terrava-muted">{card.label}</p>
-                  <p className="text-sm font-bold text-terrava-text">{card.value}</p>
-                  <p className="text-[10px] text-terrava-muted">{card.meta}</p>
+                  <p className="text-[11px] font-medium text-terrava-muted">{t("auth.card." + card.key)}</p>
+                  <p className="text-sm font-bold text-terrava-text">
+                    {card.value ?? t("auth.cardValue." + card.valueKey)}
+                  </p>
+                  <p className="text-[10px] text-terrava-muted">{t("auth.cardMeta." + card.key)}</p>
                 </motion.div>
               ))}
             </div>
@@ -118,14 +124,12 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
         </div>
 
         <motion.div variants={item}>
-          <p className="text-xs text-white/70">
-            Dirancang untuk peternak, koperasi, dokter hewan, dan pengelola peternakan modern.
-          </p>
+          <p className="text-xs text-white/70">{t("auth.panelFooter")}</p>
           <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
             {trustRowItems.map((trust) => (
-              <div key={trust.label} className="flex items-center gap-1.5 text-xs text-white/60">
+              <div key={trust.label.en} className="flex items-center gap-1.5 text-xs text-white/60">
                 <trust.icon className="h-3.5 w-3.5" aria-hidden="true" />
-                {trust.label}
+                {tr(trust.label)}
               </div>
             ))}
           </div>

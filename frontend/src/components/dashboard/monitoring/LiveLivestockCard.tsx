@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Thermometer, HeartPulse, Activity, MapPin, BatteryFull, Radio } from "lucide-react";
 import type { Livestock } from "@/types/dashboard";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const statusDot: Record<Livestock["healthStatus"], string> = {
   healthy: "bg-terrava-primary",
@@ -10,6 +11,8 @@ const statusDot: Record<Livestock["healthStatus"], string> = {
 };
 
 export default function LiveLivestockCard({ animal, compact = false }: { animal: Livestock; compact?: boolean }) {
+  const { t, tRel } = useLanguage();
+
   return (
     <Link
       to={`/dashboard/livestock/${animal.id}`}
@@ -45,13 +48,13 @@ export default function LiveLivestockCard({ animal, compact = false }: { animal:
           <MapPin className="h-3 w-3" aria-hidden="true" /> {animal.herdGroup}
         </span>
         <span className="flex items-center gap-1">
-          <Radio className="h-3 w-3" aria-hidden="true" /> {animal.deviceStatus}
+          <Radio className="h-3 w-3" aria-hidden="true" /> {t("status." + animal.deviceStatus)}
         </span>
         <span className="flex items-center gap-1">
           <BatteryFull className="h-3 w-3" aria-hidden="true" /> {animal.deviceId ? `${animal.batteryLevel}%` : "-"}
         </span>
       </div>
-      <p className="mt-1 text-[11px] text-terrava-muted">Updated {animal.lastUpdate}</p>
+      <p className="mt-1 text-[11px] text-terrava-muted">{t("monitoring.updated", { time: tRel(animal.lastUpdate) })}</p>
     </Link>
   );
 }

@@ -1,57 +1,109 @@
 import type { Alert, AlertCategory, AlertSeverity } from "@/types/dashboard";
+import type { Localized } from "@/i18n/types";
 import { createSeededRandom, pick, randomInt, randomFloat } from "@/utils/seededRandom";
 import { livestock } from "@/data/mockLivestock";
 
 const random = createSeededRandom(4004);
 
-const alertTemplates: { category: AlertCategory; title: string; description: string; cause: string; recommendations: string[] }[] = [
+interface AlertTemplate {
+  category: AlertCategory;
+  title: Localized;
+  description: Localized;
+  cause: Localized;
+  /** Canonical English actions, localized at render with `tt("action", ...)`. */
+  recommendations: string[];
+}
+
+const alertTemplates: AlertTemplate[] = [
   {
     category: "health",
-    title: "Suhu tubuh meningkat signifikan",
-    description: "Suhu tubuh tercatat di atas ambang normal selama lebih dari 3 jam berturut-turut.",
-    cause: "Kemungkinan indikasi awal infeksi atau demam ringan.",
+    title: { id: "Suhu tubuh meningkat signifikan", en: "Body temperature rising sharply" },
+    description: {
+      id: "Suhu tubuh tercatat di atas ambang normal selama lebih dari 3 jam berturut-turut.",
+      en: "Body temperature has stayed above the normal threshold for more than three consecutive hours.",
+    },
+    cause: {
+      id: "Kemungkinan indikasi awal infeksi atau demam ringan.",
+      en: "Possibly an early indication of infection or a mild fever.",
+    },
     recommendations: ["Inspect livestock", "Check hydration", "Contact veterinarian"],
   },
   {
     category: "behavior",
-    title: "Penurunan aktivitas drastis",
-    description: "Tingkat aktivitas menurun lebih dari 30% dibandingkan baseline 7 hari terakhir.",
-    cause: "Kemungkinan tanda awal ketidaknyamanan atau kelelahan.",
+    title: { id: "Penurunan aktivitas drastis", en: "Sharp drop in activity" },
+    description: {
+      id: "Tingkat aktivitas menurun lebih dari 30% dibandingkan baseline 7 hari terakhir.",
+      en: "Activity level has fallen more than 30% below the seven-day baseline.",
+    },
+    cause: {
+      id: "Kemungkinan tanda awal ketidaknyamanan atau kelelahan.",
+      en: "Possibly an early sign of discomfort or fatigue.",
+    },
     recommendations: ["Monitor for next 6 hours", "Inspect livestock", "Move to observation barn"],
   },
   {
     category: "location",
-    title: "Ternak keluar dari geofence",
-    description: "Lokasi ternak terdeteksi berada di luar batas area yang ditentukan.",
-    cause: "Kemungkinan pagar rusak atau ternak lepas dari kandang.",
+    title: { id: "Ternak keluar dari geofence", en: "Animal left the geofence" },
+    description: {
+      id: "Lokasi ternak terdeteksi berada di luar batas area yang ditentukan.",
+      en: "The animal has been detected outside its designated boundary.",
+    },
+    cause: {
+      id: "Kemungkinan pagar rusak atau ternak lepas dari kandang.",
+      en: "A damaged fence or an animal that has escaped the barn.",
+    },
     recommendations: ["Inspect livestock", "Contact veterinarian", "Create task"],
   },
   {
     category: "device",
-    title: "Baterai perangkat rendah",
-    description: "Baterai smart ear tag berada di bawah 20 persen kapasitas.",
-    cause: "Perangkat mendekati akhir siklus daya sebelum pengisian ulang.",
+    title: { id: "Baterai perangkat rendah", en: "Low device battery" },
+    description: {
+      id: "Baterai smart ear tag berada di bawah 20 persen kapasitas.",
+      en: "The smart ear tag battery has dropped below 20 percent capacity.",
+    },
+    cause: {
+      id: "Perangkat mendekati akhir siklus daya sebelum pengisian ulang.",
+      en: "The device is nearing the end of its power cycle before a recharge.",
+    },
     recommendations: ["Check hydration", "Create task"],
   },
   {
     category: "environmental",
-    title: "Suhu kandang di luar batas nyaman",
-    description: "Suhu lingkungan kandang tercatat lebih tinggi dari ambang batas yang ditentukan.",
-    cause: "Potensi risiko heat stress pada ternak di kandang tersebut.",
+    title: { id: "Suhu kandang di luar batas nyaman", en: "Barn temperature outside comfort range" },
+    description: {
+      id: "Suhu lingkungan kandang tercatat lebih tinggi dari ambang batas yang ditentukan.",
+      en: "Ambient barn temperature has been recorded above the configured threshold.",
+    },
+    cause: {
+      id: "Potensi risiko heat stress pada ternak di kandang tersebut.",
+      en: "A potential heat stress risk for the livestock in that barn.",
+    },
     recommendations: ["Monitor for next 6 hours", "Move to observation barn"],
   },
   {
     category: "weather",
-    title: "Prediksi gelombang panas besok",
-    description: "Model cuaca menunjukkan potensi gelombang panas dalam 24 jam ke depan.",
-    cause: "Kondisi atmosfer regional menunjukkan tren suhu ekstrem.",
+    title: { id: "Prediksi gelombang panas besok", en: "Heat wave forecast for tomorrow" },
+    description: {
+      id: "Model cuaca menunjukkan potensi gelombang panas dalam 24 jam ke depan.",
+      en: "Weather models indicate a possible heat wave within the next 24 hours.",
+    },
+    cause: {
+      id: "Kondisi atmosfer regional menunjukkan tren suhu ekstrem.",
+      en: "Regional atmospheric conditions point to an extreme temperature trend.",
+    },
     recommendations: ["Monitor for next 6 hours", "Create task"],
   },
   {
     category: "health",
-    title: "Detak jantung tidak stabil",
-    description: "Pola detak jantung menunjukkan fluktuasi tidak biasa dibandingkan riwayat data.",
-    cause: "Kemungkinan stres akut atau gangguan ringan pada sistem kardiovaskular.",
+    title: { id: "Detak jantung tidak stabil", en: "Unstable heart rate" },
+    description: {
+      id: "Pola detak jantung menunjukkan fluktuasi tidak biasa dibandingkan riwayat data.",
+      en: "Heart rate patterns show unusual fluctuation compared with historical data.",
+    },
+    cause: {
+      id: "Kemungkinan stres akut atau gangguan ringan pada sistem kardiovaskular.",
+      en: "Possibly acute stress or a mild cardiovascular disturbance.",
+    },
     recommendations: ["Inspect livestock", "Contact veterinarian", "Monitor for next 6 hours"],
   },
 ];
@@ -74,7 +126,7 @@ export const alerts: Alert[] = Array.from({ length: 18 }).map((_, index) => {
     livestockId: animal.id,
     farmId: animal.farmId,
     barnId: animal.barnId,
-    detectedAt: `${randomInt(random, 1, 96)} jam lalu`,
+    detectedAt: `${randomInt(random, 1, 96)} hours ago`,
     assignedTo: status === "active" ? pick(random, assignees) : pick(random, assignees.slice(0, 3)),
     description: template.description,
     aiConfidence: randomInt(random, 68, 96),

@@ -8,8 +8,11 @@ import ConnectivitySection from "@/components/sections/eartag/ConnectivitySectio
 import ComfortSafetySection from "@/components/sections/eartag/ComfortSafetySection";
 import SpecsSection from "@/components/sections/eartag/SpecsSection";
 import CTASection from "@/components/sections/CTASection";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SmartEarTagPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
     document.title = "Smart Ear Tag | Terrava";
   }, []);
@@ -18,19 +21,15 @@ export default function SmartEarTagPage() {
     <>
       <PageHero
         badge="Smart Ear Tag"
-        title="Teknologi ringan yang menjaga setiap detak, gerakan, dan lokasi ternak."
+        title={t("eartag.hero.title")}
         image="/Images/close-up-ear-tag.png"
-        imageAlt="Close-up smart ear tag pada sapi"
+        imageAlt={t("home.earTag.imageAlt")}
       />
 
       <section className="bg-white py-20 sm:py-28">
         <div className="container max-w-3xl text-center">
-          <h2 className="text-2xl font-bold text-terrava-text sm:text-3xl">Product Overview</h2>
-          <p className="mt-4 text-base leading-relaxed text-terrava-muted">
-            Smart ear tag Terrava dirancang sebagai perangkat hemat energi untuk mengumpulkan data
-            fisiologis, aktivitas, dan lokasi ternak secara berkelanjutan, tanpa mengganggu aktivitas
-            hariannya.
-          </p>
+          <h2 className="text-2xl font-bold text-terrava-text sm:text-3xl">{t("eartag.overview.title")}</h2>
+          <p className="mt-4 text-base leading-relaxed text-terrava-muted">{t("eartag.overview.description")}</p>
         </div>
       </section>
 
@@ -43,11 +42,11 @@ export default function SmartEarTagPage() {
       <SpecsSection />
 
       <CTASection
-        title="Bring Smart Monitoring to Your Livestock"
-        description="Diskusikan kebutuhan perangkat untuk peternakan Anda bersama tim Terrava."
-        primaryLabel="Request Demo"
+        title={t("eartag.cta.title")}
+        description={t("eartag.cta.description")}
+        primaryLabel={t("cta.requestDemo")}
         primaryHref="/contact"
-        secondaryLabel="Explore Solutions"
+        secondaryLabel={t("cta.exploreSolutions")}
         secondaryHref="/solutions"
       />
     </>
