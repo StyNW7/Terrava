@@ -13,12 +13,14 @@ export const teamMembers: TeamMember[] = [
     name: "Britney Angeline Soeseno",
     role: "CMO",
     image: "Images/profile/britney.jpeg",
+    linkedin: "https://www.linkedin.com/in/britneyangeline/",
   },
   {
     id: "member-3",
     name: "Ahmad Hamra",
     role: "CTO",
     image: "Images/profile/hamra.png",
+    linkedin: "https://www.linkedin.com/in/ahmad-hamra/",
   },
   {
     id: "member-4",
@@ -32,5 +34,6 @@ export const teamMembers: TeamMember[] = [
     name: "Alexandra Clarissa",
     role: "COO",
     image: "Images/profile/alexandra.png",
+    linkedin: "https://www.linkedin.com/in/alexandraclarissa/",
   },
 ];
