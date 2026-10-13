@@ -1,12 +1,16 @@
 import { Link } from "react-router-dom";
 import SeverityBadge from "@/components/dashboard/SeverityBadge";
-import { alerts } from "@/data/mockAlerts";
-import { getLivestockById } from "@/data/mockLivestock";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useScopedData } from "@/hooks/useScopedData";
 
 export default function OverviewAlertsPanel() {
+  const { getLivestockById } = useDataStore();
+  const { alerts } = useScopedData();
   const { t, tr, tRel } = useLanguage();
-  const criticalAlerts = alerts.filter((alert) => alert.severity === "critical" || alert.severity === "high").slice(0, 5);
+  const criticalAlerts = alerts
+    .filter((alert) => alert.status !== "resolved" && (alert.severity === "critical" || alert.severity === "high"))
+    .slice(0, 5);
 
   return (
     <div className="rounded-2xl border border-terrava-border bg-white p-5">
@@ -16,6 +20,7 @@ export default function OverviewAlertsPanel() {
           {t("common.viewAll")}
         </Link>
       </div>
+      {criticalAlerts.length === 0 && <p className="rounded-xl bg-terrava-bg px-3 py-6 text-center text-sm text-terrava-muted">{t("overview.empty.alerts")}</p>}
       <ul className="space-y-1">
         {criticalAlerts.map((alert) => {
           const animal = getLivestockById(alert.livestockId);

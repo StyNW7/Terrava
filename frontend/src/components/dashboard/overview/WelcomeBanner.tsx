@@ -9,6 +9,8 @@ interface WelcomeBannerProps {
   activeAlerts: number;
   devicesOnline: number;
   devicesTotal: number;
+  /** Farm in focus; defaults to the user's home farm. */
+  farmName?: string;
 }
 
 function greetingFor(hour: number) {
@@ -18,7 +20,7 @@ function greetingFor(hour: number) {
   return { key: "greeting.night", icon: Moon };
 }
 
-export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnline, devicesTotal }: WelcomeBannerProps) {
+export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnline, devicesTotal, farmName }: WelcomeBannerProps) {
   const { user } = useAuth();
   const { lang, t } = useLanguage();
   const now = new Date();
@@ -77,9 +79,9 @@ export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnl
             {activeAlerts > 0
               ? t("overview.summaryWithAlerts", {
                   count: activeAlerts,
-                  farm: user?.farmName ?? t("overview.yourFarm"),
+                  farm: farmName ?? user?.farmName ?? t("overview.yourFarm"),
                 })
-              : t("overview.summaryNoAlerts", { farm: user?.farmName ?? t("overview.yourFarm") })}
+              : t("overview.summaryNoAlerts", { farm: farmName ?? user?.farmName ?? t("overview.yourFarm") })}
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2">

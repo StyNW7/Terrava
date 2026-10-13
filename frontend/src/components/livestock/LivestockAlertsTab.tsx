@@ -4,10 +4,11 @@ import type { Livestock } from "@/types/dashboard";
 import { FilterSelect } from "@/components/dashboard/FilterBar";
 import SeverityBadge from "@/components/dashboard/SeverityBadge";
 import EmptyState from "@/components/dashboard/EmptyState";
-import { alerts } from "@/data/mockAlerts";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function LivestockAlertsTab({ animal }: { animal: Livestock }) {
+  const { alerts } = useDataStore();
   const { t, tr, tRel } = useLanguage();
   const [severity, setSeverity] = useState("all");
   const relatedAlerts = alerts.filter((alert) => alert.livestockId === animal.id && (severity === "all" || alert.severity === severity));

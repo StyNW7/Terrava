@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ColumnDef } from "@tanstack/react-table";
-import toast from "react-hot-toast";
 import { Cpu, Radio, WifiOff, BatteryLow, Wrench, Gauge } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import MetricCard from "@/components/dashboard/MetricCard";
@@ -11,25 +10,33 @@ import { FilterSelect } from "@/components/dashboard/FilterBar";
 import DataTable from "@/components/dashboard/DataTable";
 import DeviceStatusBadge from "@/components/dashboard/DeviceStatusBadge";
 import RowActionsMenu from "@/components/dashboard/RowActionsMenu";
+import ExportButton from "@/components/dashboard/ExportButton";
+import DeviceDiagnosticsModal from "@/components/devices/DeviceDiagnosticsModal";
+import AssignToLivestockModal from "@/components/devices/AssignToLivestockModal";
+import { useDeviceActions } from "@/hooks/useDeviceActions";
+import { downloadCsv } from "@/lib/download";
+import { fileStamp } from "@/utils/time";
 import ChartCard from "@/components/charts/ChartCard";
 import DeviceUptimeChart from "@/components/charts/DeviceUptimeChart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { devices } from "@/data/mockDevices";
 import { batteryDistribution, deviceErrorCategory } from "@/data/dashboardChartData";
-import { farms, getFarmById } from "@/data/mockFarms";
-import { getLivestockById } from "@/data/mockLivestock";
 import type { Device } from "@/types/dashboard";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 const typeTabValues = ["all", "ear-tag", "gateway", "environmental-sensor"];
 
 export default function DeviceManagementPage() {
+  const { devices, farms, getFarmById, getLivestockById } = useDataStore();
   const navigate = useNavigate();
   const { t, tRel } = useLanguage();
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [farmFilter, setFarmFilter] = useState("all");
+  const [diagnosing, setDiagnosing] = useState<Device | null>(null);
+  const [assigning, setAssigning] = useState<Device | null>(null);
+  const actions = useDeviceActions();
 
   useEffect(() => {
     document.title = "Device Management | Terrava";
@@ -38,18 +45,36 @@ export default function DeviceManagementPage() {
   const filtered = useMemo(() => {
     return devices.filter((device) => {
       const matchesTab = tab === "all" || device.type === tab;
-      const matchesSearch = search.trim().length === 0 || device.name.toLowerCase().includes(search.toLowerCase());
+      const query = search.trim().toLowerCase();
+      const matchesSearch = query.length === 0 || device.name.toLowerCase().includes(query) || device.id.toLowerCase().includes(query);
       const matchesStatus = status === "all" || device.status === status;
       const matchesFarm = farmFilter === "all" || device.farmId === farmFilter;
       return matchesTab && matchesSearch && matchesStatus && matchesFarm;
     });
-  }, [tab, search, status, farmFilter]);
+  }, [devices, tab, search, status, farmFilter]);
 
   const onlineCount = devices.filter((d) => d.status === "online").length;
   const offlineCount = devices.filter((d) => d.status === "offline").length;
   const lowBatteryCount = devices.filter((d) => d.status === "low-battery").length;
   const maintenanceCount = devices.filter((d) => d.status === "maintenance").length;
-  const avgUptime = Math.round(devices.reduce((sum, d) => sum + d.uptime, 0) / devices.length);
+  const avgUptime = devices.length ? Math.round(devices.reduce((sum, d) => sum + d.uptime, 0) / devices.length) : 0;
+
+  const exportDevices = () => {
+    downloadCsv(`terrava-devices_${fileStamp()}.csv`, filtered, [
+      { header: "ID", value: (d) => d.id },
+      { header: t("devices.column.device"), value: (d) => d.name },
+      { header: t("livestock.column.type"), value: (d) => t("deviceType." + d.type) },
+      { header: t("devices.column.assigned"), value: (d) => (d.assignedLivestockId ? getLivestockById(d.assignedLivestockId)?.name : "") },
+      { header: t("filter.farm"), value: (d) => getFarmById(d.farmId)?.name },
+      { header: t("livestock.column.status"), value: (d) => t("status." + d.status) },
+      { header: t("devices.battery"), value: (d) => `${d.battery}%` },
+      { header: t("devices.signal"), value: (d) => `${d.signal}%` },
+      { header: t("devices.uptime"), value: (d) => `${d.uptime}%` },
+      { header: t("devices.firmware"), value: (d) => d.firmware },
+      { header: t("devices.lastSync"), value: (d) => tRel(d.lastSync) },
+    ]);
+    return filtered.length;
+  };
 
   const typeTabs = typeTabValues.map((value) => ({
     value,
@@ -57,7 +82,15 @@ export default function DeviceManagementPage() {
   }));
 
   const columns: ColumnDef<Device, unknown>[] = [
-    { accessorKey: "name", header: t("devices.column.device") },
+    {
+      accessorKey: "name",
+      header: t("devices.column.device"),
+      cell: ({ row }) => (
+        <button type="button" onClick={() => navigate(`/dashboard/devices/${row.original.id}`)} className="text-left font-medium hover:text-terrava-primary hover:underline">
+          {row.original.name}
+        </button>
+      ),
+    },
     {
       accessorKey: "type",
       header: t("livestock.column.type"),
@@ -82,11 +115,17 @@ export default function DeviceManagementPage() {
         <RowActionsMenu
           actions={[
             { label: t("common.viewDetail"), onClick: () => navigate(`/dashboard/devices/${row.original.id}`) },
-            { label: t("devices.action.assign"), onClick: () => toast.success(t("devices.toast.assigned")) },
-            { label: t("devices.action.unassign"), onClick: () => toast.success(t("devices.toast.unassigned")) },
-            { label: t("devices.action.diagnostics"), onClick: () => toast.success(t("devices.toast.diagnostics")) },
-            { label: t("devices.action.markMaintenance"), onClick: () => toast.success(t("devices.toast.maintenance")) },
-            { label: t("devices.action.restart"), onClick: () => toast.success(t("devices.toast.restarted")) },
+            ...(row.original.type === "ear-tag"
+              ? row.original.assignedLivestockId
+                ? [{ label: t("devices.action.unassign"), onClick: () => actions.unassign(row.original) }]
+                : [{ label: t("devices.action.assign"), onClick: () => setAssigning(row.original) }]
+              : []),
+            { label: t("devices.action.diagnostics"), onClick: () => setDiagnosing(row.original) },
+            {
+              label: row.original.status === "maintenance" ? t("devices.action.endMaintenance") : t("devices.action.markMaintenance"),
+              onClick: () => actions.toggleMaintenance(row.original),
+            },
+            { label: t("devices.action.restart"), onClick: () => actions.restart(row.original) },
           ]}
         />
       ),
@@ -95,7 +134,7 @@ export default function DeviceManagementPage() {
 
   return (
     <div>
-      <PageHeader title={t("devices.title")} subtitle={t("devices.subtitle")} />
+      <PageHeader title={t("devices.title")} subtitle={t("devices.subtitle")} actions={<ExportButton onExport={exportDevices} />} />
 
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         <MetricCard icon={Cpu} label={t("devices.metric.total")} value={devices.length} />
@@ -141,7 +180,7 @@ export default function DeviceManagementPage() {
 
       <Tabs tabs={typeTabs} active={tab} onChange={setTab} />
 
-      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
+      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3 shadow-card">
         <SearchInput value={search} onChange={setSearch} placeholder={t("devices.searchPlaceholder")} className="w-full sm:w-64" />
         <FilterSelect
           label={t("livestock.column.status")}
@@ -163,7 +202,7 @@ export default function DeviceManagementPage() {
         emptyTitle={t("devices.emptyTitle")}
         emptyDescription={t("devices.emptyDescription")}
         renderMobileCard={(device) => (
-          <div>
+          <div role="link" tabIndex={0} onClick={() => navigate(`/dashboard/devices/${device.id}`)} onKeyDown={(event) => event.key === "Enter" && navigate(`/dashboard/devices/${device.id}`)} className="cursor-pointer">
             <div className="mb-1 flex items-center justify-between">
               <p className="text-sm font-medium text-terrava-text">{device.name}</p>
               <DeviceStatusBadge status={device.status} />
@@ -174,6 +213,9 @@ export default function DeviceManagementPage() {
           </div>
         )}
       />
+
+      <DeviceDiagnosticsModal device={diagnosing} onClose={() => setDiagnosing(null)} onFinished={actions.logDiagnostics} />
+      <AssignToLivestockModal device={assigning} onClose={() => setAssigning(null)} />
     </div>
   );
 }

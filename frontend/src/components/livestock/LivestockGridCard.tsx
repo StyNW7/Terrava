@@ -3,10 +3,11 @@ import { BatteryFull, Radio } from "lucide-react";
 import type { Livestock } from "@/types/dashboard";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 import HealthScoreBadge from "@/components/dashboard/HealthScoreBadge";
-import { getBarnById } from "@/data/mockFarms";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function LivestockGridCard({ animal }: { animal: Livestock }) {
+  const { getBarnById } = useDataStore();
   const { t, tRel } = useLanguage();
   const barn = getBarnById(animal.barnId);
 

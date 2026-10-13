@@ -453,3 +453,30 @@
 .leaflet-popup-content p {
   margin: 0;
 }
+
+/* Printing a dashboard page (Reports → Print): drop interactive chrome, keep cards intact. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  html {
+    font-size: 13px;
+  }
+  body {
+    background: #fff !important;
+  }
+  /* Buttons inside table cells carry row labels (names, titles), so they stay. */
+  button:not(td button),
+  [role="switch"],
+  .leaflet-control-container {
+    display: none !important;
+  }
+  .shadow-card,
+  .shadow-lift,
+  .shadow-soft {
+    box-shadow: none !important;
+  }
+  .rounded-2xl {
+    break-inside: avoid;
+  }
+}

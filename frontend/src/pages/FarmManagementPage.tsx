@@ -1,17 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import { Building2, Warehouse, PawPrint, TriangleAlert, Radio, LayoutGrid, List as ListIcon, PlusCircle } from "lucide-react";
-import toast from "react-hot-toast";
 import PageHeader from "@/components/dashboard/PageHeader";
 import MetricCard from "@/components/dashboard/MetricCard";
 import SearchInput from "@/components/dashboard/SearchInput";
 import { FilterSelect } from "@/components/dashboard/FilterBar";
 import ExportButton from "@/components/dashboard/ExportButton";
 import FarmCard from "@/components/farms/FarmCard";
-import { farms, barns, getFarmById } from "@/data/mockFarms";
+import FarmFormModal from "@/components/farms/FarmFormModal";
+import { computeFarmStats } from "@/lib/farmStats";
+import { downloadCsv } from "@/lib/download";
+import { fileStamp } from "@/utils/time";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function FarmManagementPage() {
+  const store = useDataStore();
+  const { farms, barns, getFarmById } = store;
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const [formOpen, setFormOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [region, setRegion] = useState("all");
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -26,12 +34,34 @@ export default function FarmManagementPage() {
       const matchesRegion = region === "all" || farm.region === region;
       return matchesSearch && matchesRegion;
     });
-  }, [search, region]);
+  }, [farms, search, region]);
 
-  const totalLivestock = farms.reduce((sum, farm) => sum + farm.livestockCount, 0);
-  const totalCapacity = farms.reduce((sum, farm) => sum + farm.capacity, 0);
-  const totalAlerts = farms.reduce((sum, farm) => sum + farm.activeAlerts, 0);
-  const avgCoverage = Math.round(farms.reduce((sum, farm) => sum + farm.deviceCoverage, 0) / farms.length);
+  const stats = farms.map((farm) => ({ farm, ...computeFarmStats(farm.id, store) }));
+  const totalLivestock = stats.reduce((sum, s) => sum + s.livestock, 0);
+  const totalCapacity = barns.reduce((sum, barn) => sum + barn.capacity, 0);
+  const totalAlerts = stats.reduce((sum, s) => sum + s.activeAlerts, 0);
+  const withDevice = store.activeLivestock.filter((animal) => animal.deviceId).length;
+  const avgCoverage = store.activeLivestock.length ? Math.round((withDevice / store.activeLivestock.length) * 100) : 0;
+
+  const exportFarms = () => {
+    const rows = stats.filter((s) => filtered.includes(s.farm));
+    downloadCsv(`terrava-farms_${fileStamp()}.csv`, rows, [
+      { header: "ID", value: (s) => s.farm.id },
+      { header: t("farms.form.name"), value: (s) => s.farm.name },
+      { header: t("rpt.col.location"), value: (s) => s.farm.location },
+      { header: t("filter.region"), value: (s) => s.farm.region },
+      { header: t("farms.manager"), value: (s) => s.farm.manager },
+      { header: t("livestock.column.status"), value: (s) => t("status." + s.farm.status) },
+      { header: t("nav.item.livestock"), value: (s) => s.livestock },
+      { header: t("rpt.farm.barns"), value: (s) => s.barns },
+      { header: t("farms.capacity"), value: (s) => s.capacity },
+      { header: t("farms.occupancy"), value: (s) => s.occupancy },
+      { header: t("metric.avgHealthScore"), value: (s) => s.healthScore },
+      { header: t("dashboard.activeAlerts"), value: (s) => s.activeAlerts },
+      { header: t("farms.metric.deviceCoverage"), value: (s) => `${s.deviceCoverage}%` },
+    ]);
+    return rows.length;
+  };
 
   return (
     <div>
@@ -40,10 +70,10 @@ export default function FarmManagementPage() {
         subtitle={t("farms.subtitle")}
         actions={
           <>
-            <ExportButton />
+            <ExportButton onExport={exportFarms} />
             <button
               type="button"
-              onClick={() => toast.success(t("farms.toast.addFarm"))}
+              onClick={() => setFormOpen(true)}
               className="inline-flex items-center gap-2 rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"
             >
               <PlusCircle className="h-4 w-4" aria-hidden="true" />
@@ -62,7 +92,7 @@ export default function FarmManagementPage() {
         <MetricCard icon={Radio} label={t("farms.metric.deviceCoverage")} value={`${avgCoverage}%`} />
       </div>
 
-      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
+      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3 shadow-card">
         <SearchInput value={search} onChange={setSearch} placeholder={t("farms.searchPlaceholder")} className="w-full sm:w-64" />
         <FilterSelect label={t("filter.region")} value={region} onChange={setRegion} options={[...new Set(farms.map((f) => f.region))].map((r) => ({ value: r, label: r }))} />
         <div className="ml-auto flex items-center gap-1 rounded-xl border border-terrava-border p-1">
@@ -79,6 +109,7 @@ export default function FarmManagementPage() {
         {filtered.map((farm) => (
           <FarmCard key={farm.id} farm={farm} />
         ))}
+        {filtered.length === 0 && <p className="col-span-full rounded-2xl border border-dashed border-terrava-border bg-white p-8 text-center text-sm text-terrava-muted">{t("farms.empty")}</p>}
       </div>
 
       <h2 className="mb-4 text-lg font-semibold text-terrava-text">{t("farms.barnOverview")}</h2>
@@ -99,8 +130,12 @@ export default function FarmManagementPage() {
           </thead>
           <tbody>
             {barns.map((barn) => (
-              <tr key={barn.id} className="border-t border-terrava-border">
-                <td className="px-4 py-3 font-medium text-terrava-text">{barn.name}</td>
+              <tr key={barn.id} className="border-t border-terrava-border hover:bg-terrava-bg/60">
+                <td className="px-4 py-3 font-medium text-terrava-text">
+                  <button type="button" onClick={() => navigate("/dashboard/farms/" + barn.farmId)} className="hover:text-terrava-primary hover:underline">
+                    {barn.name}
+                  </button>
+                </td>
                 <td className="px-4 py-3 text-terrava-muted">{getFarmById(barn.farmId)?.name.split(" ").slice(0, 2).join(" ")}</td>
                 <td className="px-4 py-3">{barn.capacity}</td>
                 <td className="px-4 py-3">{barn.occupancy}</td>
@@ -114,6 +149,8 @@ export default function FarmManagementPage() {
           </tbody>
         </table>
       </div>
+
+      <FarmFormModal open={formOpen} onClose={() => setFormOpen(false)} onSaved={(farm) => navigate("/dashboard/farms/" + farm.id)} />
     </div>
   );
 }

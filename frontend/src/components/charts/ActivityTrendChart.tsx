@@ -1,10 +1,10 @@
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { activityTemperature30d } from "@/data/dashboardChartData";
 
-export default function ActivityTrendChart({ height = 260 }: { height?: number }) {
+export default function ActivityTrendChart({ height = 260, data = activityTemperature30d }: { height?: number; data?: typeof activityTemperature30d }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <ComposedChart data={activityTemperature30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
+      <ComposedChart data={data} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" vertical={false} />
         <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
         <YAxis yAxisId="left" tick={{ fontSize: 11, fill: "var(--chart-tick)" }} axisLine={false} tickLine={false} />

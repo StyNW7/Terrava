@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import HealthScoreBadge from "@/components/dashboard/HealthScoreBadge";
-import { livestock } from "@/data/mockLivestock";
-import { getBarnById } from "@/data/mockFarms";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useScopedData } from "@/hooks/useScopedData";
 
 export default function OverviewAttentionPanel() {
+  const { getBarnById } = useDataStore();
+  const { livestock } = useScopedData();
   const { t } = useLanguage();
   const needsAttention = livestock
     .filter((animal) => animal.healthStatus === "attention" || animal.healthStatus === "critical")
@@ -19,6 +21,7 @@ export default function OverviewAttentionPanel() {
           {t("common.viewAll")}
         </Link>
       </div>
+      {needsAttention.length === 0 && <p className="rounded-xl bg-terrava-bg px-3 py-6 text-center text-sm text-terrava-muted">{t("overview.empty.attention")}</p>}
       <ul className="space-y-1">
         {needsAttention.map((animal) => (
           <li key={animal.id}>

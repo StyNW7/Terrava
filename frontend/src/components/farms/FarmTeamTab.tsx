@@ -1,8 +1,9 @@
 import type { Farm } from "@/types/dashboard";
-import { staff } from "@/data/mockTeam";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function FarmTeamTab({ farm }: { farm: Farm }) {
+  const { staff } = useDataStore();
   const { tt } = useLanguage();
   const farmStaff = staff.filter((member) => member.farmId === farm.id);
 

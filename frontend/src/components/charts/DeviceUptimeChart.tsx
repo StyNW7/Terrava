@@ -1,10 +1,10 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { deviceConnectivity30d } from "@/data/dashboardChartData";
 
-export default function DeviceUptimeChart({ height = 260 }: { height?: number }) {
+export default function DeviceUptimeChart({ height = 260, data = deviceConnectivity30d }: { height?: number; data?: typeof deviceConnectivity30d }) {
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={deviceConnectivity30d} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
+      <AreaChart data={data} margin={{ top: 8, right: 12, left: -16, bottom: 0 }}>
         <defs>
           <linearGradient id="onlineGradient" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="var(--chart-primary)" stopOpacity={0.35} />

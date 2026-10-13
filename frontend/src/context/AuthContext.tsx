@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { AuthContext } from "@/context/auth-context";
 import type { AuthContextValue } from "@/context/auth-context";
-import { findDemoAccount, toAuthUser } from "@/data/demoAccounts";
+import { verifyCredentials, toAuthUser } from "@/data/demoAccounts";
 import type { AuthSession, AuthUser } from "@/types/auth";
 
 const STORAGE_KEY = "terrava-auth-session";
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback<AuthContextValue["login"]>(
     async (email, password, rememberMe = false) => {
       await new Promise((resolve) => setTimeout(resolve, LOGIN_DELAY_MS));
-      const account = findDemoAccount(email, password);
+      const account = await verifyCredentials(email, password);
       if (!account) {
         // A dictionary key; the login page renders it through `t()`.
         return { ok: false, message: "auth.error.invalidCredentials" };

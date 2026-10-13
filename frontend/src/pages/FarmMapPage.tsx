@@ -12,13 +12,10 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 import HealthScoreBadge from "@/components/dashboard/HealthScoreBadge";
 import { livestockMarkerIcons, selectedLivestockMarkerIcons, facilityIcon, gatewayIcon } from "@/utils/leafletIcons";
 import type { BaseLayer } from "@/lib/mapTiles";
-import { livestock } from "@/data/mockLivestock";
-import { farms, barns, getBarnById } from "@/data/mockFarms";
-import { alerts } from "@/data/mockAlerts";
-import { devices } from "@/data/mockDevices";
 import type { HealthStatus, Livestock } from "@/types/dashboard";
 import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/lib/utils";
+import { useDataStore } from "@/hooks/useDataStore";
 
 const DEFAULT_CENTER: [number, number] = [-6.9, 107.6];
 
@@ -38,6 +35,7 @@ function averageCenter(items: Livestock[]): [number, number] {
 }
 
 export default function FarmMapPage() {
+  const { activeLivestock: livestock, farms, barns, getBarnById, alerts, devices } = useDataStore();
   const { lang, t } = useLanguage();
   const [farmFilter, setFarmFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | HealthStatus>("all");
@@ -55,7 +53,7 @@ export default function FarmMapPage() {
 
   const farmLivestock = useMemo(
     () => livestock.filter((animal) => farmFilter === "all" || animal.farmId === farmFilter),
-    [farmFilter]
+    [livestock, farmFilter]
   );
 
   const filteredLivestock = useMemo(() => {

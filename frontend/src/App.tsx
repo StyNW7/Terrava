@@ -8,6 +8,8 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { DataStoreProvider } from "@/context/DataStoreContext";
+import { SettingsProvider } from "@/context/SettingsContext";
 import { useTheme } from "@/hooks/useTheme";
 import PWAPrompts from "@/components/pwa/PWAPrompts";
 import ProtectedRoute, { GuestOnlyRoute } from "@/components/auth/ProtectedRoute";
@@ -81,6 +83,8 @@ function App() {
       <ThemeProvider>
       <LanguageProvider>
       <AuthProvider>
+      <DataStoreProvider>
+      <SettingsProvider>
         <BrowserRouter>
           <ScrollToTopFunction />
 
@@ -129,6 +133,7 @@ function App() {
             <Route path="livestock" element={<LivestockListPage />} />
             <Route path="livestock/add" element={<AddLivestockPage />} />
             <Route path="livestock/:id" element={<LivestockDetailPage />} />
+            <Route path="livestock/:id/edit" element={<AddLivestockPage />} />
             <Route path="monitoring" element={<MonitoringPage />} />
             <Route path="alerts" element={<AlertsPage />} />
             <Route path="alerts/:id" element={<AlertDetailPage />} />
@@ -160,6 +165,8 @@ function App() {
           <ThemedToaster />
           <PWAPrompts />
         </BrowserRouter>
+      </SettingsProvider>
+      </DataStoreProvider>
       </AuthProvider>
       </LanguageProvider>
       </ThemeProvider>

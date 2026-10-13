@@ -90,6 +90,16 @@ export interface Livestock {
   arrivalDate: string;
   acquisitionSource: string;
   notes: Localized;
+  /** Archived animals are hidden from lists, charts and the map but kept for records. */
+  archived?: boolean;
+}
+
+export interface AlertNote {
+  id: string;
+  text: string;
+  author: string;
+  /** ISO timestamp. */
+  createdAt: string;
 }
 
 export interface Alert {
@@ -114,6 +124,10 @@ export interface Alert {
     activity: number;
     oxygen: number;
   };
+  notes?: AlertNote[];
+  /** ISO timestamps recorded when the alert changes state in the app. */
+  acknowledgedAt?: string;
+  resolvedAt?: string;
 }
 
 export interface Device {
@@ -129,6 +143,17 @@ export interface Device {
   lastSync: string;
   uptime: number;
   dataPackets: number;
+  /** Events recorded in the app (restarts, diagnostics...), newest first. */
+  events?: DeviceEvent[];
+  maintenanceLog?: { id: string; note: string; by: string; at: string }[];
+}
+
+export interface DeviceEvent {
+  id: string;
+  type: "connected" | "data-sent" | "warning" | "firmware-updated" | "offline";
+  message: Localized;
+  /** ISO timestamp. */
+  at: string;
 }
 
 export interface DeviceLog {
@@ -164,6 +189,8 @@ export interface AIInsight {
   recommendation: Localized;
   generatedAt: string;
   reviewed: boolean;
+  /** Hidden from the insight feed by the user. */
+  dismissed?: boolean;
 }
 
 export interface TimelineEvent {

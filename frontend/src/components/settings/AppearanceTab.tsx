@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Sun, Moon, Monitor } from "lucide-react";
 import { SettingsToggleRow } from "@/components/settings/SettingsField";
+import type { SettingsTabProps } from "@/components/settings/settingsDraft";
 import { useTheme } from "@/hooks/useTheme";
 import type { ThemePreference } from "@/context/theme-context";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -11,12 +11,10 @@ const themes: { value: ThemePreference; icon: typeof Sun }[] = [
   { value: "system", icon: Monitor },
 ];
 
-export default function AppearanceTab({ onDirty }: { onDirty: () => void }) {
+export default function AppearanceTab({ draft, update }: SettingsTabProps) {
   const { preference: theme, setPreference: setTheme, resolved } = useTheme();
   const { t } = useLanguage();
-  const [compact, setCompact] = useState(false);
-  const [sidebarDefault, setSidebarDefault] = useState(true);
-  const [chartAnimation, setChartAnimation] = useState(true);
+  const { compact, sidebarExpanded, animations } = draft.appearance;
 
   return (
     <div className="space-y-6">
@@ -66,9 +64,19 @@ export default function AppearanceTab({ onDirty }: { onDirty: () => void }) {
       <div className="rounded-2xl border border-terrava-border bg-white p-6">
         <h3 className="mb-3 text-base font-semibold text-terrava-text">{t("settings.appearance.displayPreferences")}</h3>
         <div className="divide-y divide-terrava-border">
-          <SettingsToggleRow label={t("settings.appearance.compactMode")} description={t("settings.appearance.compactModeDescription")} checked={compact} onChange={(v) => { setCompact(v); onDirty(); }} />
-          <SettingsToggleRow label={t("settings.appearance.sidebarExpanded")} checked={sidebarDefault} onChange={(v) => { setSidebarDefault(v); onDirty(); }} />
-          <SettingsToggleRow label={t("settings.appearance.chartAnimation")} checked={chartAnimation} onChange={(v) => { setChartAnimation(v); onDirty(); }} />
+          <SettingsToggleRow
+            label={t("settings.appearance.compactMode")}
+            description={t("settings.appearance.compactModeDescription")}
+            checked={compact}
+            onChange={(value) => update("appearance", { compact: value })}
+          />
+          <SettingsToggleRow label={t("settings.appearance.sidebarExpanded")} checked={sidebarExpanded} onChange={(value) => update("appearance", { sidebarExpanded: value })} />
+          <SettingsToggleRow
+            label={t("settings.appearance.interfaceAnimations")}
+            description={t("settings.appearance.interfaceAnimationsDescription")}
+            checked={animations}
+            onChange={(value) => update("appearance", { animations: value })}
+          />
         </div>
       </div>
     </div>

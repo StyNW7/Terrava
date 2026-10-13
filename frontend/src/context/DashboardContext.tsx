@@ -1,5 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { useSettings } from "@/hooks/useSettings";
 
 interface DashboardContextValue {
   selectedFarmId: string;
@@ -12,7 +13,8 @@ interface DashboardContextValue {
 const DashboardContext = createContext<DashboardContextValue | undefined>(undefined);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [selectedFarmId, setSelectedFarmId] = useState("all");
+  const { settings } = useSettings();
+  const [selectedFarmId, setSelectedFarmId] = useState(settings.farm.defaultFarmId || "all");
   const [dateRangeLabel, setDateRangeLabel] = useState("last-30-days");
 
   const value = useMemo(

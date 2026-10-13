@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import DeviceStatusBadge from "@/components/dashboard/DeviceStatusBadge";
-import { devices } from "@/data/mockDevices";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useScopedData } from "@/hooks/useScopedData";
 
 export default function OverviewDeviceIssuesPanel() {
+  const { devices } = useScopedData();
   const { t, tRel } = useLanguage();
   const issues = devices.filter((device) => device.status === "offline" || device.status === "low-battery" || device.status === "maintenance").slice(0, 5);
 
@@ -15,6 +16,7 @@ export default function OverviewDeviceIssuesPanel() {
           {t("common.viewAll")}
         </Link>
       </div>
+      {issues.length === 0 && <p className="rounded-xl bg-terrava-bg px-3 py-6 text-center text-sm text-terrava-muted">{t("overview.empty.devices")}</p>}
       <ul className="space-y-1">
         {issues.map((device) => (
           <li key={device.id}>

@@ -23,12 +23,8 @@ import { useDashboardFilters } from "@/context/DashboardContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { breadcrumbLabelKeys } from "@/data/dashboardNav";
-import { farms } from "@/data/mockFarms";
-import { livestock } from "@/data/mockLivestock";
-import { alerts } from "@/data/mockAlerts";
-import { devices } from "@/data/mockDevices";
-import { staff } from "@/data/mockTeam";
 import { cn } from "@/lib/utils";
+import { useDataStore } from "@/hooks/useDataStore";
 
 const dateRanges = ["today", "last-7-days", "last-30-days", "last-90-days"];
 
@@ -60,6 +56,7 @@ const dropdownMotion = {
 type OpenMenu = "search" | "farm" | "date" | "notif" | "user" | null;
 
 export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
+  const { farms, activeLivestock: livestock, alerts, devices, staff } = useDataStore();
   const navigate = useNavigate();
   const { t, tr, tRel } = useLanguage();
   const derivedTitle = useDerivedPageTitle(t);
@@ -180,7 +177,7 @@ export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
 
   return (
     <>
-      <header ref={headerRef} className="sticky top-0 z-30 border-b border-terrava-border bg-white/90 backdrop-blur-md">
+      <header ref={headerRef} className="sticky top-0 z-30 border-b border-terrava-border bg-white/90 backdrop-blur-md print:hidden">
         <div className="flex h-16 items-center gap-2 px-3 sm:gap-4 sm:px-6">
           <button
             type="button"

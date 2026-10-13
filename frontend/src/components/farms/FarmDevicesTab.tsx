@@ -1,9 +1,10 @@
 import type { Farm } from "@/types/dashboard";
 import DeviceStatusBadge from "@/components/dashboard/DeviceStatusBadge";
-import { devices } from "@/data/mockDevices";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function FarmDevicesTab({ farm }: { farm: Farm }) {
+  const { devices } = useDataStore();
   const { t } = useLanguage();
   const farmDevices = devices.filter((device) => device.farmId === farm.id);
   const gateways = farmDevices.filter((d) => d.type === "gateway");

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { ColumnDef } from "@tanstack/react-table";
-import { LayoutGrid, List as ListIcon, PlusCircle } from "lucide-react";
+import { Archive, LayoutGrid, List as ListIcon, PlusCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import PageHeader from "@/components/dashboard/PageHeader";
 import SearchInput from "@/components/dashboard/SearchInput";
@@ -12,66 +12,125 @@ import StatusBadge from "@/components/dashboard/StatusBadge";
 import HealthScoreBadge from "@/components/dashboard/HealthScoreBadge";
 import DeviceStatusBadge from "@/components/dashboard/DeviceStatusBadge";
 import RowActionsMenu from "@/components/dashboard/RowActionsMenu";
+import ConfirmDialog from "@/components/dashboard/ConfirmDialog";
 import LivestockGridCard from "@/components/livestock/LivestockGridCard";
+import MoveLivestockModal from "@/components/livestock/MoveLivestockModal";
+import AssignDeviceModal from "@/components/livestock/AssignDeviceModal";
 import LoadingSkeleton from "@/components/dashboard/LoadingSkeleton";
 import EmptyState from "@/components/dashboard/EmptyState";
-import { livestock } from "@/data/mockLivestock";
-import { farms, getBarnById, getFarmById } from "@/data/mockFarms";
 import type { Livestock } from "@/types/dashboard";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { downloadCsv } from "@/lib/download";
+import { fileStamp } from "@/utils/time";
+import { cn } from "@/lib/utils";
 
-const livestockTypes = [...new Set(livestock.map((a) => a.type))];
 const healthValues = ["healthy", "attention", "critical", "inactive"];
 const deviceValues = ["online", "offline", "low-battery", "unassigned"];
+const bulkButton = "rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white";
 
 export default function LivestockListPage() {
   const navigate = useNavigate();
   const { t, tt, tRel } = useLanguage();
-  const [search, setSearch] = useState("");
-  const [farmFilter, setFarmFilter] = useState("all");
+  const { livestock, farms, getBarnById, getFarmById, updateLivestock } = useDataStore();
+  // Filters can be pre-set from links such as /dashboard/livestock?health=attention.
+  const [params] = useSearchParams();
+  const [search, setSearch] = useState(params.get("q") ?? "");
+  const [farmFilter, setFarmFilter] = useState(params.get("farm") ?? "all");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [healthFilter, setHealthFilter] = useState("all");
-  const [deviceFilter, setDeviceFilter] = useState("all");
+  const [healthFilter, setHealthFilter] = useState(params.get("health") ?? "all");
+  const [deviceFilter, setDeviceFilter] = useState(params.get("device") ?? "all");
+  const [showArchived, setShowArchived] = useState(false);
   const [view, setView] = useState<"table" | "grid">("table");
   const [loading, setLoading] = useState(true);
+  const [moveIds, setMoveIds] = useState<string[] | null>(null);
+  const [moveDone, setMoveDone] = useState<(() => void) | undefined>();
+  const [deviceFor, setDeviceFor] = useState<string | null>(null);
+  const [archiveTarget, setArchiveTarget] = useState<{ ids: string[]; onDone?: () => void } | null>(null);
 
   useEffect(() => {
     document.title = "Livestock | Terrava";
-    const timer = setTimeout(() => setLoading(false), 500);
+    const timer = setTimeout(() => setLoading(false), 400);
     return () => clearTimeout(timer);
   }, []);
 
+  const archivedCount = livestock.filter((animal) => animal.archived).length;
+  const livestockTypes = useMemo(() => [...new Set(livestock.map((a) => a.type))], [livestock]);
+
   const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
     return livestock.filter((animal) => {
+      if (Boolean(animal.archived) !== showArchived) return false;
       const matchesSearch =
-        search.trim().length === 0 ||
-        animal.name.toLowerCase().includes(search.toLowerCase()) ||
-        animal.code.toLowerCase().includes(search.toLowerCase()) ||
-        animal.earTagId.toLowerCase().includes(search.toLowerCase());
+        query.length === 0 ||
+        animal.name.toLowerCase().includes(query) ||
+        animal.code.toLowerCase().includes(query) ||
+        animal.id.toLowerCase().includes(query) ||
+        animal.earTagId.toLowerCase().includes(query);
       const matchesFarm = farmFilter === "all" || animal.farmId === farmFilter;
       const matchesType = typeFilter === "all" || animal.type === typeFilter;
       const matchesHealth = healthFilter === "all" || animal.healthStatus === healthFilter;
       const matchesDevice = deviceFilter === "all" || animal.deviceStatus === deviceFilter;
       return matchesSearch && matchesFarm && matchesType && matchesHealth && matchesDevice;
     });
-  }, [search, farmFilter, typeFilter, healthFilter, deviceFilter]);
+  }, [livestock, search, farmFilter, typeFilter, healthFilter, deviceFilter, showArchived]);
 
   const typeOptions = livestockTypes.map((type) => ({ value: type, label: tt("livestockType", type) }));
   const healthOptions = healthValues.map((value) => ({ value, label: t("status." + value) }));
   const deviceOptions = deviceValues.map((value) => ({ value, label: t("status." + value) }));
+
+  const exportRows = (rows: Livestock[]) => {
+    downloadCsv(`terrava-livestock_${fileStamp()}.csv`, rows, [
+      { header: t("livestock.column.id"), value: (a) => a.id },
+      { header: "Code", value: (a) => a.code },
+      { header: t("rpt.col.name"), value: (a) => a.name },
+      { header: t("addLivestock.field.earTagId"), value: (a) => a.earTagId },
+      { header: t("livestock.column.type"), value: (a) => tt("livestockType", a.type) },
+      { header: t("livestock.column.breed"), value: (a) => a.breed },
+      { header: t("livestock.column.gender"), value: (a) => tt("gender", a.gender) },
+      { header: t("livestock.column.age"), value: (a) => a.ageMonths },
+      { header: t("addLivestock.field.weight"), value: (a) => a.weightKg },
+      { header: t("filter.farm"), value: (a) => getFarmById(a.farmId)?.name },
+      { header: t("farms.barn"), value: (a) => getBarnById(a.barnId)?.name },
+      { header: t("livestock.herdGroup"), value: (a) => a.herdGroup },
+      { header: t("livestock.column.healthScore"), value: (a) => a.healthScore },
+      { header: t("livestock.column.status"), value: (a) => t("status." + a.healthStatus) },
+      { header: `${t("vitals.temperature")} (°C)`, value: (a) => a.temperature },
+      { header: `${t("vitals.heartRate")} (bpm)`, value: (a) => a.heartRate },
+      { header: t("livestock.column.device"), value: (a) => a.deviceId ?? t("status.unassigned") },
+      { header: t("rpt.col.vaccination"), value: (a) => t("status." + a.vaccinationStatus) },
+      { header: "Latitude", value: (a) => a.location.lat },
+      { header: "Longitude", value: (a) => a.location.lng },
+    ]);
+    return rows.length;
+  };
+
+  const archive = (ids: string[]) => {
+    updateLivestock(ids, { archived: true });
+    toast.success(ids.length > 1 ? t("livestock.toast.archivedMany", { count: ids.length }) : t("livestock.toast.archived"));
+  };
+  const restore = (ids: string[]) => {
+    updateLivestock(ids, { archived: false });
+    toast.success(t("livestock.toast.restored", { count: ids.length }));
+  };
+
+  const openMove = (ids: string[], onDone?: () => void) => {
+    setMoveDone(() => onDone);
+    setMoveIds(ids);
+  };
 
   const columns: ColumnDef<Livestock, unknown>[] = [
     {
       accessorKey: "name",
       header: t("nav.item.livestock"),
       cell: ({ row }) => (
-        <div className="flex items-center gap-2.5">
-          <img src={row.original.photo} alt={row.original.name} className="h-9 w-9 rounded-lg object-cover" />
-          <div className="min-w-0">
-            <p className="text-sm font-medium text-terrava-text">{row.original.name}</p>
-            <p className="text-xs text-terrava-muted">{row.original.earTagId}</p>
-          </div>
-        </div>
+        <button type="button" onClick={() => navigate(`/dashboard/livestock/${row.original.id}`)} className="group flex items-center gap-2.5 text-left">
+          <img src={row.original.photo} alt="" className="h-9 w-9 rounded-lg object-cover" />
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-terrava-text group-hover:text-terrava-primary group-hover:underline">{row.original.name}</span>
+            <span className="block text-xs text-terrava-muted">{row.original.earTagId}</span>
+          </span>
+        </button>
       ),
     },
     { accessorKey: "code", header: t("livestock.column.id") },
@@ -117,11 +176,7 @@ export default function LivestockListPage() {
       header: t("livestock.column.device"),
       cell: ({ getValue }) => {
         const value = getValue() as Livestock["deviceStatus"];
-        return value === "unassigned" ? (
-          <span className="text-xs text-terrava-muted">{t("status.unassigned")}</span>
-        ) : (
-          <DeviceStatusBadge status={value} />
-        );
+        return value === "unassigned" ? <span className="text-xs text-terrava-muted">{t("status.unassigned")}</span> : <DeviceStatusBadge status={value} />;
       },
     },
     {
@@ -134,23 +189,20 @@ export default function LivestockListPage() {
       header: "",
       cell: ({ row }) => (
         <RowActionsMenu
-          actions={[
-            { label: t("common.viewDetail"), onClick: () => navigate(`/dashboard/livestock/${row.original.id}`) },
-            { label: t("common.edit"), onClick: () => toast.success(t("livestock.toast.edit", { name: row.original.name })) },
-            {
-              label: t("livestock.action.assignDevice"),
-              onClick: () => toast.success(t("livestock.toast.assignDevice", { name: row.original.name })),
-            },
-            {
-              label: t("livestock.action.moveBarn"),
-              onClick: () => toast.success(t("livestock.toast.moveBarn", { name: row.original.name })),
-            },
-            {
-              label: t("livestock.action.archive"),
-              onClick: () => toast.success(t("livestock.toast.archive", { name: row.original.name })),
-              danger: true,
-            },
-          ]}
+          actions={
+            row.original.archived
+              ? [
+                  { label: t("common.viewDetail"), onClick: () => navigate(`/dashboard/livestock/${row.original.id}`) },
+                  { label: t("livestock.action.restore"), onClick: () => restore([row.original.id]) },
+                ]
+              : [
+                  { label: t("common.viewDetail"), onClick: () => navigate(`/dashboard/livestock/${row.original.id}`) },
+                  { label: t("common.edit"), onClick: () => navigate(`/dashboard/livestock/${row.original.id}/edit`) },
+                  { label: t("livestock.action.assignDevice"), onClick: () => setDeviceFor(row.original.id) },
+                  { label: t("livestock.action.moveBarn"), onClick: () => openMove([row.original.id]) },
+                  { label: t("livestock.action.archive"), onClick: () => setArchiveTarget({ ids: [row.original.id] }), danger: true },
+                ]
+          }
         />
       ),
     },
@@ -163,7 +215,7 @@ export default function LivestockListPage() {
         subtitle={t("livestock.subtitle")}
         actions={
           <>
-            <ExportButton />
+            <ExportButton onExport={() => exportRows(filtered)} />
             <button
               type="button"
               onClick={() => navigate("/dashboard/livestock/add")}
@@ -176,18 +228,31 @@ export default function LivestockListPage() {
         }
       />
 
-      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
+      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3 shadow-card">
         <SearchInput value={search} onChange={setSearch} placeholder={t("livestock.searchPlaceholder")} className="w-full sm:w-64" />
         <FilterSelect label={t("filter.farm")} value={farmFilter} onChange={setFarmFilter} options={farms.map((f) => ({ value: f.id, label: f.name }))} />
         <FilterSelect label={t("filter.type")} value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
         <FilterSelect label={t("filter.health")} value={healthFilter} onChange={setHealthFilter} options={healthOptions} />
         <FilterSelect label={t("filter.device")} value={deviceFilter} onChange={setDeviceFilter} options={deviceOptions} />
+        <button
+          type="button"
+          aria-pressed={showArchived}
+          onClick={() => setShowArchived((value) => !value)}
+          className={cn(
+            "inline-flex h-10 items-center gap-1.5 rounded-xl border px-3 text-[13px] font-medium transition-colors",
+            showArchived ? "border-terrava-primary/30 bg-terrava-light text-terrava-primary" : "border-terrava-border text-terrava-text hover:bg-terrava-bg"
+          )}
+        >
+          <Archive className="h-4 w-4" aria-hidden="true" />
+          {t("livestock.archived")} ({archivedCount})
+        </button>
 
         <div className="ml-auto flex items-center gap-1 rounded-xl border border-terrava-border p-1">
           <button
             type="button"
             onClick={() => setView("table")}
             aria-label={t("view.table")}
+            aria-pressed={view === "table"}
             className={`rounded-lg p-1.5 ${view === "table" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}
           >
             <ListIcon className="h-4 w-4" aria-hidden="true" />
@@ -196,6 +261,7 @@ export default function LivestockListPage() {
             type="button"
             onClick={() => setView("grid")}
             aria-label={t("view.grid")}
+            aria-pressed={view === "grid"}
             className={`rounded-lg p-1.5 ${view === "grid" ? "bg-terrava-light text-terrava-primary" : "text-terrava-muted"}`}
           >
             <LayoutGrid className="h-4 w-4" aria-hidden="true" />
@@ -206,27 +272,44 @@ export default function LivestockListPage() {
       {loading ? (
         <LoadingSkeleton variant={view === "table" ? "table" : "cards"} rows={8} />
       ) : filtered.length === 0 ? (
-        <EmptyState title={t("livestock.emptyTitle")} description={t("livestock.emptyDescription")} />
+        <EmptyState
+          title={showArchived ? t("livestock.archiveEmpty") : t("livestock.emptyTitle")}
+          description={showArchived ? t("livestock.archiveEmptyDescription") : t("livestock.emptyDescription")}
+        />
       ) : view === "table" ? (
         <DataTable
           data={filtered}
           columns={columns}
           enableRowSelection
-          bulkActions={
-            <>
-              <button onClick={() => toast.success(t("livestock.toast.bulkMove"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
-                {t("livestock.action.moveToGroup")}
+          bulkActions={(selected, clear) =>
+            showArchived ? (
+              <button
+                type="button"
+                onClick={() => {
+                  restore(selected.map((a) => a.id));
+                  clear();
+                }}
+                className={bulkButton}
+              >
+                {t("livestock.action.restore")}
               </button>
-              <button onClick={() => toast.success(t("livestock.toast.bulkAssign"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
-                {t("livestock.action.assignDevice")}
-              </button>
-              <button onClick={() => toast.success(t("livestock.toast.bulkExport"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-primary hover:bg-white">
-                {t("common.export")}
-              </button>
-              <button onClick={() => toast.success(t("livestock.toast.bulkArchive"))} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-error hover:bg-white">
-                {t("livestock.action.archive")}
-              </button>
-            </>
+            ) : (
+              <>
+                <button type="button" onClick={() => openMove(selected.map((a) => a.id), clear)} className={bulkButton}>
+                  {t("livestock.action.moveToGroup")}
+                </button>
+                <button type="button" onClick={() => toast.success(t("dashboard.exportDoneCount", { count: exportRows(selected) }))} className={bulkButton}>
+                  {t("common.export")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setArchiveTarget({ ids: selected.map((a) => a.id), onDone: clear })}
+                  className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-error hover:bg-white"
+                >
+                  {t("livestock.action.archive")}
+                </button>
+              </>
+            )
           }
           renderMobileCard={(animal) => <LivestockGridCard animal={animal} />}
         />
@@ -237,6 +320,22 @@ export default function LivestockListPage() {
           ))}
         </div>
       )}
+
+      <MoveLivestockModal ids={moveIds} onClose={() => setMoveIds(null)} onDone={moveDone} />
+      <AssignDeviceModal livestockId={deviceFor} onClose={() => setDeviceFor(null)} />
+      <ConfirmDialog
+        open={!!archiveTarget}
+        onClose={() => setArchiveTarget(null)}
+        onConfirm={() => {
+          if (!archiveTarget) return;
+          archive(archiveTarget.ids);
+          archiveTarget.onDone?.();
+        }}
+        title={t("livestock.archiveConfirmTitle", { count: archiveTarget?.ids.length ?? 0 })}
+        description={t("livestock.archiveConfirmDescription")}
+        confirmLabel={t("livestock.action.archive")}
+        tone="danger"
+      />
     </div>
   );
 }

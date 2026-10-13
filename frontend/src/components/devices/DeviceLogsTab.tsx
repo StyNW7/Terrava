@@ -3,6 +3,7 @@ import type { Device, DeviceLog } from "@/types/dashboard";
 import { getLogsByDevice } from "@/data/mockDevices";
 import EmptyState from "@/components/dashboard/EmptyState";
 import { useLanguage } from "@/hooks/useLanguage";
+import { isoToRelative } from "@/utils/time";
 
 const logIcons: Record<DeviceLog["type"], typeof CheckCircle2> = {
   connected: CheckCircle2,
@@ -22,7 +23,11 @@ const logTone: Record<DeviceLog["type"], string> = {
 
 export default function DeviceLogsTab({ device }: { device: Device }) {
   const { t, tr, tRel } = useLanguage();
-  const logs = getLogsByDevice(device.id);
+  // Events recorded in the app come first, then the seeded history.
+  const logs: DeviceLog[] = [
+    ...(device.events ?? []).map((item) => ({ id: item.id, deviceId: device.id, type: item.type, message: item.message, timestamp: isoToRelative(item.at) })),
+    ...getLogsByDevice(device.id),
+  ];
 
   if (logs.length === 0) {
     return <EmptyState title={t("devices.noLogsTitle")} description={t("devices.noLogsDescription")} />;

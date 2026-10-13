@@ -1,7 +1,7 @@
 import { Sparkles } from "lucide-react";
 import type { AIInsight } from "@/types/dashboard";
-import { getLivestockById } from "@/data/mockLivestock";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 const priorityTone: Record<AIInsight["priority"], string> = {
   high: "bg-terrava-error/10 text-terrava-error",
@@ -18,6 +18,7 @@ interface InsightCardProps {
 }
 
 export default function InsightCard({ insight, onReview, onCreateTask, onDismiss, onMarkReviewed }: InsightCardProps) {
+  const { getLivestockById } = useDataStore();
   const { t, tr, tRel } = useLanguage();
   const affectedNames = insight.affectedLivestock
     .map((id) => getLivestockById(id)?.name)
@@ -26,7 +27,7 @@ export default function InsightCard({ insight, onReview, onCreateTask, onDismiss
     .join(", ");
 
   return (
-    <div className="rounded-2xl border border-terrava-border bg-white p-5">
+    <div className={`rounded-2xl border border-terrava-border bg-white p-5 shadow-card ${insight.dismissed ? "opacity-70" : ""}`}>
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${priorityTone[insight.priority]}`}>
           {t("insights.priorityLabel", { priority: t("priority." + insight.priority) })}
@@ -57,11 +58,16 @@ export default function InsightCard({ insight, onReview, onCreateTask, onDismiss
         <button onClick={onCreateTask} className="rounded-lg border border-terrava-border px-3 py-1.5 text-xs font-semibold text-terrava-text hover:bg-terrava-bg">
           {t("insights.createTask")}
         </button>
-        <button onClick={onMarkReviewed} className="rounded-lg border border-terrava-border px-3 py-1.5 text-xs font-semibold text-terrava-text hover:bg-terrava-bg">
-          {t("insights.markReviewed")}
+        <button
+          type="button"
+          onClick={onMarkReviewed}
+          aria-pressed={insight.reviewed}
+          className="rounded-lg border border-terrava-border px-3 py-1.5 text-xs font-semibold text-terrava-text hover:bg-terrava-bg"
+        >
+          {insight.reviewed ? t("insights.markUnreviewed") : t("insights.markReviewed")}
         </button>
-        <button onClick={onDismiss} className="rounded-lg border border-terrava-border px-3 py-1.5 text-xs font-semibold text-terrava-muted hover:bg-terrava-bg">
-          {t("insights.dismiss")}
+        <button type="button" onClick={onDismiss} className="rounded-lg border border-terrava-border px-3 py-1.5 text-xs font-semibold text-terrava-muted hover:bg-terrava-bg">
+          {insight.dismissed ? t("insights.restore") : t("insights.dismiss")}
         </button>
       </div>
     </div>

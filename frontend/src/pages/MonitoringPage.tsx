@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Pause,
   Play,
@@ -16,12 +17,13 @@ import ActivityTrendChart from "@/components/charts/ActivityTrendChart";
 import HealthScoreChart from "@/components/charts/HealthScoreChart";
 import LiveLivestockCard from "@/components/dashboard/monitoring/LiveLivestockCard";
 import SeverityBadge from "@/components/dashboard/SeverityBadge";
-import { livestock } from "@/data/mockLivestock";
-import { alerts } from "@/data/mockAlerts";
-import { farms } from "@/data/mockFarms";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useSettings, useUnits } from "@/hooks/useSettings";
+import { findBreaches, liveReading } from "@/utils/liveReadings";
 
 export default function MonitoringPage() {
+  const { activeLivestock: livestock, alerts, farms } = useDataStore();
   const { lang, t, tr, tRel } = useLanguage();
   const [paused, setPaused] = useState(false);
   const [compact, setCompact] = useState(false);
@@ -31,6 +33,13 @@ export default function MonitoringPage() {
   const [healthFilter, setHealthFilter] = useState("all");
   const [tick, setTick] = useState(0);
   const [lastSync, setLastSync] = useState(new Date());
+  const { settings } = useSettings();
+  const { formatTemp } = useUnits();
+
+  // Monitoring always opens on the default farm from Settings.
+  useEffect(() => {
+    if (settings.farm.defaultFarmId !== "all") setFarmFilter(settings.farm.defaultFarmId);
+  }, [settings.farm.defaultFarmId]);
 
   useEffect(() => {
     document.title = "Live Monitoring | Terrava";
@@ -51,6 +60,19 @@ export default function MonitoringPage() {
 
   const criticalCount = livestock.filter((a) => a.healthStatus === "critical").length;
   const activeAlerts = alerts.filter((a) => a.status === "active").slice(0, 6);
+
+  // Live readings and the thresholds they cross, recomputed on every tick.
+  const live = useMemo(
+    () =>
+      new Map(
+        livestock.map((animal) => {
+          const reading = liveReading(animal, tick);
+          return [animal.id, { reading, breaches: findBreaches(reading, settings.thresholds, Boolean(animal.deviceId)) }];
+        })
+      ),
+    [livestock, tick, settings.thresholds]
+  );
+  const breachedCount = filtered.filter((animal) => (live.get(animal.id)?.breaches.length ?? 0) > 0).length;
 
   return (
     <div className={fullscreen ? "fixed inset-0 z-50 overflow-y-auto bg-terrava-bg p-6" : ""}>
@@ -86,7 +108,17 @@ export default function MonitoringPage() {
         </div>
       )}
 
-      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
+      {breachedCount > 0 && (
+        <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-warning/40 bg-terrava-warning/10 px-4 py-3 text-sm text-terrava-text">
+          <TriangleAlert className="h-4 w-4 text-terrava-warning" aria-hidden="true" />
+          <span className="flex-1">{t("monitoring.breachNotice", { count: breachedCount })}</span>
+          <Link to="/dashboard/settings?tab=thresholds" className="text-xs font-semibold text-terrava-primary hover:underline">
+            {t("monitoring.editThresholds")}
+          </Link>
+        </div>
+      )}
+
+      <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3 shadow-card">
         <span className="flex items-center gap-1.5 rounded-full bg-terrava-primary/10 px-3 py-1.5 text-xs font-semibold text-terrava-primary">
           <span className={`h-2 w-2 rounded-full bg-terrava-primary ${paused ? "" : "animate-pulse"}`} aria-hidden="true" />
           {paused ? t("monitoring.paused") : t("monitoring.live")}
@@ -148,24 +180,42 @@ export default function MonitoringPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((animal) => (
-                    <tr key={animal.id} className="border-t border-terrava-border">
-                      <td className="px-4 py-3 font-medium text-terrava-text">{animal.name}</td>
-                      <td className="px-4 py-3">{animal.temperature}°C</td>
-                      <td className="px-4 py-3">{animal.heartRate} bpm</td>
-                      <td className="px-4 py-3">{animal.activityLevel}</td>
-                      <td className="px-4 py-3">{animal.deviceId ? `${animal.batteryLevel}%` : "-"}</td>
-                      <td className="px-4 py-3 text-terrava-muted">{tRel(animal.lastUpdate)}</td>
-                    </tr>
-                  ))}
+                  {filtered.map((animal) => {
+                    const entry = live.get(animal.id);
+                    const reading = entry?.reading ?? liveReading(animal, 0);
+                    const breaches = entry?.breaches ?? [];
+                    const cell = (breached: boolean) => (breached ? "px-4 py-3 font-semibold text-terrava-error" : "px-4 py-3");
+                    return (
+                      <tr key={animal.id} className={`border-t border-terrava-border ${breaches.length ? "bg-terrava-error/5" : ""}`}>
+                        <td className="px-4 py-3 font-medium text-terrava-text">
+                          <Link to={`/dashboard/livestock/${animal.id}`} className="hover:text-terrava-primary hover:underline">
+                            {animal.name}
+                          </Link>
+                        </td>
+                        <td className={cell(breaches.includes("tempHigh") || breaches.includes("tempLow"))}>{formatTemp(reading.temperature)}</td>
+                        <td className={cell(breaches.includes("heartRate"))}>{reading.heartRate} bpm</td>
+                        <td className={cell(breaches.includes("activity"))}>{reading.activity}</td>
+                        <td className={cell(breaches.includes("battery"))}>{animal.deviceId ? `${reading.battery}%` : "-"}</td>
+                        <td className="px-4 py-3 text-terrava-muted">{!paused && tick > 0 && animal.deviceId ? tRel("Just now") : tRel(animal.lastUpdate)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
           ) : (
             <div className={`grid gap-3 ${compact ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"}`}>
               {filtered.map((animal) => (
-                <LiveLivestockCard key={`${animal.id}-${tick}`} animal={animal} compact={compact} />
+                <LiveLivestockCard
+                  key={animal.id}
+                  animal={animal}
+                  reading={live.get(animal.id)?.reading ?? liveReading(animal, 0)}
+                  breaches={live.get(animal.id)?.breaches}
+                  live={!paused && tick > 0}
+                  compact={compact}
+                />
               ))}
+              {filtered.length === 0 && <p className="col-span-full rounded-2xl border border-dashed border-terrava-border bg-white p-8 text-center text-sm text-terrava-muted">{t("livestock.emptyTitle")}</p>}
             </div>
           )}
         </div>
@@ -182,11 +232,14 @@ export default function MonitoringPage() {
             <h3 className="mb-3 text-sm font-semibold text-terrava-text">{t("monitoring.alertPanel")}</h3>
             <ul className="space-y-2">
               {activeAlerts.map((alert) => (
-                <li key={alert.id} className="flex items-center justify-between rounded-xl bg-terrava-bg px-3 py-2">
-                  <span className="truncate text-xs text-terrava-text">{tr(alert.title)}</span>
-                  <SeverityBadge severity={alert.severity} />
+                <li key={alert.id}>
+                  <Link to={`/dashboard/alerts/${alert.id}`} className="flex items-center justify-between gap-2 rounded-xl bg-terrava-bg px-3 py-2 hover:bg-terrava-light">
+                    <span className="truncate text-xs text-terrava-text">{tr(alert.title)}</span>
+                    <SeverityBadge severity={alert.severity} />
+                  </Link>
                 </li>
               ))}
+              {activeAlerts.length === 0 && <li className="rounded-xl bg-terrava-bg px-3 py-4 text-center text-xs text-terrava-muted">{t("overview.empty.alerts")}</li>}
             </ul>
           </div>
         </div>

@@ -1,8 +1,8 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { alertFrequency30d } from "@/data/dashboardChartData";
 
-export default function AlertFrequencyChart({ height = 260 }: { height?: number }) {
-  const data = alertFrequency30d.slice(-14);
+export default function AlertFrequencyChart({ height = 260, data: series }: { height?: number; data?: typeof alertFrequency30d }) {
+  const data = series ?? alertFrequency30d.slice(-14);
 
   return (
     <ResponsiveContainer width="100%" height={height}>

@@ -1,6 +1,8 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
 import { Wrench } from "lucide-react";
+import { useDeviceActions } from "@/hooks/useDeviceActions";
+import { useAuth } from "@/hooks/useAuth";
+import { isoToRelative } from "@/utils/time";
 import type { Device } from "@/types/dashboard";
 import Timeline from "@/components/dashboard/Timeline";
 import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
@@ -9,8 +11,16 @@ import { useLanguage } from "@/hooks/useLanguage";
 export default function DeviceMaintenanceTab({ device }: { device: Device }) {
   const { t, tRel } = useLanguage();
   const [notes, setNotes] = useState("");
+  const { markServiced } = useDeviceActions();
+  const { user } = useAuth();
 
   const history = [
+    ...(device.maintenanceLog ?? []).map((entry) => ({
+      id: entry.id,
+      label: `${t("devices.maintenance.serviced")}: ${entry.note}`,
+      timestamp: `${tRel(isoToRelative(entry.at))} · ${entry.by}`,
+      icon: Wrench,
+    })),
     { id: "1", label: t("devices.maintenance.periodicCheck"), timestamp: tRel("2 months ago"), icon: Wrench },
     { id: "2", label: t("devices.maintenance.batteryReplaced"), timestamp: tRel("5 months ago"), icon: Wrench },
   ];
@@ -35,11 +45,13 @@ export default function DeviceMaintenanceTab({ device }: { device: Device }) {
             onChange={(event) => setNotes(event.target.value)}
             rows={3}
             placeholder={t("devices.maintenance.notePlaceholder")}
-            className="w-full rounded-xl border border-terrava-border px-3.5 py-2.5 text-sm focus:border-terrava-primary focus:outline-none"
+            maxLength={500}
+            className="w-full rounded-xl border border-terrava-border bg-white px-3.5 py-2.5 text-sm text-terrava-text focus:border-terrava-primary focus:outline-none"
           />
           <button
+            type="button"
             onClick={() => {
-              toast.success(t("devices.toast.serviced"));
+              markServiced(device, notes.trim(), user?.name ?? "Terrava");
               setNotes("");
             }}
             className="mt-3 rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"

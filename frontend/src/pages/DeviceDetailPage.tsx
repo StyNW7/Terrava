@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BatteryFull, Radio, Gauge, Clock, Cpu, Database } from "lucide-react";
-import toast from "react-hot-toast";
 import Breadcrumb from "@/components/dashboard/Breadcrumb";
 import Tabs from "@/components/dashboard/Tabs";
 import DeviceStatusBadge from "@/components/dashboard/DeviceStatusBadge";
@@ -11,13 +10,19 @@ import DeviceSensorDataTab from "@/components/devices/DeviceSensorDataTab";
 import DeviceConnectivityTab from "@/components/devices/DeviceConnectivityTab";
 import DeviceLogsTab from "@/components/devices/DeviceLogsTab";
 import DeviceMaintenanceTab from "@/components/devices/DeviceMaintenanceTab";
-import { getDeviceById } from "@/data/mockDevices";
-import { getLivestockById } from "@/data/mockLivestock";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useDeviceActions } from "@/hooks/useDeviceActions";
+import DeviceDiagnosticsModal from "@/components/devices/DeviceDiagnosticsModal";
+import AssignToLivestockModal from "@/components/devices/AssignToLivestockModal";
 
 const tabValues = ["overview", "sensor", "connectivity", "logs", "maintenance"];
 
 export default function DeviceDetailPage() {
+  const { getDeviceById, getLivestockById } = useDataStore();
+  const actions = useDeviceActions();
+  const [diagnosing, setDiagnosing] = useState(false);
+  const [assigning, setAssigning] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
   const { lang, t, tRel } = useLanguage();
@@ -50,11 +55,23 @@ export default function DeviceDetailPage() {
             {animal ? ` · ${t("devices.assignedTo", { name: animal.name })}` : ""}
           </p>
         </div>
-        <div className="flex gap-2.5">
-          <button onClick={() => toast.success(t("devices.toast.diagnostics"))} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+        <div className="flex flex-wrap gap-2.5">
+          {device.type === "ear-tag" && (
+            <button
+              type="button"
+              onClick={() => (device.assignedLivestockId ? actions.unassign(device) : setAssigning(true))}
+              className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg"
+            >
+              {device.assignedLivestockId ? t("devices.action.unassign") : t("devices.action.assign")}
+            </button>
+          )}
+          <button type="button" onClick={() => actions.toggleMaintenance(device)} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+            {device.status === "maintenance" ? t("devices.action.endMaintenance") : t("devices.action.markMaintenance")}
+          </button>
+          <button type="button" onClick={() => setDiagnosing(true)} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
             {t("devices.action.diagnostics")}
           </button>
-          <button onClick={() => toast.success(t("devices.toast.restarted"))} className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover">
+          <button type="button" onClick={() => actions.restart(device)} className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover">
             {t("devices.action.restart")}
           </button>
         </div>
@@ -80,6 +97,9 @@ export default function DeviceDetailPage() {
       {activeTab === "connectivity" && <DeviceConnectivityTab />}
       {activeTab === "logs" && <DeviceLogsTab device={device} />}
       {activeTab === "maintenance" && <DeviceMaintenanceTab device={device} />}
+
+      <DeviceDiagnosticsModal device={diagnosing ? device : null} onClose={() => setDiagnosing(false)} onFinished={actions.logDiagnostics} />
+      <AssignToLivestockModal device={assigning ? device : null} onClose={() => setAssigning(false)} />
     </div>
   );
 }

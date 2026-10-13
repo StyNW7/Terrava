@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { BrainCircuit } from "lucide-react";
-import toast from "react-hot-toast";
-import { aiInsights } from "@/data/mockInsights";
+import CreateTaskModal, { type TaskDraft } from "@/components/dashboard/CreateTaskModal";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useScopedData } from "@/hooks/useScopedData";
 
 export default function OverviewAIPanel() {
+  const { getLivestockById } = useDataStore();
+  const { insights: aiInsights, farmId } = useScopedData();
   const { t, tr } = useLanguage();
-  const topInsights = aiInsights.filter((insight) => !insight.reviewed).slice(0, 3);
+  const [taskDraft, setTaskDraft] = useState<TaskDraft | null>(null);
+  const topInsights = aiInsights.filter((insight) => !insight.reviewed && !insight.dismissed).slice(0, 3);
 
   return (
     <div className="rounded-2xl border border-terrava-border bg-white p-5">
@@ -16,6 +21,7 @@ export default function OverviewAIPanel() {
           {t("common.viewAll")}
         </Link>
       </div>
+      {topInsights.length === 0 && <p className="rounded-xl bg-terrava-bg px-3 py-6 text-center text-sm text-terrava-muted">{t("overview.empty.insights")}</p>}
       <div className="space-y-3">
         {topInsights.map((insight) => (
           <div key={insight.id} className="rounded-xl bg-terrava-bg p-3.5">
@@ -30,7 +36,13 @@ export default function OverviewAIPanel() {
               </Link>
               <button
                 type="button"
-                onClick={() => toast.success(t("insights.taskCreated"))}
+                onClick={() =>
+                  setTaskDraft({
+                    title: tr(insight.recommendation),
+                    farmId: farmId !== "all" ? farmId : getLivestockById(insight.affectedLivestock[0] ?? "")?.farmId ?? "farm-1",
+                    source: { type: "insight", id: insight.id },
+                  })
+                }
                 className="rounded-lg border border-terrava-border bg-white px-3 py-1.5 text-xs font-semibold text-terrava-text hover:bg-terrava-bg"
               >
                 {t("insights.createTask")}
@@ -39,6 +51,7 @@ export default function OverviewAIPanel() {
           </div>
         ))}
       </div>
+      <CreateTaskModal draft={taskDraft} onClose={() => setTaskDraft(null)} />
     </div>
   );
 }

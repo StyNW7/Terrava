@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import {
   type ColumnDef,
@@ -26,7 +26,24 @@ interface DataTableProps<T> {
   onSelectionChange?: (rows: T[]) => void;
   pageSize?: number;
   renderMobileCard?: (row: T) => ReactNode;
-  bulkActions?: ReactNode;
+  /** Shown when rows are selected; receives the selected rows and a way to clear the selection. */
+  bulkActions?: ReactNode | ((selected: T[], clearSelection: () => void) => ReactNode);
+}
+
+function SelectBox({ checked, indeterminate = false, onChange, label }: { checked: boolean; indeterminate?: boolean; onChange: (value: boolean) => void; label: string }) {
+  return (
+    <input
+      type="checkbox"
+      checked={checked}
+      ref={(element) => {
+        if (element) element.indeterminate = indeterminate;
+      }}
+      onChange={(event) => onChange(event.target.checked)}
+      onClick={(event) => event.stopPropagation()}
+      aria-label={label}
+      className="h-4 w-4 cursor-pointer rounded border-terrava-border accent-[rgb(var(--t-primary))]"
+    />
+  );
 }
 
 export default function DataTable<T extends { id: string }>({
@@ -46,19 +63,48 @@ export default function DataTable<T extends { id: string }>({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize });
 
+  const selectionColumn = useMemo<ColumnDef<T, unknown>>(
+    () => ({
+      id: "__select",
+      enableSorting: false,
+      header: ({ table }) => (
+        <SelectBox
+          checked={table.getIsAllPageRowsSelected()}
+          indeterminate={table.getIsSomePageRowsSelected()}
+          onChange={(value) => table.toggleAllPageRowsSelected(value)}
+          label={t("dashboard.selectAllRows")}
+        />
+      ),
+      cell: ({ row }) => <SelectBox checked={row.getIsSelected()} onChange={(value) => row.toggleSelected(value)} label={t("dashboard.selectRow")} />,
+    }),
+    [t]
+  );
+
+  const allColumns = useMemo(() => (enableRowSelection ? [selectionColumn, ...columns] : columns), [enableRowSelection, selectionColumn, columns]);
+
+  // Selection is keyed by row id; drop ids that are no longer in the data (e.g. archived rows).
+  const selectedRows = useMemo(() => data.filter((row) => rowSelection[row.id]), [data, rowSelection]);
+  const clearSelection = () => setRowSelection({});
+
+  useEffect(() => {
+    onSelectionChange?.(selectedRows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRows]);
+
+  // Stay on a valid page when filtering shrinks the data.
+  useEffect(() => {
+    setPagination((current) => {
+      const lastPage = Math.max(0, Math.ceil(data.length / current.pageSize) - 1);
+      return current.pageIndex > lastPage ? { ...current, pageIndex: lastPage } : current;
+    });
+  }, [data.length]);
+
   const table = useReactTable({
     data,
-    columns,
+    columns: allColumns,
     state: { sorting, rowSelection, pagination },
     onSortingChange: setSorting,
-    onRowSelectionChange: (updater) => {
-      setRowSelection(updater);
-      if (onSelectionChange) {
-        const next = typeof updater === "function" ? updater(rowSelection) : updater;
-        const selectedRows = data.filter((_, index) => next[String(index)]);
-        onSelectionChange(selectedRows);
-      }
-    },
+    onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     enableRowSelection,
     getRowId: (row) => row.id,
@@ -78,14 +124,19 @@ export default function DataTable<T extends { id: string }>({
     );
   }
 
-  const selectedCount = Object.keys(rowSelection).length;
+  const selectedCount = selectedRows.length;
 
   return (
     <div className="rounded-2xl border border-terrava-border bg-white">
       {enableRowSelection && selectedCount > 0 && bulkActions && (
         <div className="flex items-center justify-between border-b border-terrava-border bg-terrava-light px-4 py-2.5">
           <span className="text-xs font-semibold text-terrava-primary">{t("dashboard.selectedCount", { count: selectedCount })}</span>
-          <div className="flex items-center gap-2">{bulkActions}</div>
+          <div className="flex flex-wrap items-center gap-2">
+            {typeof bulkActions === "function" ? bulkActions(selectedRows, clearSelection) : bulkActions}
+            <button type="button" onClick={clearSelection} className="rounded-lg px-2.5 py-1 text-xs font-semibold text-terrava-muted hover:bg-white">
+              {t("common.cancel")}
+            </button>
+          </div>
         </div>
       )}
 
@@ -137,8 +188,13 @@ export default function DataTable<T extends { id: string }>({
       {/* Mobile card fallback */}
       <div className="divide-y divide-terrava-border md:hidden">
         {table.getRowModel().rows.map((row) => (
-          <div key={row.id} className="p-4">
-            {renderMobileCard ? renderMobileCard(row.original) : null}
+          <div key={row.id} className="flex items-start gap-3 p-4">
+            {enableRowSelection && (
+              <span className="pt-0.5">
+                <SelectBox checked={row.getIsSelected()} onChange={(value) => row.toggleSelected(value)} label={t("dashboard.selectRow")} />
+              </span>
+            )}
+            <div className="min-w-0 flex-1">{renderMobileCard ? renderMobileCard(row.original) : null}</div>
           </div>
         ))}
       </div>

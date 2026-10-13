@@ -3,11 +3,13 @@ import { BrainCircuit, Syringe } from "lucide-react";
 import type { Livestock } from "@/types/dashboard";
 import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
 import SeverityBadge from "@/components/dashboard/SeverityBadge";
-import { alerts } from "@/data/mockAlerts";
-import { getFarmById, getBarnById } from "@/data/mockFarms";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useUnits } from "@/hooks/useSettings";
 
 export default function LivestockOverviewTab({ animal }: { animal: Livestock }) {
+  const { alerts, getFarmById, getBarnById } = useDataStore();
+  const { formatWeight } = useUnits();
   const { t, tr, tt } = useLanguage();
   const relatedAlerts = alerts.filter((alert) => alert.livestockId === animal.id).slice(0, 3);
 
@@ -68,7 +70,7 @@ export default function LivestockOverviewTab({ animal }: { animal: Livestock }) 
           <DetailInfoRow label={t("livestock.column.breed")} value={animal.breed} />
           <DetailInfoRow label={t("livestock.column.gender")} value={tt("gender", animal.gender)} />
           <DetailInfoRow label={t("livestock.column.age")} value={t("livestock.months", { count: animal.ageMonths })} />
-          <DetailInfoRow label={t("livestock.weight")} value={`${animal.weightKg} kg`} />
+          <DetailInfoRow label={t("livestock.weight")} value={formatWeight(animal.weightKg)} />
           <DetailInfoRow label={t("livestock.bodyCondition")} value={`${animal.bodyConditionScore}/5`} />
         </div>
 

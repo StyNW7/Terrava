@@ -71,6 +71,7 @@ export const breadcrumbLabelKeys: Record<string, string> = {
   dashboard: "nav.item.dashboard",
   livestock: "nav.item.livestock",
   add: "nav.item.addLivestock",
+  edit: "common.edit",
   monitoring: "nav.item.monitoring",
   alerts: "nav.item.alerts",
   "ai-insights": "nav.item.aiInsights",

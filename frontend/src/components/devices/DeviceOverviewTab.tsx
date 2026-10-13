@@ -1,10 +1,10 @@
 import type { Device } from "@/types/dashboard";
 import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
-import { getFarmById } from "@/data/mockFarms";
-import { getLivestockById } from "@/data/mockLivestock";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function DeviceOverviewTab({ device }: { device: Device }) {
+  const { getFarmById, getLivestockById } = useDataStore();
   const { lang, t, tRel } = useLanguage();
   const animal = device.assignedLivestockId ? getLivestockById(device.assignedLivestockId) : undefined;
 

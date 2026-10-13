@@ -1,10 +1,11 @@
 import type { Farm } from "@/types/dashboard";
 import LivestockGridCard from "@/components/livestock/LivestockGridCard";
 import EmptyState from "@/components/dashboard/EmptyState";
-import { getLivestockByFarm } from "@/data/mockLivestock";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function FarmLivestockTab({ farm }: { farm: Farm }) {
+  const { getLivestockByFarm } = useDataStore();
   const { t } = useLanguage();
   const animals = getLivestockByFarm(farm.id);
 

@@ -38,6 +38,15 @@ The dashboard maps (**Peta Peternakan** and the livestock location tab) use [CAR
 
 `.env.local` is git-ignored, so the key never lands in the repository. The **Satelit** layer uses Esri World Imagery; `VITE_ARCGIS_API_KEY` is optional and only needed if you move to an ArcGIS Location Platform plan. Provider credits stay visible as a small attribution chip in the corner, because the OpenStreetMap, CARTO, and Esri licences require it.
 
+## Demo data, actions, and exports
+
+The dashboard runs on a dummy dataset (`src/data/mock*.ts`) loaded into a shared store (`src/context/DataStoreContext.tsx`) and saved in `localStorage` (`terrava-demo-data`). Every action changes that data and shows up everywhere: resolving or assigning alerts, adding, editing, moving, or archiving livestock, pairing ear tags, adding farms and barns, inviting or removing team members, and creating tasks from alerts or AI insights.
+
+- **Reports & Analytics**: six reports (health, alerts, devices, farm operations, environment/THI, staff) are built from the current data and the page filters. Each can be previewed, downloaded as a real PDF (jsPDF, loaded on demand) or CSV, and scheduled; downloads are kept in the report history.
+- **CSV export** on the Alerts, Livestock, Farms, and Devices pages exports the rows currently shown. The dashboard's **Export Summary** downloads a one-page PDF.
+- **Settings** are saved in `localStorage` (`terrava-settings`) and take effect across the app: thresholds drive the Live Monitoring warnings, units change temperature and weight, the default farm drives the dashboard filter, plus compact mode and the default sidebar state. A password changed in Settings is stored per browser as a SHA-256 hash and used on the next sign-in.
+- **Settings → Data & Privacy → Reset Demo Data** restores the original dataset.
+
 ## Theme
 
 Light and dark mode are supported. Toggle with the sun/moon button in the navbar, dashboard header, or auth pages, or pick Light / Dark / System under **Settings → Appearance**. The choice is stored in `localStorage` (`terrava-theme`) and applied before first paint to avoid flashes.

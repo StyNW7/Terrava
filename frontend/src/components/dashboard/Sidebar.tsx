@@ -7,13 +7,14 @@ import { images } from "@/data/images";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import { useAuth } from "@/hooks/useAuth";
 import { useClickOutside } from "@/hooks/useClickOutside";
-import { alerts } from "@/data/mockAlerts";
 import UserMenuItems from "@/components/dashboard/UserMenuItems";
 import UserAvatar from "@/components/dashboard/UserAvatar";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function Sidebar() {
+  const { alerts } = useDataStore();
   const { collapsed, toggleCollapsed } = useSidebarState();
   const { user } = useAuth();
   const { t, tt } = useLanguage();
@@ -35,7 +36,7 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "sticky top-0 hidden h-screen shrink-0 flex-col border-r border-terrava-border bg-white transition-[width] duration-300 ease-out-expo lg:flex",
+        "sticky top-0 hidden h-screen shrink-0 flex-col border-r border-terrava-border bg-white transition-[width] duration-300 ease-out-expo print:!hidden lg:flex",
         collapsed ? "w-20" : "w-[270px]"
       )}
     >

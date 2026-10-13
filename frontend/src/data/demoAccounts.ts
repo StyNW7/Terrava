@@ -52,6 +52,40 @@ export function findDemoAccount(email: string, password: string): DemoAccount | 
   return demoAccounts.find((account) => account.email === normalized && account.password === password);
 }
 
+/** Password changes made in Settings are kept per browser as SHA-256 hashes, never in plain text. */
+export const PASSWORD_OVERRIDES_KEY = "terrava-password-overrides";
+
+export async function hashPassword(email: string, password: string): Promise<string> {
+  const bytes = new TextEncoder().encode(`terrava:${email.trim().toLowerCase()}:${password}`);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function readOverrides(): Record<string, string> {
+  try {
+    return JSON.parse(window.localStorage.getItem(PASSWORD_OVERRIDES_KEY) ?? "{}") as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+
+/** Check credentials against the demo accounts, honouring a password changed in Settings. */
+export async function verifyCredentials(email: string, password: string): Promise<DemoAccount | undefined> {
+  const normalized = email.trim().toLowerCase();
+  const account = demoAccounts.find((item) => item.email === normalized);
+  if (!account) return undefined;
+  const override = readOverrides()[normalized];
+  if (override) return override === (await hashPassword(normalized, password)) ? account : undefined;
+  return account.password === password ? account : undefined;
+}
+
+export async function setPasswordOverride(email: string, password: string) {
+  const normalized = email.trim().toLowerCase();
+  const overrides = readOverrides();
+  overrides[normalized] = await hashPassword(normalized, password);
+  window.localStorage.setItem(PASSWORD_OVERRIDES_KEY, JSON.stringify(overrides));
+}
+
 export function toAuthUser(account: DemoAccount): AuthUser {
   const { id, email, name, role, farmName, initials } = account;
   return { id, email, name, role, farmName, initials };

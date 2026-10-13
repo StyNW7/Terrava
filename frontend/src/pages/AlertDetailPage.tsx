@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   BrainCircuit,
   Thermometer,
@@ -11,6 +11,9 @@ import {
   MessageSquarePlus,
   ClipboardList,
   BellRing,
+  Eye,
+  RotateCcw,
+  StickyNote,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Breadcrumb from "@/components/dashboard/Breadcrumb";
@@ -19,18 +22,24 @@ import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
 import Timeline from "@/components/dashboard/Timeline";
 import ErrorState from "@/components/dashboard/ErrorState";
 import Modal from "@/components/dashboard/Modal";
-import { getAlertById } from "@/data/mockAlerts";
-import { getLivestockById } from "@/data/mockLivestock";
-import { getFarmById, getBarnById } from "@/data/mockFarms";
+import AssignStaffModal from "@/components/dashboard/AssignStaffModal";
+import CreateTaskModal, { type TaskDraft } from "@/components/dashboard/CreateTaskModal";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
+import { useAuth } from "@/hooks/useAuth";
+import { isoToRelative } from "@/utils/time";
 
 export default function AlertDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, tr, tt, tRel } = useLanguage();
+  const { user } = useAuth();
+  const { alerts, getAlertById, getLivestockById, getFarmById, getBarnById, updateAlerts, addAlertNote } = useDataStore();
   const alert = id ? getAlertById(id) : undefined;
   const [noteOpen, setNoteOpen] = useState(false);
   const [note, setNote] = useState("");
+  const [assignOpen, setAssignOpen] = useState(false);
+  const [taskDraft, setTaskDraft] = useState<TaskDraft | null>(null);
 
   useEffect(() => {
     document.title = alert ? `${tr(alert.title)} | Terrava` : "Alert Detail | Terrava";
@@ -43,6 +52,17 @@ export default function AlertDetailPage() {
   const animal = getLivestockById(alert.livestockId);
   const farm = getFarmById(alert.farmId);
   const barn = getBarnById(alert.barnId);
+  const related = alerts.filter((other) => other.livestockId === alert.livestockId && other.id !== alert.id);
+  const notes = alert.notes ?? [];
+  const stamp = (iso?: string) => (iso ? tRel(isoToRelative(iso)) : t("alerts.timeline.recently"));
+
+  const setStatus = (status: "active" | "acknowledged" | "resolved") => {
+    const now = new Date().toISOString();
+    if (status === "acknowledged") updateAlerts([alert.id], { status, acknowledgedAt: now });
+    if (status === "resolved") updateAlerts([alert.id], { status, resolvedAt: now });
+    if (status === "active") updateAlerts([alert.id], { status, resolvedAt: undefined, acknowledgedAt: undefined });
+    toast.success(t(status === "acknowledged" ? "alerts.toast.acknowledged" : status === "resolved" ? "alerts.toast.resolved" : "alerts.toast.reopened"));
+  };
 
   const timelineItems = [
     { id: "1", label: t("alerts.timeline.detected"), timestamp: tRel(alert.detectedAt), icon: BellRing },
@@ -58,9 +78,11 @@ export default function AlertDetailPage() {
           },
         ]
       : []),
-    ...(alert.status === "resolved"
-      ? [{ id: "5", label: t("status.resolved"), timestamp: t("alerts.timeline.recently"), icon: CheckCircle2 }]
+    ...(alert.acknowledgedAt || alert.status === "acknowledged"
+      ? [{ id: "ack", label: t("status.acknowledged"), timestamp: stamp(alert.acknowledgedAt), icon: Eye }]
       : []),
+    ...notes.map((item) => ({ id: item.id, label: t("alerts.timeline.note", { name: item.author }), timestamp: stamp(item.createdAt), icon: StickyNote })),
+    ...(alert.status === "resolved" ? [{ id: "5", label: t("status.resolved"), timestamp: stamp(alert.resolvedAt), icon: CheckCircle2 }] : []),
   ];
 
   return (
@@ -80,15 +102,37 @@ export default function AlertDetailPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          <button onClick={() => toast.success(t("alerts.toast.acknowledged"))} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            {t("alerts.action.acknowledge")}
+          {alert.status === "active" && (
+            <button type="button" onClick={() => setStatus("acknowledged")} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+              {t("alerts.action.acknowledge")}
+            </button>
+          )}
+          <button type="button" onClick={() => setAssignOpen(true)} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+            {alert.assignedTo ? t("alerts.action.reassign") : t("alerts.action.assign")}
           </button>
-          <button onClick={() => toast.success(t("alerts.toast.assigned"))} className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
-            {t("alerts.action.assign")}
+          <button
+            type="button"
+            onClick={() =>
+              setTaskDraft({
+                title: t("tasks.followUp", { title: tr(alert.title), name: animal?.name ?? "" }),
+                farmId: alert.farmId,
+                assignee: alert.assignedTo,
+                source: { type: "alert", id: alert.id },
+              })
+            }
+            className="rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg"
+          >
+            {t("insights.createTask")}
           </button>
-          <button onClick={() => toast.success(t("alerts.toast.resolved"))} className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover">
-            {t("alerts.action.resolve")}
-          </button>
+          {alert.status === "resolved" ? (
+            <button type="button" onClick={() => setStatus("active")} className="inline-flex items-center gap-2 rounded-xl border border-terrava-border px-4 py-2.5 text-sm font-semibold text-terrava-text hover:bg-terrava-bg">
+              <RotateCcw className="h-4 w-4" aria-hidden="true" /> {t("alerts.action.reopen")}
+            </button>
+          ) : (
+            <button type="button" onClick={() => setStatus("resolved")} className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover">
+              {t("alerts.action.resolve")}
+            </button>
+          )}
         </div>
       </div>
 
@@ -100,13 +144,13 @@ export default function AlertDetailPage() {
           </div>
 
           {animal && (
-            <div className="flex items-center gap-4 rounded-2xl border border-terrava-border bg-white p-5">
+            <Link to={"/dashboard/livestock/" + animal.id} className="flex items-center gap-4 rounded-2xl border border-terrava-border bg-white p-5 transition-colors hover:border-terrava-primary/40">
               <img src={animal.photo} alt={animal.name} className="h-16 w-16 rounded-xl object-cover" />
               <div>
                 <p className="text-sm font-semibold text-terrava-text">{animal.name}</p>
                 <p className="text-xs text-terrava-muted">{animal.code} &middot; {farm?.name} &middot; {barn?.name}</p>
               </div>
-            </div>
+            </Link>
           )}
 
           <div className="rounded-2xl border border-terrava-border bg-white p-5">
@@ -179,7 +223,25 @@ export default function AlertDetailPage() {
 
           <div className="rounded-2xl border border-terrava-border bg-white p-5">
             <h3 className="mb-3 text-sm font-semibold text-terrava-text">{t("alerts.relatedRecords")}</h3>
-            <p className="text-sm text-terrava-muted">{t("alerts.noRelatedRecords")}</p>
+            {related.length === 0 ? (
+              <p className="text-sm text-terrava-muted">{t("alerts.noRelatedRecords")}</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {related.slice(0, 5).map((other) => (
+                  <li key={other.id}>
+                    <Link to={"/dashboard/alerts/" + other.id} className="flex items-center justify-between gap-3 rounded-xl bg-terrava-bg px-3 py-2 text-sm hover:bg-terrava-light">
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium text-terrava-text">{tr(other.title)}</span>
+                        <span className="block text-xs text-terrava-muted">
+                          {tRel(other.detectedAt)} · {t("status." + other.status)}
+                        </span>
+                      </span>
+                      <SeverityBadge severity={other.severity} />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="rounded-2xl border border-terrava-border bg-white p-5">
@@ -190,7 +252,20 @@ export default function AlertDetailPage() {
                 {t("alerts.addNote")}
               </button>
             </div>
-            <p className="text-sm text-terrava-muted">{t("alerts.noNotes")}</p>
+            {notes.length === 0 ? (
+              <p className="text-sm text-terrava-muted">{t("alerts.noNotes")}</p>
+            ) : (
+              <ul className="space-y-2">
+                {[...notes].reverse().map((item) => (
+                  <li key={item.id} className="rounded-xl bg-terrava-bg px-3 py-2.5">
+                    <p className="whitespace-pre-line text-sm text-terrava-text">{item.text}</p>
+                    <p className="mt-1 text-[11px] text-terrava-muted">
+                      {item.author} · {stamp(item.createdAt)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
@@ -205,12 +280,15 @@ export default function AlertDetailPage() {
               {t("common.cancel")}
             </button>
             <button
+              type="button"
+              disabled={note.trim().length === 0}
               onClick={() => {
+                addAlertNote(alert.id, note.trim(), user?.name ?? "Terrava");
                 toast.success(t("alerts.toast.noteAdded"));
                 setNote("");
                 setNoteOpen(false);
               }}
-              className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"
+              className="rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover disabled:opacity-50"
             >
               {t("alerts.saveNote")}
             </button>
@@ -222,9 +300,23 @@ export default function AlertDetailPage() {
           onChange={(event) => setNote(event.target.value)}
           rows={4}
           placeholder={t("alerts.notePlaceholder")}
-          className="w-full rounded-xl border border-terrava-border px-3.5 py-2.5 text-sm focus:border-terrava-primary focus:outline-none"
+          maxLength={1000}
+          autoFocus
+          className="w-full rounded-xl border border-terrava-border bg-white px-3.5 py-2.5 text-sm text-terrava-text focus:border-terrava-primary focus:outline-none"
         />
       </Modal>
+
+      <AssignStaffModal
+        open={assignOpen}
+        title={t("alerts.assignTitle")}
+        current={alert.assignedTo}
+        onClose={() => setAssignOpen(false)}
+        onAssign={(name) => {
+          updateAlerts([alert.id], { assignedTo: name });
+          toast.success(t("alerts.toast.assignedTo", { count: 1, name }));
+        }}
+      />
+      <CreateTaskModal draft={taskDraft} onClose={() => setTaskDraft(null)} />
     </div>
   );
 }

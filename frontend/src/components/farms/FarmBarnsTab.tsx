@@ -1,8 +1,9 @@
 import type { Farm } from "@/types/dashboard";
-import { getBarnsByFarm } from "@/data/mockFarms";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function FarmBarnsTab({ farm }: { farm: Farm }) {
+  const { getBarnsByFarm } = useDataStore();
   const { t } = useLanguage();
   const farmBarns = getBarnsByFarm(farm.id);
 

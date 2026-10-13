@@ -3,11 +3,12 @@ import type { Livestock } from "@/types/dashboard";
 import DetailInfoRow from "@/components/dashboard/DetailInfoRow";
 import DeviceStatusBadge from "@/components/dashboard/DeviceStatusBadge";
 import EmptyState from "@/components/dashboard/EmptyState";
-import { getDeviceById } from "@/data/mockDevices";
 import { Cpu } from "lucide-react";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 export default function LivestockDeviceTab({ animal }: { animal: Livestock }) {
+  const { getDeviceById } = useDataStore();
   const { lang, t, tRel } = useLanguage();
   const device = animal.deviceId ? getDeviceById(animal.deviceId) : undefined;
 

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Sparkles, TriangleAlert, Users, ListChecks } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
@@ -10,28 +11,63 @@ import AlertDistributionChart from "@/components/charts/AlertDistributionChart";
 import HealthScoreChart from "@/components/charts/HealthScoreChart";
 import EmptyState from "@/components/dashboard/EmptyState";
 import InsightCard from "@/components/dashboard/insights/InsightCard";
-import { aiInsights } from "@/data/mockInsights";
+import CreateTaskModal, { type TaskDraft } from "@/components/dashboard/CreateTaskModal";
+import type { AIInsight } from "@/types/dashboard";
 import { insightCategoryDistribution, insightPriorityDistribution, taskCompletionTrend } from "@/data/dashboardChartData";
-import { getLivestockById } from "@/data/mockLivestock";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDataStore } from "@/hooks/useDataStore";
 
 const tabValues = ["all", "health", "behavior", "environment", "productivity", "devices"];
 
 export default function AIInsightsPage() {
+  const { insights: aiInsights, getLivestockById, updateInsight, tasks } = useDataStore();
   const { t, tr } = useLanguage();
   const [tab, setTab] = useState("all");
   const [selectedInsightId, setSelectedInsightId] = useState<string | null>(null);
-  const [dismissed, setDismissed] = useState<string[]>([]);
+  const [showDismissed, setShowDismissed] = useState(false);
+  const [taskDraft, setTaskDraft] = useState<TaskDraft | null>(null);
 
   useEffect(() => {
     document.title = "AI Insights | Terrava";
   }, []);
 
+  const dismissedCount = aiInsights.filter((insight) => insight.dismissed).length;
   const filtered = useMemo(
-    () => aiInsights.filter((insight) => !dismissed.includes(insight.id) && (tab === "all" || insight.category === tab)),
-    [tab, dismissed]
+    () => aiInsights.filter((insight) => Boolean(insight.dismissed) === showDismissed && (tab === "all" || insight.category === tab)),
+    [aiInsights, tab, showDismissed]
   );
+
+  const taskFrom = (insight: AIInsight) => {
+    const firstAnimal = getLivestockById(insight.affectedLivestock[0] ?? "");
+    setTaskDraft({
+      title: tr(insight.recommendation),
+      farmId: firstAnimal?.farmId ?? "farm-1",
+      source: { type: "insight", id: insight.id },
+    });
+  };
+
+  const dismiss = (insight: AIInsight) => {
+    updateInsight(insight.id, { dismissed: true });
+    toast(
+      (toastRef) => (
+        <span className="flex items-center gap-3">
+          {t("insights.dismissedToast")}
+          <button
+            type="button"
+            onClick={() => {
+              updateInsight(insight.id, { dismissed: false });
+              toast.dismiss(toastRef.id);
+            }}
+            className="rounded-lg bg-white/15 px-2 py-1 text-xs font-semibold"
+          >
+            {t("common.undo")}
+          </button>
+        </span>
+      ),
+      { duration: 5000 }
+    );
+  };
 
   const tabs = tabValues.map((value) => ({
     value,
@@ -40,7 +76,14 @@ export default function AIInsightsPage() {
 
   const selectedInsight = aiInsights.find((insight) => insight.id === selectedInsightId);
   const newInsightsCount = aiInsights.filter((insight) => !insight.reviewed).length;
-  const highPriorityCount = aiInsights.filter((insight) => insight.priority === "high").length;
+  const highPriorityCount = aiInsights.filter((insight) => insight.priority === "high" && !insight.dismissed).length;
+  const riskGroups = new Set(
+    aiInsights
+      .filter((insight) => insight.priority === "high" && !insight.dismissed)
+      .flatMap((insight) => insight.affectedLivestock.map((id) => getLivestockById(id)?.herdGroup))
+      .filter(Boolean)
+  ).size;
+  const openTasks = tasks.filter((task) => !task.done).length;
 
   return (
     <div>
@@ -49,8 +92,8 @@ export default function AIInsightsPage() {
       <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <MetricCard icon={Sparkles} label={t("insights.metric.new")} value={newInsightsCount} />
         <MetricCard icon={TriangleAlert} label={t("insights.metric.highPriority")} value={highPriorityCount} tone="warning" />
-        <MetricCard icon={Users} label={t("insights.metric.riskGroups")} value={3} />
-        <MetricCard icon={ListChecks} label={t("insights.metric.followUpTasks")} value={12} />
+        <MetricCard icon={Users} label={t("insights.metric.riskGroups")} value={riskGroups} />
+        <MetricCard icon={ListChecks} label={t("insights.metric.followUpTasks")} value={openTasks} />
       </div>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -80,6 +123,19 @@ export default function AIInsightsPage() {
 
       <Tabs tabs={tabs} active={tab} onChange={setTab} />
 
+      {dismissedCount > 0 && (
+        <div className="mb-4 flex justify-end">
+          <button
+            type="button"
+            aria-pressed={showDismissed}
+            onClick={() => setShowDismissed((value) => !value)}
+            className="rounded-xl border border-terrava-border px-3 py-1.5 text-xs font-semibold text-terrava-text hover:bg-terrava-bg"
+          >
+            {showDismissed ? t("insights.showActive") : t("insights.showDismissed", { count: dismissedCount })}
+          </button>
+        </div>
+      )}
+
       {filtered.length === 0 ? (
         <EmptyState icon={Sparkles} title={t("insights.emptyTitle")} description={t("insights.emptyDescription")} />
       ) : (
@@ -89,9 +145,12 @@ export default function AIInsightsPage() {
               key={insight.id}
               insight={insight}
               onReview={() => setSelectedInsightId(insight.id)}
-              onCreateTask={() => toast.success(t("insights.taskCreated"))}
-              onDismiss={() => setDismissed((prev) => [...prev, insight.id])}
-              onMarkReviewed={() => toast.success(t("insights.markedReviewed"))}
+              onCreateTask={() => taskFrom(insight)}
+              onDismiss={() => (insight.dismissed ? updateInsight(insight.id, { dismissed: false }) : dismiss(insight))}
+              onMarkReviewed={() => {
+                updateInsight(insight.id, { reviewed: !insight.reviewed });
+                if (!insight.reviewed) toast.success(t("insights.markedReviewed"));
+              }}
             />
           ))}
         </div>
@@ -108,8 +167,10 @@ export default function AIInsightsPage() {
                 {selectedInsight.affectedLivestock.map((id) => {
                   const animal = getLivestockById(id);
                   return (
-                    <li key={id} className="text-sm text-terrava-text">
-                      {animal?.name} ({animal?.code})
+                    <li key={id}>
+                      <Link to={"/dashboard/livestock/" + id} className="text-sm text-terrava-text hover:text-terrava-primary hover:underline">
+                        {animal?.name} ({animal?.code})
+                      </Link>
                     </li>
                   );
                 })}
@@ -132,8 +193,10 @@ export default function AIInsightsPage() {
             </p>
 
             <button
+              type="button"
               onClick={() => {
-                toast.success(t("insights.taskCreated"));
+                taskFrom(selectedInsight);
+                if (!selectedInsight.reviewed) updateInsight(selectedInsight.id, { reviewed: true });
                 setSelectedInsightId(null);
               }}
               className="w-full rounded-xl bg-terrava-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-terrava-hover"
@@ -143,6 +206,7 @@ export default function AIInsightsPage() {
           </div>
         )}
       </Drawer>
+      <CreateTaskModal draft={taskDraft} onClose={() => setTaskDraft(null)} />
     </div>
   );
 }
