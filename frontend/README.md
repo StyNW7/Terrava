@@ -2,6 +2,8 @@
 
 AI-Powered Smart Livestock Ecosystem — public site, authentication, and farmer dashboard (React + Vite + TypeScript + Tailwind + Framer Motion).
 
+For the project overview, features, and screenshots, see the [main README](../README.md) ([Bahasa Indonesia](../README-ind.md)).
+
 ## Run locally
 
 ```bash
