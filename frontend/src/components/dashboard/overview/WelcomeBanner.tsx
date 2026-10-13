@@ -33,16 +33,16 @@ export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnl
   });
 
   const chips = [
-    { icon: CircleCheck, label: t("overview.chip.healthy", { percent: healthyPercent }), tone: "text-terrava-success" },
+    { icon: CircleCheck, label: t("overview.chip.healthy", { percent: healthyPercent }), tone: "text-emerald-300" },
     {
       icon: BellRing,
       label: t("overview.chip.activeAlerts", { count: activeAlerts }),
-      tone: activeAlerts > 0 ? "text-terrava-warning" : "text-terrava-success",
+      tone: activeAlerts > 0 ? "text-amber-300" : "text-emerald-300",
     },
     {
       icon: Radio,
       label: t("overview.chip.devicesOnline", { online: devicesOnline, total: devicesTotal }),
-      tone: "text-terrava-info",
+      tone: "text-sky-300",
     },
   ];
 

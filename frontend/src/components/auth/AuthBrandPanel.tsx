@@ -68,7 +68,7 @@ export default function AuthBrandPanel({ heading, description, benefits, testimo
       >
         <motion.div variants={item}>
           <Link to="/" className="flex items-center gap-2.5">
-            <img src={images.logoIcon} alt="Terrava logo" className="h-9 w-9 rounded-lg object-contain" />
+            <img src={images.logoIcon} alt="Terrava logo" className="h-10 w-10 rounded-xl bg-white object-contain p-1 shadow-sm" />
             <span className="text-xl font-bold text-white">Terrava</span>
           </Link>
           <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-white/60">

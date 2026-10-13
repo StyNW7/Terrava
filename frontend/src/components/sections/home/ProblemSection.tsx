@@ -18,7 +18,7 @@ export default function ProblemSection() {
   return (
     <section className="py-20 sm:py-28">
       <div className="container">
-        <SectionHeading title={t("home.problem.title")} />
+        <SectionHeading badge={t("home.problem.badge")} title={t("home.problem.title")} description={t("home.problem.description")} />
 
         <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:items-center">
           <StaggerGroup className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -30,7 +30,7 @@ export default function ProblemSection() {
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-terrava-light text-terrava-primary">
                   <problem.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
-                <h3 className="mb-2 text-sm font-semibold text-terrava-text">{t("home.problem." + problem.key + ".title")}</h3>
+                <h3 className="mb-2 text-[15px] font-bold leading-snug text-terrava-text">{t("home.problem." + problem.key + ".title")}</h3>
                 <p className="text-sm leading-relaxed text-terrava-muted">{t("home.problem." + problem.key + ".description")}</p>
               </StaggerItem>
             ))}

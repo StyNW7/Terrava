@@ -32,6 +32,11 @@ export const landing: Dictionary = {
   "home.hero.noCriticalAlerts": { id: "Tidak ada alert kritis", en: "No critical alerts" },
 
   // --- Problem -------------------------------------------------------------
+  "home.problem.badge": { id: "Tantangan Peternak", en: "The Challenge" },
+  "home.problem.description": {
+    id: "Empat masalah yang paling sering membuat peternak kehilangan waktu, tenaga, dan pendapatan.",
+    en: "Four problems that most often cost farmers their time, energy, and income.",
+  },
   "home.problem.title": {
     id: "Peternakan tidak seharusnya bergantung pada keterlambatan dan perkiraan.",
     en: "Livestock farming should not have to rely on delay and guesswork.",
@@ -78,6 +83,23 @@ export const landing: Dictionary = {
     id: "Dari data ternak menjadi tindakan yang lebih tepat.",
     en: "From livestock data to better-targeted action.",
   },
+  "home.flow.badge": { id: "Cara Kerja", en: "How It Works" },
+  "home.flow.description": {
+    id: "Enam langkah otomatis yang mengubah sinyal dari setiap ternak menjadi keputusan yang bisa langsung diambil.",
+    en: "Six automated steps that turn signals from every animal into decisions you can act on right away.",
+  },
+  "home.flow.step.earTag.title": { id: "Smart Ear Tag", en: "Smart Ear Tag" },
+  "home.flow.step.earTag.desc": { id: "Merekam suhu, aktivitas, dan lokasi ternak.", en: "Records temperature, activity, and location." },
+  "home.flow.step.gateway.title": { id: "LoRa Gateway", en: "LoRa Gateway" },
+  "home.flow.step.gateway.desc": { id: "Mengirim data jarak jauh dengan hemat daya.", en: "Relays data over long range on little power." },
+  "home.flow.step.cloud.title": { id: "Cloud", en: "Cloud" },
+  "home.flow.step.cloud.desc": { id: "Menyimpan dan menyinkronkan data secara aman.", en: "Stores and syncs data securely." },
+  "home.flow.step.ai.title": { id: "Analisis AI", en: "AI Analysis" },
+  "home.flow.step.ai.desc": { id: "Mendeteksi anomali sebelum gejala terlihat.", en: "Flags anomalies before symptoms show." },
+  "home.flow.step.dashboard.title": { id: "Dashboard & Alert", en: "Dashboard & Alerts" },
+  "home.flow.step.dashboard.desc": { id: "Menyajikan kondisi ternak dan peringatan dini.", en: "Surfaces herd status and early warnings." },
+  "home.flow.step.action.title": { id: "Tindakan Peternak", en: "Farmer Action" },
+  "home.flow.step.action.desc": { id: "Peternak merespons cepat dengan rekomendasi jelas.", en: "Farmers respond fast with clear guidance." },
 
   // --- Core features -------------------------------------------------------
   "home.features.badge": { id: "Core Features", en: "Core Features" },

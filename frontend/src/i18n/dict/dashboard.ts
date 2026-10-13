@@ -633,6 +633,17 @@ export const dashboard: Dictionary = {
   "map.offlineDevices": { id: "Perangkat Offline", en: "Offline Devices" },
   "map.livestockList": { id: "Daftar Ternak", en: "Livestock List" },
   "map.barnFacility": { id: "Kandang / Fasilitas", en: "Barn / Facility" },
+  "map.barn": { id: "Kandang", en: "Barn" },
+  "map.baseLayer": { id: "Jenis peta", en: "Base map" },
+  "map.layer.map": { id: "Peta", en: "Map" },
+  "map.layer.satellite": { id: "Satelit", en: "Satellite" },
+  "map.fitAll": { id: "Tampilkan semua", en: "Show all" },
+  "map.legend": { id: "Legenda", en: "Legend" },
+  "map.score": { id: "Skor", en: "Score" },
+  "map.showing": { id: "{count} dari {total}", en: "{count} of {total}" },
+  "map.noResults": { id: "Tidak ada ternak yang cocok dengan filter.", en: "No livestock match these filters." },
+  "map.openAlerts": { id: "Buka Alerts Center untuk tindak lanjut", en: "Open the Alerts Center to follow up" },
+  "map.allOnline": { id: "Semua perangkat terhubung", en: "All devices are connected" },
 
   // --- Farms ---------------------------------------------------------------
   "farms.subtitle": {

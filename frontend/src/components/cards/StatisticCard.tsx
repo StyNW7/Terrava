@@ -6,7 +6,7 @@ export default function StatisticCard({ stat }: { stat: StatisticItem }) {
   const Icon = stat.icon;
 
   return (
-    <div className="card-hover group h-full rounded-2xl border border-terrava-border bg-white p-6 text-center shadow-card">
+    <div className="card-hover group h-full rounded-2xl border border-terrava-border bg-white px-4 py-6 text-center shadow-card">
       <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-terrava-light text-terrava-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-terrava-primary group-hover:text-white">
         <Icon className="h-6 w-6" aria-hidden="true" />
       </div>
@@ -15,7 +15,7 @@ export default function StatisticCard({ stat }: { stat: StatisticItem }) {
           {tr(stat.qualifier)}
         </p>
       )}
-      <p className="text-2xl font-bold text-terrava-text sm:text-3xl">
+      <p className="whitespace-nowrap text-2xl font-bold tracking-tight text-terrava-text xl:text-[26px]">
         {stat.value}
         {stat.suffix && <span className="text-terrava-primary">{tr(stat.suffix)}</span>}
       </p>

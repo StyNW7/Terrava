@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, LayoutDashboard } from "lucide-react";
 import { breadcrumbLabelKeys } from "@/data/dashboardNav";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -32,16 +32,31 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
     })();
 
   return (
-    <nav aria-label={t("dashboard.breadcrumb")} className="flex items-center gap-1.5 text-xs text-terrava-muted">
+    <nav aria-label={t("dashboard.breadcrumb")} className="flex min-w-0 items-center gap-1.5 whitespace-nowrap text-sm text-terrava-muted">
       {derivedItems.map((item, index) => (
-        <span key={`${item.label}-${index}`} className="flex items-center gap-1.5">
-          {index > 0 && <ChevronRight className="h-3 w-3" aria-hidden="true" />}
-          {item.href ? (
+        <span
+          key={`${item.label}-${index}`}
+          className={index === derivedItems.length - 1 ? "flex min-w-0 items-center gap-1.5" : "flex shrink-0 items-center gap-1.5"}
+        >
+          {index > 0 && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-terrava-muted/60" aria-hidden="true" />}
+          {item.href === "/dashboard" ? (
+            // The dashboard root collapses to an icon so the current page keeps the room.
+            <Link
+              to={item.href}
+              aria-label={item.label}
+              title={item.label}
+              className="grid h-7 w-7 place-items-center rounded-lg transition-colors hover:bg-terrava-bg hover:text-terrava-primary"
+            >
+              <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          ) : item.href ? (
             <Link to={item.href} className="capitalize transition-colors hover:text-terrava-primary">
               {item.label}
             </Link>
           ) : (
-            <span className="capitalize font-medium text-terrava-text">{item.label}</span>
+            <span className="truncate font-semibold capitalize text-terrava-text" aria-current="page">
+              {item.label}
+            </span>
           )}
         </span>
       ))}

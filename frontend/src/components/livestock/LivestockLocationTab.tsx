@@ -11,14 +11,16 @@ export default function LivestockLocationTab({ animal }: { animal: Livestock }) 
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <div className="overflow-hidden rounded-2xl border border-terrava-border lg:col-span-2">
-        <MapContainer center={[animal.location.lat, animal.location.lng]} zoom={15} scrollWheelZoom={false} style={{ height: 360, width: "100%" }}>
+      <div className="isolate overflow-hidden rounded-2xl border border-terrava-border shadow-card lg:col-span-2">
+        <MapContainer center={[animal.location.lat, animal.location.lng]} zoom={15} scrollWheelZoom={false} attributionControl={false} style={{ height: 360, width: "100%" }}>
           <ThemedTileLayer />
-          <Circle center={[animal.location.lat, animal.location.lng]} radius={150} pathOptions={{ color: "var(--chart-primary)", fillOpacity: 0.08 }} />
+          <Circle center={[animal.location.lat, animal.location.lng]} radius={150} pathOptions={{ color: "var(--chart-primary)", fillOpacity: 0.08, weight: 1.5, dashArray: "4 4" }} />
           <Marker position={[animal.location.lat, animal.location.lng]} icon={livestockMarkerIcons[animal.healthStatus] ?? livestockMarkerIcons.healthy}>
             <Popup>
-              <p className="font-semibold">{animal.name}</p>
-              <p>{t("livestock.column.healthScore")}: {animal.healthScore}</p>
+              <p className="text-sm font-bold text-terrava-text">{animal.name}</p>
+              <p className="text-xs text-terrava-muted">
+                {t("livestock.column.healthScore")}: <span className="font-semibold text-terrava-text">{animal.healthScore}</span>
+              </p>
             </Popup>
           </Marker>
         </MapContainer>

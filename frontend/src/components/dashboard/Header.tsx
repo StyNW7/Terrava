@@ -181,7 +181,7 @@ export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
   return (
     <>
       <header ref={headerRef} className="sticky top-0 z-30 border-b border-terrava-border bg-white/90 backdrop-blur-md">
-        <div className="flex items-center gap-3 px-4 py-3 sm:gap-4 sm:px-6">
+        <div className="flex h-16 items-center gap-2 px-3 sm:gap-4 sm:px-6">
           <button
             type="button"
             onClick={onMenuClick}
@@ -195,7 +195,7 @@ export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
             <div className="hidden sm:block">
               <Breadcrumb />
             </div>
-            <p className="truncate text-base font-semibold text-terrava-text sm:text-sm sm:font-medium sm:text-terrava-muted">{title}</p>
+            <p className="truncate text-[15px] font-bold text-terrava-text sm:hidden">{title}</p>
           </div>
 
           {/* Desktop search */}
@@ -218,16 +218,16 @@ export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
                 onFocus={() => setOpenMenu("search")}
                 placeholder={t("dashboard.searchPlaceholder")}
                 aria-label={t("dashboard.globalSearch")}
-                className="w-52 bg-transparent text-sm text-terrava-text placeholder:text-terrava-muted focus:outline-none lg:w-60"
+                className="w-36 bg-transparent text-sm text-terrava-text placeholder:text-terrava-muted focus:outline-none xl:w-44 2xl:w-60"
               />
-              <kbd className="hidden rounded-md border border-terrava-border bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-terrava-muted lg:block">
+              <kbd className="hidden rounded-md border border-terrava-border bg-white px-1.5 py-0.5 font-mono text-[10px] font-semibold text-terrava-muted 2xl:block">
                 Ctrl K
               </kbd>
             </div>
             <AnimatePresence>{openMenu === "search" && searchPanel}</AnimatePresence>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-2">
             <button
               type="button"
               onClick={() => {
@@ -310,7 +310,7 @@ export default function Header({ onMenuClick, pageTitle }: HeaderProps) {
               </AnimatePresence>
             </div>
 
-            <LanguageToggle className="h-9 rounded-lg border-transparent bg-transparent text-terrava-muted hover:bg-terrava-bg hover:text-terrava-text" />
+            <LanguageToggle className="h-9 rounded-lg border-transparent px-2 bg-transparent text-terrava-muted hover:bg-terrava-bg hover:text-terrava-text" />
 
             <ThemeToggle className="h-9 w-9 rounded-lg border-transparent bg-transparent text-terrava-muted hover:bg-terrava-bg hover:text-terrava-text" />
 

@@ -39,23 +39,34 @@ export default function Sidebar() {
         collapsed ? "w-20" : "w-[270px]"
       )}
     >
-      <div className={cn("flex items-center gap-2.5 border-b border-terrava-border px-4 py-5", collapsed && "justify-center px-2")}>
+      <NavLink
+        to="/"
+        className={cn("flex h-16 shrink-0 items-center gap-2.5 border-b border-terrava-border px-5", collapsed && "justify-center px-2")}
+      >
         <img src={images.logoIcon} alt="Terrava" className="h-9 w-9 shrink-0 rounded-lg object-contain" />
         {!collapsed && (
-          <div className="min-w-0">
-            <p className="truncate text-base font-bold text-terrava-text">Terrava</p>
-            <p className="truncate text-xs text-terrava-muted">{t("dashboard.farmerDashboard")}</p>
+          <div className="min-w-0 leading-tight">
+            <p className="truncate text-base font-bold tracking-tight text-terrava-text">Terrava</p>
+            <p className="truncate text-[11px] font-medium text-terrava-muted">{t("dashboard.farmerDashboard")}</p>
           </div>
         )}
-      </div>
+      </NavLink>
 
-      <nav className="no-scrollbar flex-1 space-y-6 overflow-y-auto px-3 py-5">
+      <nav
+        className="no-scrollbar flex-1 space-y-4 overflow-y-auto px-3 py-4"
+        style={{
+          maskImage: "linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 28px), transparent 100%)",
+        }}
+      >
         {dashboardNavGroups.map((group) => (
           <div key={group.labelKey}>
-            {!collapsed && (
-              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-terrava-muted/80">{t(group.labelKey)}</p>
+            {!collapsed ? (
+              <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-terrava-muted/70">{t(group.labelKey)}</p>
+            ) : (
+              <div className="mx-auto mb-1.5 h-px w-6 bg-terrava-border" aria-hidden="true" />
             )}
-            <ul className="space-y-1">
+            <ul className="space-y-0.5">
               {group.items.map((item) => {
                 const active = isItemActive(item.href);
                 const badge = item.href === "/dashboard/alerts" ? activeAlerts : undefined;
@@ -66,9 +77,9 @@ export default function Sidebar() {
                       end={item.href === "/dashboard"}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150",
-                        collapsed && "justify-center",
-                        active ? "text-terrava-primary" : "text-terrava-text hover:bg-terrava-bg"
+                        "relative flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors duration-150",
+                        collapsed && "justify-center py-2.5",
+                        active ? "font-semibold text-terrava-primary" : "font-medium text-terrava-text/85 hover:bg-terrava-bg hover:text-terrava-text"
                       )}
                     >
                       {active && (
@@ -77,7 +88,9 @@ export default function Sidebar() {
                           className="absolute inset-0 rounded-xl bg-terrava-light"
                           transition={{ type: "spring", stiffness: 400, damping: 32 }}
                           aria-hidden="true"
-                        />
+                        >
+                          <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-terrava-primary" />
+                        </motion.span>
                       )}
                       <span className="relative flex items-center gap-3">
                         <span className="relative">
@@ -110,21 +123,8 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-terrava-border p-3">
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          aria-label={collapsed ? t("dashboard.expandSidebar") : t("dashboard.collapseSidebar")}
-          className={cn(
-            "mb-2 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-terrava-muted transition-colors hover:bg-terrava-bg hover:text-terrava-text",
-            collapsed && "justify-center"
-          )}
-        >
-          {collapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" aria-hidden="true" /> : <PanelLeftClose className="h-[18px] w-[18px]" aria-hidden="true" />}
-          {!collapsed && <span>{t("dashboard.collapse")}</span>}
-        </button>
-
-        <div ref={profileRef} className="relative">
+      <div className={cn("flex items-center gap-2 border-t border-terrava-border p-3", collapsed && "flex-col-reverse")}>
+        <div ref={profileRef} className={cn("relative min-w-0", !collapsed && "flex-1")}>
           <button
             type="button"
             onClick={() => setProfileOpen((prev) => !prev)}
@@ -167,6 +167,16 @@ export default function Sidebar() {
             )}
           </AnimatePresence>
         </div>
+
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-label={collapsed ? t("dashboard.expandSidebar") : t("dashboard.collapseSidebar")}
+          title={collapsed ? t("dashboard.expandSidebar") : t("dashboard.collapseSidebar")}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-terrava-muted transition-colors hover:bg-terrava-bg hover:text-terrava-text"
+        >
+          {collapsed ? <PanelLeftOpen className="h-[18px] w-[18px]" aria-hidden="true" /> : <PanelLeftClose className="h-[18px] w-[18px]" aria-hidden="true" />}
+        </button>
       </div>
     </aside>
   );

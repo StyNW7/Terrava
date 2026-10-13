@@ -103,7 +103,8 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https:\/\/[a-z]\.basemaps\.cartocdn\.com\/.*/i,
+            // CARTO basemaps, the OSM fallback, and Esri satellite imagery.
+            urlPattern: /^https:\/\/(([a-z]\.)?basemaps\.cartocdn\.com|tile\.openstreetmap\.org|server\.arcgisonline\.com)\/.*/i,
             handler: "CacheFirst",
             options: {
               cacheName: "map-tiles",

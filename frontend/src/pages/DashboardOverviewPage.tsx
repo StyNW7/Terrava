@@ -76,7 +76,7 @@ export default function DashboardOverviewPage() {
         devicesTotal={devices.length}
       />
 
-      <StaggerGroup className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6" stagger={0.06}>
+      <StaggerGroup className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-3 2xl:grid-cols-6" stagger={0.06}>
         <StaggerItem>
           <MetricCard icon={PawPrint} label={t("metric.totalLivestock")} value={livestock.length} trend={4.2} trendLabel={t("metric.vsLastMonth")} />
         </StaggerItem>
@@ -84,10 +84,10 @@ export default function DashboardOverviewPage() {
           <MetricCard icon={HeartPulse} label={t("metric.healthyLivestock")} value={healthyCount} trend={2.1} trendLabel={t("metric.vsLastMonth")} />
         </StaggerItem>
         <StaggerItem>
-          <MetricCard icon={TriangleAlert} label={t("metric.needsAttention")} value={attentionCount} trend={-1.4} trendLabel={t("metric.vsLastMonth")} tone="warning" />
+          <MetricCard icon={TriangleAlert} label={t("metric.needsAttention")} value={attentionCount} trend={-1.4} trendLabel={t("metric.vsLastMonth")} tone="warning" inverseTrend />
         </StaggerItem>
         <StaggerItem>
-          <MetricCard icon={BellRing} label={t("metric.criticalAlerts")} value={criticalAlertCount} trend={-3.5} trendLabel={t("metric.vsYesterday")} tone="error" />
+          <MetricCard icon={BellRing} label={t("metric.criticalAlerts")} value={criticalAlertCount} trend={-3.5} trendLabel={t("metric.vsYesterday")} tone="error" inverseTrend />
         </StaggerItem>
         <StaggerItem>
           <MetricCard icon={Radio} label={t("metric.activeDevices")} value={activeDevices} trend={1.8} trendLabel={t("metric.vsLastWeek")} />

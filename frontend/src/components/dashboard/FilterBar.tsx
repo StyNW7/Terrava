@@ -7,7 +7,7 @@ interface FilterBarProps {
 
 export default function FilterBar({ children }: FilterBarProps) {
   return (
-    <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3">
+    <div className="mb-5 flex flex-wrap items-center gap-2.5 rounded-2xl border border-terrava-border bg-white p-3 shadow-card">
       {children}
     </div>
   );
@@ -30,7 +30,7 @@ export function FilterSelect({ label, value, onChange, options }: FilterSelectPr
         value={value}
         onChange={(event) => onChange(event.target.value)}
         aria-label={label}
-        className="rounded-xl border border-terrava-border bg-white px-3 py-2 text-xs font-medium text-terrava-text focus:border-terrava-primary focus:outline-none"
+        className="h-10 max-w-full rounded-xl border border-terrava-border bg-white pl-3.5 text-[13px] font-medium text-terrava-text focus:border-terrava-primary focus:outline-none"
       >
         <option value="all">{label}: {t("common.all")}</option>
         {options.map((option) => (
