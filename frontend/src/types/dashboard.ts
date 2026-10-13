@@ -170,6 +170,8 @@ export interface StaffMember {
   email: string;
   avatar: string;
   role: StaffRole;
+  /** Company position shown next to the access role, e.g. "CTO". */
+  title?: string;
   farmId: string;
   status: StaffStatus;
   lastActive: string;

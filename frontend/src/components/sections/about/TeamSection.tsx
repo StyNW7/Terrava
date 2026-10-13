@@ -12,7 +12,7 @@ export default function TeamSection() {
       <div className="container">
         <SectionHeading badge={t("about.team.badge")} title={t("about.team.title")} />
 
-        <StaggerGrid className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-2">
+        <StaggerGrid className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
           {teamMembers.map((member) => (
             <div key={member.id} className="text-center">
               <img

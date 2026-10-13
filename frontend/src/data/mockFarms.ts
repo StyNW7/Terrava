@@ -10,7 +10,7 @@ export const farms: Farm[] = [
     name: "Green Valley Farm",
     location: "Boyolali, Jawa Tengah",
     region: "Jawa Tengah",
-    manager: "Stanley Wijaya",
+    manager: "Stanley Nathanael Wijaya",
     image: images.modernBarn,
     status: "active",
     livestockCount: 14,
@@ -73,7 +73,7 @@ export const farms: Farm[] = [
 
 const barnNames = ["Barn A", "Barn B", "Barn C"];
 const barnManagers = [
-  "Stanley Wijaya",
+  "Stanley Nathanael Wijaya",
   "Ratna Kusuma",
   "Andi Wirawan",
   "Budi Santoso",

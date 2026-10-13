@@ -4,9 +4,12 @@ import { farms } from "@/data/mockFarms";
 
 const random = createSeededRandom(5005);
 
-const staffData: { name: string; role: StaffRole; status: StaffMember["status"]; avatar?: string; email?: string }[] = [
-  { name: "Stanley Wijaya", role: "Owner", status: "active", avatar: "/Images/profile/snw.png", email: "stanley.wijaya@terrava.id" },
-  { name: "Aqnhatul Shabrina", role: "Operational", status: "active", avatar: "/Images/profile/aqna.jpeg", email: "aqnhatul.shabrina@terrava.id" },
+const staffData: { name: string; role: StaffRole; title?: string; status: StaffMember["status"]; avatar?: string; email?: string }[] = [
+  { name: "Stanley Nathanael Wijaya", role: "Owner", title: "Founder & CEO", status: "active", avatar: "/Images/profile/snw.png", email: "stanley.wijaya@terrava.id" },
+  { name: "Britney Angeline Soeseno", role: "Operational", title: "CMO", status: "active", avatar: "/Images/profile/britney.jpeg", email: "britney.soeseno@terrava.id" },
+  { name: "Ahmad Hamra", role: "Operational", title: "CTO", status: "active", avatar: "/Images/profile/hamra.png", email: "ahmad.hamra@terrava.id" },
+  { name: "Aqnhatul Shabrina", role: "Operational", title: "CFO", status: "active", avatar: "/Images/profile/aqna.jpeg", email: "aqnhatul.shabrina@terrava.id" },
+  { name: "Alexandra Clarissa", role: "Operational", title: "COO", status: "active", avatar: "/Images/profile/alexandra.png", email: "alexandra.clarissa@terrava.id" },
   { name: "Ratna Kusuma", role: "Farm Manager", status: "active" },
   { name: "Andi Wirawan", role: "Veterinarian", status: "active" },
   { name: "Budi Santoso", role: "Staff", status: "active" },
@@ -33,6 +36,7 @@ export const staff: StaffMember[] = staffData.map((person, index) => ({
   email: person.email ?? `${person.name.toLowerCase().replace(/\s+/g, ".")}@terrava.id`,
   avatar: person.avatar ?? avatarPool[index % avatarPool.length],
   role: person.role,
+  title: person.title,
   farmId: farms[index % farms.length].id,
   status: person.status,
   lastActive: person.status === "active" ? `${randomInt(random, 1, 6)} hours ago` : "Never active",

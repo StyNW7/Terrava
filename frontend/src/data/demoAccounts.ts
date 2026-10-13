@@ -17,7 +17,7 @@ export const demoAccounts: DemoAccount[] = [
     id: "usr-owner",
     email: "demo@terrava.id",
     password: "Terrava123",
-    name: "Stanley Wijaya",
+    name: "Stanley Nathanael Wijaya",
     role: "Farm Owner",
     farmName: "Terrava Farm Boyolali",
     initials: "SW",

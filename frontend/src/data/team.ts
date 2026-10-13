@@ -3,18 +3,34 @@ import type { TeamMember } from "@/types";
 export const teamMembers: TeamMember[] = [
   {
     id: "member-1",
-    name: "Stanley Wijaya",
-    role: "Founder & Product Lead",
-    image:
-      "Images/profile/snw.png",
+    name: "Stanley Nathanael Wijaya",
+    role: "Founder & CEO",
+    image: "Images/profile/snw.png",
     linkedin: "https://www.linkedin.com/in/stanley-nathanael-wijaya/",
   },
   {
     id: "member-2",
+    name: "Britney Angeline Soeseno",
+    role: "CMO",
+    image: "Images/profile/britney.jpeg",
+  },
+  {
+    id: "member-3",
+    name: "Ahmad Hamra",
+    role: "CTO",
+    image: "Images/profile/hamra.png",
+  },
+  {
+    id: "member-4",
     name: "Aqnhatul Shabrina",
-    role: "Business Lead",
-    image:
-      "Images/profile/aqna.jpeg",
+    role: "CFO",
+    image: "Images/profile/aqna.jpeg",
     linkedin: "https://www.linkedin.com/in/aqnhatul-shabrina-341643320/",
+  },
+  {
+    id: "member-5",
+    name: "Alexandra Clarissa",
+    role: "COO",
+    image: "Images/profile/alexandra.png",
   },
 ];

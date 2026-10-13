@@ -74,6 +74,7 @@ export default function TeamPage() {
   const farmManagers = staff.filter((member) => member.role === "Farm Manager").length;
   const veterinarians = staff.filter((member) => member.role === "Veterinarian").length;
   const pendingInvitations = staff.filter((member) => member.status === "invited").length;
+  const roleLabel = (member: StaffMember) => (member.title ? `${member.title} · ${tt("role", member.role)}` : tt("role", member.role));
   const roleOptions = roleValues.map((value) => ({ value, label: tt("role", value) }));
 
   const isSelf = (member: StaffMember) => member.email.toLowerCase() === user?.email.toLowerCase() || member.name === user?.name;
@@ -168,7 +169,7 @@ export default function TeamPage() {
                   <span className="block truncate text-sm font-semibold text-terrava-text hover:text-terrava-primary">
                     {member.name} {isSelf(member) && <span className="text-xs font-normal text-terrava-muted">({t("team.you")})</span>}
                   </span>
-                  <span className="block text-xs text-terrava-muted">{tt("role", member.role)}</span>
+                  <span className="block truncate text-xs text-terrava-muted">{roleLabel(member)}</span>
                 </span>
               </button>
               <RowActionsMenu actions={memberActions(member)} />
@@ -214,7 +215,7 @@ export default function TeamPage() {
               <img src={profile.avatar} alt="" className="h-16 w-16 rounded-full object-cover" />
               <div>
                 <p className="text-base font-bold text-terrava-text">{profile.name}</p>
-                <p className="text-sm text-terrava-muted">{tt("role", profile.role)}</p>
+                <p className="text-sm text-terrava-muted">{roleLabel(profile)}</p>
                 <span className={`mt-1 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusTone[profile.status]}`}>{t("status." + profile.status)}</span>
               </div>
             </div>
