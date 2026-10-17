@@ -37,6 +37,19 @@ Terrava connects smart ear tags, IoT, the cloud, and artificial intelligence so 
 </p>
 
 <p>
+  <img src="https://img.shields.io/badge/NestJS-12-E0234E?style=flat-square&logo=nestjs&logoColor=white" alt="NestJS" />
+  <img src="https://img.shields.io/badge/Prisma-7-2D3748?style=flat-square&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Neon%20%7C%20Supabase-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Socket.IO-realtime-010101?style=flat-square&logo=socketdotio&logoColor=white" alt="Socket.IO" />
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.143-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/scikit--learn-1.9-F7931E?style=flat-square&logo=scikitlearn&logoColor=white" alt="scikit-learn" />
+  <img src="https://img.shields.io/badge/Claude-Opus_5.5-D97757?style=flat-square&logo=anthropic&logoColor=white" alt="Claude" />
+  <img src="https://img.shields.io/badge/ESP32-PlatformIO-F5822A?style=flat-square&logo=espressif&logoColor=white" alt="ESP32 PlatformIO" />
+  <img src="https://img.shields.io/badge/LoRaWAN-AS923--2-1A73E8?style=flat-square" alt="LoRaWAN" />
+</p>
+
+<p>
   <img src="https://img.shields.io/github/last-commit/StyNW7/Terrava?style=flat-square&color=277a4d" alt="Last commit" />
   <img src="https://img.shields.io/github/repo-size/StyNW7/Terrava?style=flat-square&color=277a4d" alt="Repository size" />
   <img src="https://img.shields.io/github/stars/StyNW7/Terrava?style=flat-square&color=277a4d" alt="GitHub stars" />
@@ -70,6 +83,7 @@ Terrava connects smart ear tags, IoT, the cloud, and artificial intelligence so 
 - [How It Works](#-how-it-works)
 - [Key Features](#-key-features)
 - [Smart Ear Tag](#-smart-ear-tag)
+- [Monorepo Architecture](#-monorepo-architecture)
 - [Screenshots](#-screenshots)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
@@ -95,7 +109,7 @@ Terrava connects smart ear tags, IoT, the cloud, and artificial intelligence so 
 A lightweight **smart ear tag** records each animal's body temperature, heart rate, activity, and location. The data travels over long-range **LoRa** connectivity to a gateway and then to the **cloud**, where **AI** learns each animal's normal pattern and flags anything unusual. Farmers see everything in one **web dashboard**: herd health, live vital signs, alerts with recommended first actions, farm maps, devices, teams, and downloadable reports.
 
 > [!NOTE]
-> This repository contains the **Terrava web platform**: the public website and the full farmer dashboard. It is a working **prototype**: every page and action works in the browser using a realistic dummy dataset, so the whole product can be explored without hardware or a backend.
+> This repository is a **monorepo with four independent layers**: `frontend/` (the public website and full farmer dashboard, a working prototype on a realistic demo dataset), `backend/` (NestJS + Prisma + PostgreSQL API), `ai/` (Python machine-learning models and the Terra assistant) and `iot/` (ear tag and gateway firmware, payload protocol, LoRaWAN bridge and fleet simulator). Each layer installs, runs and is tested on its own; wiring them together is the next step. See [Monorepo Architecture](#-monorepo-architecture).
 
 <table>
   <tr>
@@ -140,6 +154,50 @@ flowchart LR
 | 4️⃣ **AI Analysis** | Learns each animal's normal pattern and flags anomalies before symptoms show. |
 | 5️⃣ **Dashboard & Alerts** | Surfaces herd status, trends, and early warnings in one view. |
 | 6️⃣ **Farmer Action** | The farmer responds fast, guided by clear recommendations. |
+
+---
+
+## 🧱 Monorepo Architecture
+
+```mermaid
+flowchart LR
+  subgraph IOT["iot/  (C++ · Python)"]
+    TAG["Smart ear tag firmware\nESP32 + LoRa + sensors"]
+    GW["LoRa gateway firmware"]
+    SIM["Fleet simulator · LoRaWAN bridge"]
+  end
+  subgraph BE["backend/  (NestJS · Prisma · PostgreSQL)"]
+    ING["IoT ingest + rule engine"]
+    API["REST API + Socket.IO"]
+    JOBS["Jobs: offline detection, insights,\nscheduled reports, weather"]
+  end
+  subgraph AI["ai/  (FastAPI · scikit-learn · Claude)"]
+    ML["Health model · anomaly detection\nforecasting · estrus · heat stress"]
+    BOT["Terra assistant"]
+  end
+  FE["frontend/  (React · Vite PWA)"]
+  TAG -- LoRaWAN / P2P --> GW --> ING
+  SIM -. HTTP .-> ING
+  ING --> API
+  API -. "next: integration" .- FE
+  API -. "next: integration" .- ML
+  FE -. "next: chat widget" .- BOT
+```
+
+| Layer | Stack | What it delivers | Run it |
+| --- | --- | --- | --- |
+| [`frontend/`](frontend) | React 18, TypeScript, Vite, Tailwind, PWA | Public website + complete farmer dashboard prototype (demo data in the browser) | `npm install && npm run dev` |
+| [`backend/`](backend) | NestJS 12, Prisma 7, PostgreSQL (Neon / Supabase / embedded), Socket.IO | Multi-tenant API for every dashboard module, RBAC, IoT ingest with a rule engine (alerts that de-duplicate, escalate and auto-resolve), AI insights, PDF/CSV reports with email schedules, notifications (in-app, email, WhatsApp), realtime events | `npm run db:local` · `npm run db:deploy && npm run db:seed` · `npm run dev` |
+| [`ai/`](ai) | Python 3.12, FastAPI, scikit-learn, Claude API | Condition classifier (fever, heat stress, respiratory, lameness, estrus, metabolic), health score with explanations, anomaly detection, Holt-Winters forecasting, estrus and heat-stress analytics, herd insights, Terra chatbot (streaming, tool use, offline mode) | `pip install -r requirements-dev.txt` · `python -m terrava_ai serve` |
+| [`iot/`](iot) | C++ (PlatformIO, ESP32, RadioLib), Python | Binary LoRa payload protocol, ear tag firmware (sensors, LoRaWAN OTAA, deep sleep, flash buffer, downlinks), single-channel gateway, TTN/ChirpStack bridge, scenario-driven fleet simulator | `python -m terrava_iot simulate --api http://localhost:4000/api/v1` |
+
+**Shared contracts, ready for integration**
+
+- The backend speaks the frontend's types (`frontend/src/types/dashboard.ts`): same field names, kebab-case values and bilingual `{ id, en }` text, and its seed reproduces the prototype's dataset with the same ids (`farm-1`, `LVS-001`, `DEV-001`, `ALT-001`...).
+- The IoT layer posts exactly what `/api/v1/ingest/*` accepts; the TTN formatter, the C codec and the Python codec share one set of test vectors.
+- The AI service returns insights in the dashboard's `AIInsight` shape and health results in the same status bands as the backend.
+
+**Verified in this repository**: backend — TypeScript build, 45 unit tests and a 25-scenario end-to-end smoke test against a seeded database; AI — 35 tests (models, time series, API, assistant tool loop); IoT — 31 tests including byte-for-byte agreement between the Python codec and the TTN JavaScript formatter, a closed-loop run of the simulator against the backend (telemetry → alerts → downlink commands → acknowledgements), and PlatformIO builds of the ear tag (LoRaWAN and P2P) and gateway firmware.
 
 ---
 
@@ -339,6 +397,21 @@ Every screen is shown in both themes. Screens were captured at 1440 × 900 with 
 | **Quality** | ESLint 9, `typescript-eslint`, React Hooks lint rules |
 | **Hosting** | [Vercel](https://vercel.com/) (SPA rewrites in `vercel.json`) |
 
+**Backend, AI and IoT layers**
+
+| Layer | Technology |
+| --- | --- |
+| **API framework** | [NestJS 12](https://nestjs.com/) (Express 5), class-validator, Swagger / OpenAPI at `/docs` |
+| **Database** | [PostgreSQL](https://www.postgresql.org/) via [Prisma 7](https://www.prisma.io/) (pg driver adapter) on [Neon](https://neon.tech/), [Supabase](https://supabase.com/) or an embedded local Postgres |
+| **Auth & security** | JWT access tokens + rotating refresh tokens with reuse detection, bcrypt, RBAC guard, Helmet, rate limiting, audit log |
+| **Realtime & jobs** | Socket.IO gateway, `@nestjs/schedule` cron jobs, EventEmitter domain events |
+| **Reports & messaging** | PDFKit, CSV, Nodemailer (SMTP), WhatsApp HTTP gateway, Open-Meteo weather |
+| **AI service** | [FastAPI](https://fastapi.tiangolo.com/), [scikit-learn](https://scikit-learn.org/) (HistGradientBoosting, IsolationForest), NumPy, pandas |
+| **Assistant** | [Claude](https://www.anthropic.com/claude) (`claude-opus-5-5`) via the Anthropic Python SDK: streaming, tool use, prompt caching, server-side fallback; TF-IDF knowledge retrieval |
+| **Firmware** | C++ / Arduino on ESP32 with [PlatformIO](https://platformio.org/), [RadioLib](https://github.com/jgromes/RadioLib) (LoRaWAN 1.1 OTAA, AS923-2), TinyGPS++, MAX3010x, MLX90614, MPU6050, XPowersLib, LittleFS |
+| **IoT tooling** | Python: binary codec, fleet simulator, MQTT bridge (paho-mqtt) for The Things Stack / ChirpStack with a SQLite outbox |
+| **Testing** | Jest, pytest, end-to-end smoke tests, shared protocol test vectors, Unity (firmware) |
+
 ---
 
 ## 🗂️ Project Structure
@@ -372,6 +445,18 @@ Terrava/
 │   ├── vercel.json              # SPA rewrites for Vercel
 │   ├── vite.config.ts           # Vite, path alias, and PWA configuration
 │   └── README.md                # Frontend technical notes
+├── backend/                     # NestJS + Prisma API (see backend/README.md)
+│   ├── prisma/                  # schema (28 models), migrations, demo seed
+│   ├── scripts/                 # embedded Postgres, end-to-end smoke test
+│   └── src/                     # config, domain logic, common, modules/*
+├── ai/                          # FastAPI ML service + Terra assistant (see ai/README.md)
+│   ├── terrava_ai/              # ml/ (models), chat/ (assistant + knowledge), api/
+│   └── tests/
+├── iot/                         # Firmware, protocol, bridge, simulator (see iot/README.md)
+│   ├── protocol/                # PAYLOAD.md, C codec, TTN formatter, test vectors
+│   ├── firmware/ear-tag/        # ESP32 ear tag (PlatformIO)
+│   ├── firmware/gateway/        # ESP32 LoRa gateway (PlatformIO)
+│   └── terrava_iot/             # Python codec, simulator, MQTT bridge
 ├── images/                      # Logo and README screenshots (light/ and dark/)
 ├── README.md                    # Documentation (English)
 └── README-ind.md                # Documentation (Bahasa Indonesia)
@@ -421,6 +506,27 @@ npm run preview
 ```
 
 Chrome and Edge on desktop or Android offer **Install**. On iOS, use Safari → Share → **Add to Home Screen**.
+
+### Run the backend, AI and IoT layers
+
+Each layer is independent; start only what you need. Full guides live in each folder's README.
+
+```bash
+# Backend API (Node.js 22.12+) — http://localhost:4000/api/v1, docs at /docs
+cd backend && npm install && cp .env.example .env
+npm run db:local            # terminal 1: embedded PostgreSQL (or use Neon / Supabase)
+npm run db:deploy && npm run db:seed && npm run dev   # terminal 2
+
+# AI service (Python 3.11+) — http://localhost:8000/docs
+cd ai && python -m venv .venv && .venv/Scripts/activate   # macOS/Linux: source .venv/bin/activate
+pip install -r requirements-dev.txt && pip install -e . --no-deps
+python -m terrava_ai serve
+
+# IoT simulator streaming virtual ear tags into the backend
+cd iot && python -m venv .venv && .venv/Scripts/activate
+pip install -r requirements-dev.txt && pip install -e . --no-deps
+python -m terrava_iot simulate --api http://localhost:4000/api/v1 --backfill 6 --speed 600 --scenario DEV-001=fever
+```
 
 ---
 
@@ -551,10 +657,13 @@ Terrava contributes to seven of the United Nations Sustainable Development Goals
 - [x] Farmer dashboard with livestock, monitoring, alerts, AI insights, map, farms, devices, team, and settings
 - [x] Working PDF and CSV reports with preview, history, and scheduling
 - [x] Installable PWA with offline support
-- [ ] Backend API and database for real multi-user data
-- [ ] Integration with physical smart ear tags over LoRaWAN
-- [ ] Trained anomaly detection models on real herd data
-- [ ] Real email and WhatsApp delivery for alerts and scheduled reports
+- [x] Backend API and database for real multi-user data (`backend/`)
+- [x] Ear tag and gateway firmware, LoRaWAN bridge and payload protocol (`iot/`)
+- [x] Health, anomaly, forecasting and estrus models plus the Terra assistant (`ai/`, trained on synthetic data)
+- [x] Email and WhatsApp delivery for alerts and scheduled reports (backend channels)
+- [ ] Connect the frontend to the backend API and realtime events
+- [ ] Call the AI service from the backend pipeline and add the chat widget to the dashboard
+- [ ] Field pilot with physical ear tags; retrain the models on labelled herd data
 - [ ] Cooperative and government aggregate dashboards
 
 ---

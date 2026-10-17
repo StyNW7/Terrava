@@ -1,0 +1,159 @@
+{
+  "uplinks": [
+    {
+      "name": "healthy cow with GPS",
+      "fPort": 1,
+      "hex": "110f19486140019cff8d153c0697a78154016ad30ee0",
+      "decoded": {
+        "temperature": 38.65,
+        "heart_rate": 72,
+        "oxygen": 97,
+        "activity": 64,
+        "steps": 412,
+        "latitude": -7.531204,
+        "longitude": 110.602113,
+        "battery": 84,
+        "flags": 1,
+        "timestamp": 1792216800,
+        "type": "vitals"
+      }
+    },
+    {
+      "name": "fever, no GPS fix",
+      "fPort": 1,
+      "hex": "110ff2705e1200237fffffff7fffffff3d006ad31cf0",
+      "decoded": {
+        "temperature": 40.82,
+        "heart_rate": 112,
+        "oxygen": 94,
+        "activity": 18,
+        "steps": 35,
+        "latitude": null,
+        "longitude": null,
+        "battery": 61,
+        "flags": 0,
+        "timestamp": 1792220400,
+        "type": "vitals"
+      }
+    },
+    {
+      "name": "sensor faults, replayed from flash, solar",
+      "fPort": 1,
+      "hex": "11ffffffff000000ff9672a8066a2335091f00000000",
+      "decoded": {
+        "temperature": null,
+        "heart_rate": null,
+        "oxygen": null,
+        "activity": 0,
+        "steps": 0,
+        "latitude": -6.917464,
+        "longitude": 107.619125,
+        "battery": 9,
+        "flags": 31,
+        "timestamp": 0,
+        "type": "vitals"
+      }
+    },
+    {
+      "name": "status after command",
+      "fPort": 2,
+      "hex": "1202040104d2012c4d00032a00",
+      "decoded": {
+        "firmware": [
+          2,
+          4,
+          1
+        ],
+        "uptime_hours": 1234,
+        "report_interval": 300,
+        "battery": 77,
+        "buffered": 3,
+        "last_command_seq": 42,
+        "last_command_result": 0,
+        "type": "status"
+      }
+    },
+    {
+      "name": "barn climate",
+      "fPort": 3,
+      "hex": "130c351d1a5c0000",
+      "decoded": {
+        "temperature": 31.25,
+        "humidity": 74.5,
+        "battery": 92,
+        "type": "environment"
+      }
+    },
+    {
+      "name": "negative temperature",
+      "fPort": 3,
+      "hex": "13ff062710320000",
+      "decoded": {
+        "temperature": -2.5,
+        "humidity": 100.0,
+        "battery": 50,
+        "type": "environment"
+      }
+    }
+  ],
+  "commands": [
+    {
+      "command": "restart",
+      "seq": 1,
+      "params": {},
+      "hex": "0101"
+    },
+    {
+      "command": "run-diagnostics",
+      "seq": 2,
+      "params": {},
+      "hex": "0202"
+    },
+    {
+      "command": "set-interval",
+      "seq": 3,
+      "params": {
+        "interval": 600
+      },
+      "hex": "03030258"
+    },
+    {
+      "command": "set-interval",
+      "seq": 4,
+      "params": {
+        "interval": 86400
+      },
+      "hex": "030485a0"
+    },
+    {
+      "command": "locate",
+      "seq": 5,
+      "params": {},
+      "hex": "0405"
+    },
+    {
+      "command": "firmware-update",
+      "seq": 6,
+      "params": {
+        "version": "v2.5.0"
+      },
+      "hex": "0506020500"
+    }
+  ],
+  "p2p": [
+    {
+      "name": "DEV-001 vitals",
+      "deviceId": 1,
+      "serial": "DEV-001",
+      "fcnt": 513,
+      "hex": "a5000000010201110f19486140019cff8d153c0697a78154016ad30ee0ed31"
+    },
+    {
+      "name": "TAG-013 status",
+      "deviceId": 16777229,
+      "serial": "TAG-013",
+      "fcnt": 7,
+      "hex": "a50100000d00071202040104d2012c4d00032a00b923"
+    }
+  ]
+}

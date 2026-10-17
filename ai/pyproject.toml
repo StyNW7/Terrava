@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terrava-ai"
+version = "1.0.0"
+description = "Terrava AI layer: livestock health models, anomaly detection, forecasting, herd insights and the Terra assistant chatbot."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.143,<1",
+  "uvicorn[standard]>=0.54",
+  "pydantic>=2.11,<3",
+  "pydantic-settings>=2.16",
+  "numpy>=2.2",
+  "pandas>=2.3",
+  "scikit-learn>=1.7",
+  "joblib>=1.5",
+  "anthropic>=1.15,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=9", "httpx>=0.28", "ruff>=0.14"]
+
+[project.scripts]
+terrava-ai = "terrava_ai.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["terrava_ai*"]
+
+[tool.setuptools.package-data]
+terrava_ai = ["chat/knowledge/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"

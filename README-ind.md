@@ -37,6 +37,19 @@ Terrava menghubungkan smart ear tag, IoT, cloud, dan kecerdasan buatan agar pete
 </p>
 
 <p>
+  <img src="https://img.shields.io/badge/NestJS-12-E0234E?style=flat-square&logo=nestjs&logoColor=white" alt="NestJS" />
+  <img src="https://img.shields.io/badge/Prisma-7-2D3748?style=flat-square&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Neon%20%7C%20Supabase-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Socket.IO-realtime-010101?style=flat-square&logo=socketdotio&logoColor=white" alt="Socket.IO" />
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.143-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/scikit--learn-1.9-F7931E?style=flat-square&logo=scikitlearn&logoColor=white" alt="scikit-learn" />
+  <img src="https://img.shields.io/badge/Claude-Opus_5.5-D97757?style=flat-square&logo=anthropic&logoColor=white" alt="Claude" />
+  <img src="https://img.shields.io/badge/ESP32-PlatformIO-F5822A?style=flat-square&logo=espressif&logoColor=white" alt="ESP32 PlatformIO" />
+  <img src="https://img.shields.io/badge/LoRaWAN-AS923--2-1A73E8?style=flat-square" alt="LoRaWAN" />
+</p>
+
+<p>
   <img src="https://img.shields.io/github/last-commit/StyNW7/Terrava?style=flat-square&color=277a4d" alt="Commit terakhir" />
   <img src="https://img.shields.io/github/repo-size/StyNW7/Terrava?style=flat-square&color=277a4d" alt="Ukuran repository" />
   <img src="https://img.shields.io/github/stars/StyNW7/Terrava?style=flat-square&color=277a4d" alt="GitHub stars" />
@@ -70,6 +83,7 @@ Terrava menghubungkan smart ear tag, IoT, cloud, dan kecerdasan buatan agar pete
 - [Cara Kerja](#-cara-kerja)
 - [Fitur Utama](#-fitur-utama)
 - [Smart Ear Tag](#-smart-ear-tag)
+- [Arsitektur Monorepo](#-arsitektur-monorepo)
 - [Screenshot](#-screenshot)
 - [Tech Stack](#-tech-stack)
 - [Struktur Proyek](#-struktur-proyek)
@@ -95,7 +109,7 @@ Terrava menghubungkan smart ear tag, IoT, cloud, dan kecerdasan buatan agar pete
 **Smart ear tag** yang ringan merekam suhu tubuh, detak jantung, aktivitas, dan lokasi setiap ternak. Data dikirim melalui konektivitas jarak jauh **LoRa** ke gateway, lalu ke **cloud**, tempat **AI** mempelajari pola normal setiap ternak dan menandai hal yang tidak biasa. Peternak melihat semuanya dalam satu **dashboard web**: kesehatan ternak, tanda vital secara langsung, alert beserta rekomendasi tindakan awal, peta peternakan, perangkat, tim, dan laporan yang bisa diunduh.
 
 > [!NOTE]
-> Repository ini berisi **platform web Terrava**: website publik dan dashboard peternak yang lengkap. Proyek ini adalah **prototipe** yang berfungsi: setiap halaman dan aksi berjalan di browser menggunakan data dummy yang realistis, sehingga seluruh produk bisa dicoba tanpa perangkat keras atau backend.
+> Repository ini adalah **monorepo dengan empat layer independen**: `frontend/` (website publik dan dashboard peternak lengkap, prototipe yang berfungsi dengan data demo realistis), `backend/` (API NestJS + Prisma + PostgreSQL), `ai/` (model machine learning Python dan asisten Terra) dan `iot/` (firmware ear tag dan gateway, protokol payload, bridge LoRaWAN, dan simulator armada). Setiap layer bisa diinstal, dijalankan, dan diuji sendiri; integrasi antar-layer adalah langkah berikutnya. Lihat [Arsitektur Monorepo](#-arsitektur-monorepo).
 
 <table>
   <tr>
@@ -140,6 +154,50 @@ flowchart LR
 | 4️⃣ **Analisis AI** | Mempelajari pola normal setiap ternak dan menandai anomali sebelum gejala terlihat. |
 | 5️⃣ **Dashboard & Alert** | Menyajikan status ternak, tren, dan peringatan dini dalam satu tampilan. |
 | 6️⃣ **Tindakan Peternak** | Peternak merespons cepat dengan panduan rekomendasi yang jelas. |
+
+---
+
+## 🧱 Arsitektur Monorepo
+
+```mermaid
+flowchart LR
+  subgraph IOT["iot/  (C++ · Python)"]
+    TAG["Firmware smart ear tag\nESP32 + LoRa + sensor"]
+    GW["Firmware gateway LoRa"]
+    SIM["Simulator armada · bridge LoRaWAN"]
+  end
+  subgraph BE["backend/  (NestJS · Prisma · PostgreSQL)"]
+    ING["Ingest IoT + rule engine"]
+    API["REST API + Socket.IO"]
+    JOBS["Job: deteksi offline, insight,\nlaporan terjadwal, cuaca"]
+  end
+  subgraph AI["ai/  (FastAPI · scikit-learn · Claude)"]
+    ML["Model kesehatan · deteksi anomali\nforecasting · estrus · heat stress"]
+    BOT["Asisten Terra"]
+  end
+  FE["frontend/  (React · Vite PWA)"]
+  TAG -- LoRaWAN / P2P --> GW --> ING
+  SIM -. HTTP .-> ING
+  ING --> API
+  API -. "berikutnya: integrasi" .- FE
+  API -. "berikutnya: integrasi" .- ML
+  FE -. "berikutnya: widget chat" .- BOT
+```
+
+| Layer | Stack | Isi | Cara menjalankan |
+| --- | --- | --- | --- |
+| [`frontend/`](frontend) | React 18, TypeScript, Vite, Tailwind, PWA | Website publik + prototipe dashboard peternak lengkap (data demo di browser) | `npm install && npm run dev` |
+| [`backend/`](backend) | NestJS 12, Prisma 7, PostgreSQL (Neon / Supabase / embedded), Socket.IO | API multi-tenant untuk semua modul dashboard, RBAC, ingest IoT dengan rule engine (alert yang de-duplikasi, eskalasi, dan auto-resolve), AI insight, laporan PDF/CSV dengan jadwal email, notifikasi (in-app, email, WhatsApp), event realtime | `npm run db:local` · `npm run db:deploy && npm run db:seed` · `npm run dev` |
+| [`ai/`](ai) | Python 3.12, FastAPI, scikit-learn, Claude API | Klasifikasi kondisi (demam, heat stress, pernapasan, pincang, estrus, metabolik), skor kesehatan dengan penjelasan, deteksi anomali, forecasting Holt-Winters, analitik estrus dan heat stress, insight kawanan, chatbot Terra (streaming, tool use, mode offline) | `pip install -r requirements-dev.txt` · `python -m terrava_ai serve` |
+| [`iot/`](iot) | C++ (PlatformIO, ESP32, RadioLib), Python | Protokol payload LoRa biner, firmware ear tag (sensor, LoRaWAN OTAA, deep sleep, buffer flash, downlink), gateway satu kanal, bridge TTN/ChirpStack, simulator armada berbasis skenario | `python -m terrava_iot simulate --api http://localhost:4000/api/v1` |
+
+**Kontrak bersama, siap diintegrasikan**
+
+- Backend memakai tipe yang sama dengan frontend (`frontend/src/types/dashboard.ts`): nama field, nilai kebab-case, dan teks dua bahasa `{ id, en }` yang sama; seed-nya mereproduksi dataset prototipe dengan id yang sama (`farm-1`, `LVS-001`, `DEV-001`, `ALT-001`...).
+- Layer IoT mengirim persis format yang diterima `/api/v1/ingest/*`; formatter TTN, codec C, dan codec Python berbagi satu set test vector.
+- Layer AI mengembalikan insight dalam bentuk `AIInsight` milik dashboard dan hasil kesehatan dengan pita status yang sama seperti backend.
+
+**Sudah diverifikasi di repository ini**: backend — build TypeScript, 45 unit test, dan smoke test end-to-end 25 skenario terhadap database yang sudah di-seed; AI — 35 test (model, time series, API, tool loop asisten); IoT — 31 test termasuk kecocokan byte-per-byte antara codec Python dan formatter JavaScript TTN, uji loop tertutup simulator terhadap backend (telemetri → alert → perintah downlink → acknowledgement), serta build PlatformIO firmware ear tag (LoRaWAN dan P2P) dan gateway.
 
 ---
 
@@ -339,6 +397,21 @@ Setiap halaman ditampilkan dalam kedua tema. Screenshot diambil pada resolusi 14
 | **Kualitas kode** | ESLint 9, `typescript-eslint`, aturan lint React Hooks |
 | **Hosting** | [Vercel](https://vercel.com/) (SPA rewrites di `vercel.json`) |
 
+**Layer backend, AI, dan IoT**
+
+| Lapisan | Teknologi |
+| --- | --- |
+| **Framework API** | [NestJS 12](https://nestjs.com/) (Express 5), class-validator, Swagger / OpenAPI di `/docs` |
+| **Database** | [PostgreSQL](https://www.postgresql.org/) melalui [Prisma 7](https://www.prisma.io/) (driver adapter pg) di [Neon](https://neon.tech/), [Supabase](https://supabase.com/), atau Postgres lokal embedded |
+| **Auth & keamanan** | JWT access token + refresh token berotasi dengan deteksi reuse, bcrypt, guard RBAC, Helmet, rate limiting, audit log |
+| **Realtime & job** | Gateway Socket.IO, cron job `@nestjs/schedule`, domain event EventEmitter |
+| **Laporan & pesan** | PDFKit, CSV, Nodemailer (SMTP), gateway HTTP WhatsApp, cuaca Open-Meteo |
+| **Layanan AI** | [FastAPI](https://fastapi.tiangolo.com/), [scikit-learn](https://scikit-learn.org/) (HistGradientBoosting, IsolationForest), NumPy, pandas |
+| **Asisten** | [Claude](https://www.anthropic.com/claude) (`claude-opus-5-5`) melalui Anthropic Python SDK: streaming, tool use, prompt caching, server-side fallback; retrieval pengetahuan TF-IDF |
+| **Firmware** | C++ / Arduino di ESP32 dengan [PlatformIO](https://platformio.org/), [RadioLib](https://github.com/jgromes/RadioLib) (LoRaWAN 1.1 OTAA, AS923-2), TinyGPS++, MAX3010x, MLX90614, MPU6050, XPowersLib, LittleFS |
+| **Tooling IoT** | Python: codec biner, simulator armada, bridge MQTT (paho-mqtt) untuk The Things Stack / ChirpStack dengan outbox SQLite |
+| **Pengujian** | Jest, pytest, smoke test end-to-end, test vector protokol bersama, Unity (firmware) |
+
 ---
 
 ## 🗂️ Struktur Proyek
@@ -372,6 +445,18 @@ Terrava/
 │   ├── vercel.json              # SPA rewrites untuk Vercel
 │   ├── vite.config.ts           # Konfigurasi Vite, path alias, dan PWA
 │   └── README.md                # Catatan teknis frontend
+├── backend/                     # API NestJS + Prisma (lihat backend/README.md)
+│   ├── prisma/                  # skema (28 model), migrasi, seed demo
+│   ├── scripts/                 # Postgres embedded, smoke test end-to-end
+│   └── src/                     # config, domain logic, common, modules/*
+├── ai/                          # Layanan ML FastAPI + asisten Terra (lihat ai/README.md)
+│   ├── terrava_ai/              # ml/ (model), chat/ (asisten + pengetahuan), api/
+│   └── tests/
+├── iot/                         # Firmware, protokol, bridge, simulator (lihat iot/README.md)
+│   ├── protocol/                # PAYLOAD.md, codec C, formatter TTN, test vector
+│   ├── firmware/ear-tag/        # Ear tag ESP32 (PlatformIO)
+│   ├── firmware/gateway/        # Gateway LoRa ESP32 (PlatformIO)
+│   └── terrava_iot/             # Codec Python, simulator, bridge MQTT
 ├── images/                      # Logo dan screenshot README (light/ dan dark/)
 ├── README.md                    # Dokumentasi (bahasa Inggris)
 └── README-ind.md                # Dokumentasi (bahasa Indonesia)
@@ -421,6 +506,27 @@ npm run preview
 ```
 
 Chrome dan Edge di desktop atau Android menawarkan tombol **Install**. Di iOS, gunakan Safari → Share → **Add to Home Screen**.
+
+### Menjalankan layer backend, AI, dan IoT
+
+Setiap layer berdiri sendiri; jalankan yang Anda perlukan saja. Panduan lengkap ada di README masing-masing folder.
+
+```bash
+# Backend API (Node.js 22.12+) — http://localhost:4000/api/v1, dokumentasi di /docs
+cd backend && npm install && cp .env.example .env
+npm run db:local            # terminal 1: PostgreSQL embedded (atau pakai Neon / Supabase)
+npm run db:deploy && npm run db:seed && npm run dev   # terminal 2
+
+# Layanan AI (Python 3.11+) — http://localhost:8000/docs
+cd ai && python -m venv .venv && .venv/Scripts/activate   # macOS/Linux: source .venv/bin/activate
+pip install -r requirements-dev.txt && pip install -e . --no-deps
+python -m terrava_ai serve
+
+# Simulator IoT: ear tag virtual mengirim data ke backend
+cd iot && python -m venv .venv && .venv/Scripts/activate
+pip install -r requirements-dev.txt && pip install -e . --no-deps
+python -m terrava_iot simulate --api http://localhost:4000/api/v1 --backfill 6 --speed 600 --scenario DEV-001=fever
+```
 
 ---
 
@@ -551,10 +657,13 @@ Terrava berkontribusi pada tujuh Tujuan Pembangunan Berkelanjutan (SDGs) Perseri
 - [x] Dashboard peternak dengan ternak, monitoring, alert, AI insights, peta, peternakan, perangkat, tim, dan pengaturan
 - [x] Laporan PDF dan CSV yang berfungsi, lengkap dengan pratinjau, riwayat, dan penjadwalan
 - [x] PWA yang bisa dipasang dengan dukungan offline
-- [ ] Backend API dan database untuk data multi-pengguna sungguhan
-- [ ] Integrasi dengan smart ear tag fisik melalui LoRaWAN
-- [ ] Model deteksi anomali yang dilatih dengan data ternak sungguhan
-- [ ] Pengiriman email dan WhatsApp sungguhan untuk alert dan laporan terjadwal
+- [x] Backend API dan database untuk data multi-pengguna sungguhan (`backend/`)
+- [x] Firmware ear tag dan gateway, bridge LoRaWAN, dan protokol payload (`iot/`)
+- [x] Model kesehatan, anomali, forecasting, dan estrus serta asisten Terra (`ai/`, dilatih dengan data sintetis)
+- [x] Pengiriman email dan WhatsApp untuk alert dan laporan terjadwal (channel di backend)
+- [ ] Menghubungkan frontend ke API backend dan event realtime
+- [ ] Memanggil layanan AI dari pipeline backend dan menambahkan widget chat di dashboard
+- [ ] Pilot lapangan dengan ear tag fisik; melatih ulang model dengan data ternak berlabel
 - [ ] Dashboard agregat untuk koperasi dan pemerintah
 
 ---

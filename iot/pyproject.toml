@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terrava-iot"
+version = "1.0.0"
+description = "Terrava IoT layer: ear tag payload codec, fleet simulator and LoRaWAN-to-backend bridge."
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.28", "paho-mqtt>=2.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=9", "ruff>=0.14", "platformio>=6.1"]
+
+[project.scripts]
+terrava-iot = "terrava_iot.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["terrava_iot*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"

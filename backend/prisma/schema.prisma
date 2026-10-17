@@ -1,0 +1,969 @@
+// =============================================================================
+// Terrava data model
+// -----------------------------------------------------------------------------
+// Multi-tenant: every business record belongs to an Organization (a farm
+// business, cooperative, commercial operator or institution). Users join an
+// organization through a Membership that carries their access role, which is
+// what the dashboard calls a "staff member".
+//
+// Enum values are UPPER_SNAKE in the database; the API serialises them to the
+// kebab-case strings the frontend already uses ("low-battery", "ear-tag"...).
+//
+// Localized text (alert titles, AI insights, notes) is stored as JSON
+// `{ "id": "...", "en": "..." }`, matching the frontend `Localized` type.
+// =============================================================================
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
+
+enum OrganizationType {
+  SMALLHOLDER
+  COOPERATIVE
+  COMMERCIAL
+  GOVERNMENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  DISABLED
+}
+
+enum StaffRole {
+  OWNER
+  FARM_MANAGER
+  OPERATIONAL
+  STAFF
+  VETERINARIAN
+  COOPERATIVE_ADMIN
+  VIEWER
+}
+
+enum FarmStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum GeofenceType {
+  BOUNDARY
+  GRAZING
+  RESTRICTED
+}
+
+enum HealthStatus {
+  HEALTHY
+  ATTENTION
+  CRITICAL
+  INACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum VaccinationStatus {
+  UP_TO_DATE
+  DUE
+  OVERDUE
+}
+
+enum DeviceType {
+  EAR_TAG
+  GATEWAY
+  ENVIRONMENTAL_SENSOR
+}
+
+enum DeviceStatus {
+  ONLINE
+  OFFLINE
+  LOW_BATTERY
+  MAINTENANCE
+}
+
+enum DeviceEventType {
+  CONNECTED
+  DATA_SENT
+  WARNING
+  FIRMWARE_UPDATED
+  OFFLINE
+  RESTARTED
+  DIAGNOSTICS
+  MAINTENANCE_STARTED
+  MAINTENANCE_ENDED
+  PAIRED
+  UNPAIRED
+}
+
+enum DeviceCommandType {
+  RESTART
+  RUN_DIAGNOSTICS
+  SET_INTERVAL
+  FIRMWARE_UPDATE
+  LOCATE
+}
+
+enum DeviceCommandStatus {
+  PENDING
+  SENT
+  ACKNOWLEDGED
+  FAILED
+  EXPIRED
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  HIGH
+  CRITICAL
+}
+
+enum AlertCategory {
+  HEALTH
+  BEHAVIOR
+  LOCATION
+  DEVICE
+  ENVIRONMENTAL
+  WEATHER
+}
+
+enum AlertStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum AlertSource {
+  RULE
+  AI
+  DEVICE
+  WEATHER
+  MANUAL
+}
+
+enum AlertEventType {
+  CREATED
+  ACKNOWLEDGED
+  ASSIGNED
+  UNASSIGNED
+  RESOLVED
+  REOPENED
+  NOTE_ADDED
+  TASK_CREATED
+  ESCALATED
+}
+
+enum InsightPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum InsightCategory {
+  HEALTH
+  BEHAVIOR
+  ENVIRONMENT
+  PRODUCTIVITY
+  DEVICES
+}
+
+enum TaskKind {
+  VACCINATION
+  VET
+  WEIGHING
+  INSPECTION
+  FOLLOW_UP
+}
+
+enum TaskSourceType {
+  ALERT
+  INSIGHT
+}
+
+enum HealthRecordType {
+  EXAMINATION
+  VACCINATION
+  TREATMENT
+  WEIGHING
+  OBSERVATION
+}
+
+enum ReportType {
+  OVERVIEW
+  HEALTH
+  ALERTS
+  DEVICES
+  FARM
+  ENVIRONMENT
+  STAFF
+}
+
+enum ReportFormat {
+  PDF
+  CSV
+}
+
+enum ReportFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum NotificationType {
+  ALERT
+  TASK
+  INSIGHT
+  REPORT
+  DEVICE
+  TEAM
+  SYSTEM
+}
+
+enum ContactStatus {
+  NEW
+  IN_PROGRESS
+  CLOSED
+}
+
+// -----------------------------------------------------------------------------
+// Identity, tenancy and access
+// -----------------------------------------------------------------------------
+
+model Organization {
+  id        String           @id @default(cuid())
+  name      String
+  slug      String           @unique
+  type      OrganizationType @default(SMALLHOLDER)
+  province  String?
+  city      String?
+  /// Alert thresholds and other organisation-wide preferences (see settings module).
+  settings  Json             @default("{}")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  memberships     Membership[]
+  invitations     Invitation[]
+  farms           Farm[]
+  livestock       Livestock[]
+  devices         Device[]
+  alerts          Alert[]
+  insights        AIInsight[]
+  tasks           Task[]
+  reportRuns      ReportRun[]
+  reportSchedules ReportSchedule[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+
+  @@map("organizations")
+}
+
+model User {
+  id               String     @id @default(cuid())
+  email            String     @unique
+  passwordHash     String
+  name             String
+  phone            String?
+  avatarUrl        String?
+  locale           String     @default("id")
+  timezone         String     @default("wib")
+  status           UserStatus @default(ACTIVE)
+  emailVerifiedAt  DateTime?
+  twoFactorEnabled Boolean    @default(false)
+  /// Personal preferences (notifications, appearance, privacy...). See settings module.
+  preferences      Json       @default("{}")
+  lastLoginAt      DateTime?
+  lastActiveAt     DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  memberships        Membership[]
+  sessions           Session[]
+  passwordResets     PasswordResetToken[]
+  notifications      Notification[]
+  alertNotes         AlertNote[]
+  healthRecords      HealthRecord[]
+  invitationsSent    Invitation[]         @relation("InvitedBy")
+  reportRuns         ReportRun[]
+  auditLogs          AuditLog[]
+
+  @@map("users")
+}
+
+/// A user's seat in an organization: the dashboard's "staff member".
+model Membership {
+  id             String     @id @default(cuid())
+  userId         String
+  organizationId String
+  role           StaffRole  @default(STAFF)
+  /// Company position shown next to the access role, e.g. "CTO".
+  title          String?
+  /// Primary farm assignment (null = all farms).
+  farmId         String?
+  status         UserStatus @default(ACTIVE)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  farm         Farm?        @relation("FarmMembers", fields: [farmId], references: [id], onDelete: SetNull)
+
+  managedFarms   Farm[]  @relation("FarmManager")
+  managedBarns   Barn[]  @relation("BarnManager")
+  assignedAlerts Alert[] @relation("AlertAssignee")
+  assignedTasks  Task[]  @relation("TaskAssignee")
+
+  @@unique([userId, organizationId])
+  @@index([organizationId, role])
+  @@map("memberships")
+}
+
+model Invitation {
+  id             String    @id @default(cuid())
+  organizationId String
+  email          String
+  name           String?
+  role           StaffRole @default(STAFF)
+  farmId         String?
+  tokenHash      String    @unique
+  invitedById    String?
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedBy    User?        @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, email])
+  @@map("invitations")
+}
+
+/// A signed-in device/browser. Backs refresh-token rotation and the "active sessions" list.
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  organizationId   String
+  refreshTokenHash String    @unique
+  userAgent        String?
+  ipAddress        String?
+  rememberMe       Boolean   @default(false)
+  lastUsedAt       DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}
+
+// -----------------------------------------------------------------------------
+// Farms, barns and geofences
+// -----------------------------------------------------------------------------
+
+model Farm {
+  id             String     @id @default(cuid())
+  organizationId String
+  name           String
+  location       String
+  region         String
+  address        String?
+  latitude       Float?
+  longitude      Float?
+  areaHectares   Float?
+  imageUrl       String?
+  status         FarmStatus @default(ACTIVE)
+  managerId      String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  manager      Membership?   @relation("FarmManager", fields: [managerId], references: [id], onDelete: SetNull)
+  members      Membership[]  @relation("FarmMembers")
+  barns        Barn[]
+  geofences    Geofence[]
+  livestock    Livestock[]
+  devices      Device[]
+  alerts       Alert[]
+  tasks        Task[]
+  environment  EnvironmentReading[]
+  insights     AIInsight[]
+
+  @@index([organizationId])
+  @@map("farms")
+}
+
+model Barn {
+  id        String   @id @default(cuid())
+  farmId    String
+  name      String
+  capacity  Int
+  managerId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm        Farm                 @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  manager     Membership?          @relation("BarnManager", fields: [managerId], references: [id], onDelete: SetNull)
+  livestock   Livestock[]
+  devices     Device[]
+  alerts      Alert[]
+  environment EnvironmentReading[]
+
+  @@index([farmId])
+  @@map("barns")
+}
+
+model Geofence {
+  id        String       @id @default(cuid())
+  farmId    String
+  name      String
+  type      GeofenceType @default(BOUNDARY)
+  /// Closed polygon as an array of [lat, lng] pairs.
+  polygon   Json
+  active    Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+  @@map("geofences")
+}
+
+// -----------------------------------------------------------------------------
+// Livestock and health records
+// -----------------------------------------------------------------------------
+
+model Livestock {
+  id                 String            @id @default(cuid())
+  organizationId     String
+  farmId             String
+  barnId             String
+  /// Internal code shown in the dashboard, e.g. "TRV-001". Unique per organization.
+  code               String
+  name               String
+  /// Printed ear tag number, e.g. "EAR-1000". Unique per organization.
+  earTagId           String
+  rfid               String?
+  registrationNumber String?
+  photoUrl           String?
+  type               String
+  breed              String
+  gender             Gender
+  dateOfBirth        DateTime          @db.Date
+  weightKg           Float
+  bodyConditionScore Float             @default(3)
+  markings           String?
+  herdGroup          String
+  healthStatus       HealthStatus      @default(HEALTHY)
+  healthScore        Int               @default(90)
+  vaccinationStatus  VaccinationStatus @default(UP_TO_DATE)
+  arrivalDate        DateTime          @db.Date
+  acquisitionSource  String
+  knownConditions    String?
+  notes              Json?
+  /// The ear tag this animal currently wears (one device per animal).
+  deviceId           String?           @unique
+
+  // Latest telemetry snapshot, refreshed on every ingested reading so lists and
+  // the live monitor never have to scan the time series.
+  temperature    Float?
+  heartRate      Int?
+  activityLevel  Int?
+  oxygenLevel    Int?
+  latitude       Float?
+  longitude      Float?
+  lastReadingAt  DateTime?
+
+  archived   Boolean   @default(false)
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  organization  Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  farm          Farm                @relation(fields: [farmId], references: [id], onDelete: Restrict)
+  barn          Barn                @relation(fields: [barnId], references: [id], onDelete: Restrict)
+  device        Device?             @relation("LivestockDevice", fields: [deviceId], references: [id], onDelete: SetNull)
+  readings      TelemetryReading[]
+  alerts        Alert[]
+  healthRecords HealthRecord[]
+  movements     LivestockMovement[]
+  tasks         Task[]
+
+  @@unique([organizationId, code])
+  @@unique([organizationId, earTagId])
+  @@index([organizationId, farmId, archived])
+  @@index([barnId])
+  @@index([healthStatus])
+  @@map("livestock")
+}
+
+model HealthRecord {
+  id                 String           @id @default(cuid())
+  livestockId        String
+  type               HealthRecordType
+  title              String
+  description        String?
+  performedAt        DateTime
+  performedById      String?
+  performedByName    String?
+  vaccineName        String?
+  medication         String?
+  dosage             String?
+  weightKg           Float?
+  bodyConditionScore Float?
+  temperature        Float?
+  nextDueAt          DateTime?
+  cost               Decimal?         @db.Decimal(12, 2)
+  createdAt          DateTime         @default(now())
+
+  livestock   Livestock @relation(fields: [livestockId], references: [id], onDelete: Cascade)
+  performedBy User?     @relation(fields: [performedById], references: [id], onDelete: SetNull)
+
+  @@index([livestockId, type, performedAt])
+  @@map("health_records")
+}
+
+model LivestockMovement {
+  id          String   @id @default(cuid())
+  livestockId String
+  fromFarmId  String
+  fromBarnId  String
+  toFarmId    String
+  toBarnId    String
+  reason      String?
+  movedByName String?
+  movedAt     DateTime @default(now())
+
+  livestock Livestock @relation(fields: [livestockId], references: [id], onDelete: Cascade)
+
+  @@index([livestockId, movedAt])
+  @@map("livestock_movements")
+}
+
+// -----------------------------------------------------------------------------
+// Devices and telemetry
+// -----------------------------------------------------------------------------
+
+model Device {
+  id             String       @id @default(cuid())
+  organizationId String
+  farmId         String
+  barnId         String?
+  /// Hardware serial printed on the device, e.g. "DEV-001".
+  serial         String       @unique
+  /// LoRaWAN DevEUI (16 hex chars) when the device joins through LoRaWAN.
+  devEui         String?      @unique
+  name           String
+  type           DeviceType
+  status         DeviceStatus @default(OFFLINE)
+  firmware       String       @default("v1.0.0")
+  battery        Int          @default(100)
+  /// Normalised link quality 0-100 derived from RSSI/SNR.
+  signal         Int          @default(0)
+  rssi           Int?
+  snr            Float?
+  /// Seconds between transmissions (configurable through a SET_INTERVAL command).
+  reportInterval Int          @default(300)
+  uptime         Float        @default(100)
+  dataPackets    Int          @default(0)
+  latitude       Float?
+  longitude      Float?
+  /// SHA-256 of the API key a gateway uses to push telemetry (gateways only).
+  apiKeyHash     String?      @unique
+  lastSyncAt     DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  farm              Farm                @relation(fields: [farmId], references: [id], onDelete: Restrict)
+  barn              Barn?               @relation(fields: [barnId], references: [id], onDelete: SetNull)
+  assignedLivestock Livestock?          @relation("LivestockDevice")
+  events            DeviceEvent[]
+  maintenanceLogs   MaintenanceLog[]
+  commands          DeviceCommand[]
+  readings          TelemetryReading[]
+  environment       EnvironmentReading[]
+  alerts            Alert[]
+
+  @@index([organizationId, farmId, type])
+  @@index([status])
+  @@map("devices")
+}
+
+model DeviceEvent {
+  id        String          @id @default(cuid())
+  deviceId  String
+  type      DeviceEventType
+  message   Json
+  metadata  Json?
+  createdAt DateTime        @default(now())
+
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId, createdAt])
+  @@map("device_events")
+}
+
+model MaintenanceLog {
+  id        String   @id @default(cuid())
+  deviceId  String
+  note      String
+  byName    String
+  createdAt DateTime @default(now())
+
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId, createdAt])
+  @@map("maintenance_logs")
+}
+
+/// Downlink queue: commands the IoT gateway picks up and relays to devices.
+model DeviceCommand {
+  id          String              @id @default(cuid())
+  deviceId    String
+  type        DeviceCommandType
+  payload     Json?
+  status      DeviceCommandStatus @default(PENDING)
+  requestedBy String?
+  result      Json?
+  createdAt   DateTime            @default(now())
+  sentAt      DateTime?
+  ackedAt     DateTime?
+  expiresAt   DateTime
+
+  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@index([deviceId, status])
+  @@map("device_commands")
+}
+
+/// Time series of ear tag readings. Partition or move to TimescaleDB at scale.
+model TelemetryReading {
+  id          BigInt   @id @default(autoincrement())
+  deviceId    String
+  livestockId String?
+  recordedAt  DateTime
+  receivedAt  DateTime @default(now())
+  temperature Float?
+  heartRate   Int?
+  oxygen      Int?
+  activity    Int?
+  steps       Int?
+  latitude    Float?
+  longitude   Float?
+  battery     Int?
+  rssi        Int?
+  snr         Float?
+  /// Monotonic per-device frame counter; used to drop duplicate uplinks.
+  sequence    Int?
+
+  device    Device     @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  livestock Livestock? @relation(fields: [livestockId], references: [id], onDelete: SetNull)
+
+  @@unique([deviceId, sequence, recordedAt])
+  @@index([livestockId, recordedAt])
+  @@index([deviceId, recordedAt])
+  @@map("telemetry_readings")
+}
+
+model EnvironmentReading {
+  id          BigInt   @id @default(autoincrement())
+  farmId      String
+  barnId      String?
+  deviceId    String?
+  recordedAt  DateTime
+  temperature Float
+  humidity    Float
+  /// Temperature-Humidity Index, computed on ingest.
+  thi         Float
+
+  farm   Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  barn   Barn?   @relation(fields: [barnId], references: [id], onDelete: SetNull)
+  device Device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@index([farmId, recordedAt])
+  @@index([barnId, recordedAt])
+  @@map("environment_readings")
+}
+
+// -----------------------------------------------------------------------------
+// Alerts, insights and tasks
+// -----------------------------------------------------------------------------
+
+model Alert {
+  id              String        @id @default(cuid())
+  organizationId  String
+  farmId          String
+  barnId          String?
+  livestockId     String?
+  deviceId        String?
+  title           Json
+  description     Json
+  severity        AlertSeverity
+  category        AlertCategory
+  status          AlertStatus   @default(ACTIVE)
+  source          AlertSource   @default(RULE)
+  /// Rule that raised the alert ("tempHigh", "batteryLow"...). Used for de-duplication.
+  ruleKey         String?
+  aiConfidence    Int           @default(80)
+  aiCause         Json
+  /// Canonical English action labels; the frontend localises them.
+  recommendations String[]
+  /// Vital signs at the moment of detection: { temperature, heartRate, activity, oxygen }.
+  dataAtDetection Json
+  detectedAt      DateTime      @default(now())
+  /// Last reading that still met the rule; auto-resolve waits until it is old enough (hysteresis).
+  lastSeenAt      DateTime      @default(now())
+  assignedToId    String?
+  acknowledgedAt  DateTime?
+  acknowledgedBy  String?
+  resolvedAt      DateTime?
+  resolvedBy      String?
+  resolutionNote  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  farm         Farm         @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  barn         Barn?        @relation(fields: [barnId], references: [id], onDelete: SetNull)
+  livestock    Livestock?   @relation(fields: [livestockId], references: [id], onDelete: SetNull)
+  device       Device?      @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  assignedTo   Membership?  @relation("AlertAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  notes        AlertNote[]
+  events       AlertEvent[]
+
+  @@index([organizationId, status, severity])
+  @@index([organizationId, detectedAt])
+  @@index([livestockId, ruleKey, status])
+  @@map("alerts")
+}
+
+model AlertNote {
+  id         String   @id @default(cuid())
+  alertId    String
+  authorId   String?
+  authorName String
+  text       String
+  createdAt  DateTime @default(now())
+
+  alert  Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([alertId, createdAt])
+  @@map("alert_notes")
+}
+
+model AlertEvent {
+  id        String         @id @default(cuid())
+  alertId   String
+  type      AlertEventType
+  actorName String?
+  metadata  Json?
+  createdAt DateTime       @default(now())
+
+  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  @@index([alertId, createdAt])
+  @@map("alert_events")
+}
+
+model AIInsight {
+  id                String          @id @default(cuid())
+  organizationId    String
+  farmId            String?
+  priority          InsightPriority
+  category          InsightCategory
+  title             Json
+  summary           Json
+  recommendation    Json
+  confidence        Int
+  affectedLivestock String[]
+  /// Model or rule that produced the insight, e.g. "rules/heat-stress" or "ai/anomaly-v1".
+  source            String          @default("rules")
+  metadata          Json?
+  generatedAt       DateTime        @default(now())
+  reviewed          Boolean         @default(false)
+  reviewedAt        DateTime?
+  reviewedBy        String?
+  dismissed         Boolean         @default(false)
+  dismissedAt       DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  farm         Farm?        @relation(fields: [farmId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, dismissed, generatedAt])
+  @@map("ai_insights")
+}
+
+model Task {
+  id             String          @id @default(cuid())
+  organizationId String
+  farmId         String
+  livestockId    String?
+  /// Free text typed by a user.
+  title          String?
+  /// Dictionary key for seeded tasks so the title follows the UI language.
+  titleKey       String?
+  description    String?
+  kind           TaskKind
+  assigneeId     String?
+  /// Denormalised display name (kept when the member is removed).
+  assigneeName   String
+  dueDate        DateTime        @db.Date
+  done           Boolean         @default(false)
+  completedAt    DateTime?
+  sourceType     TaskSourceType?
+  sourceId       String?
+  createdBy      String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  farm         Farm         @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  livestock    Livestock?   @relation(fields: [livestockId], references: [id], onDelete: SetNull)
+  assignee     Membership?  @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, done, dueDate])
+  @@map("tasks")
+}
+
+// -----------------------------------------------------------------------------
+// Reports, notifications, contact and audit
+// -----------------------------------------------------------------------------
+
+model ReportRun {
+  id             String       @id @default(cuid())
+  organizationId String
+  reportType     ReportType
+  format         ReportFormat
+  /// { farmId, livestockType, health, compare }
+  filters        Json
+  language       String       @default("id")
+  generatedById  String?
+  scheduleId     String?
+  sizeBytes      Int?
+  generatedAt    DateTime     @default(now())
+
+  organization Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  generatedBy  User?           @relation(fields: [generatedById], references: [id], onDelete: SetNull)
+  schedule     ReportSchedule? @relation(fields: [scheduleId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, generatedAt])
+  @@map("report_runs")
+}
+
+model ReportSchedule {
+  id             String          @id @default(cuid())
+  organizationId String
+  reportType     ReportType
+  frequency      ReportFrequency
+  /// 1-7 (Mon-Sun) for weekly, 1-28 for monthly; unused for daily.
+  day            Int             @default(1)
+  /// HH:mm in the organisation's timezone.
+  time           String
+  timezone       String          @default("Asia/Jakarta")
+  format         ReportFormat
+  recipients     String[]
+  language       String          @default("id")
+  active         Boolean         @default(true)
+  nextRunAt      DateTime
+  lastRunAt      DateTime?
+  createdById    String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  runs         ReportRun[]
+
+  @@unique([organizationId, reportType])
+  @@index([active, nextRunAt])
+  @@map("report_schedules")
+}
+
+model Notification {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String
+  type           NotificationType
+  title          Json
+  body           Json
+  link           String?
+  /// Channels the notification was delivered on: in-app, email, whatsapp.
+  channels       String[]
+  entityId       String?
+  readAt         DateTime?
+  createdAt      DateTime         @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+  @@map("notifications")
+}
+
+model ContactSubmission {
+  id               String        @id @default(cuid())
+  fullName         String
+  email            String
+  phone            String?
+  organization     String?
+  role             String?
+  inquiryType      String
+  farmLocation     String?
+  livestockCount   String?
+  message          String
+  preferredContact String?
+  consent          Boolean
+  status           ContactStatus @default(NEW)
+  ipAddress        String?
+  createdAt        DateTime      @default(now())
+
+  @@index([status, createdAt])
+  @@map("contact_submissions")
+}
+
+model AuditLog {
+  id             String   @id @default(cuid())
+  organizationId String?
+  userId         String?
+  actorName      String?
+  action         String
+  entityType     String
+  entityId       String?
+  metadata       Json?
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
