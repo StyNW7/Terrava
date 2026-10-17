@@ -6,8 +6,8 @@ const random = createSeededRandom(5005);
 
 const staffData: { name: string; role: StaffRole; title?: string; status: StaffMember["status"]; avatar?: string; email?: string }[] = [
   { name: "Stanley Nathanael Wijaya", role: "Owner", title: "Founder & CEO", status: "active", avatar: "/Images/profile/snw.png", email: "stanley.wijaya@terrava.id" },
-  { name: "Britney Angeline Soeseno", role: "Operational", title: "CMO", status: "active", avatar: "/Images/profile/britney.jpeg", email: "britney.soeseno@terrava.id" },
-  { name: "Ahmad Hamra", role: "Operational", title: "CTO", status: "active", avatar: "/Images/profile/hamra.png", email: "ahmad.hamra@terrava.id" },
+  // { name: "Britney Angeline Soeseno", role: "Operational", title: "CMO", status: "active", avatar: "/Images/profile/britney.jpeg", email: "britney.soeseno@terrava.id" },
+  // { name: "Ahmad Hamra", role: "Operational", title: "CTO", status: "active", avatar: "/Images/profile/hamra.png", email: "ahmad.hamra@terrava.id" },
   { name: "Aqnhatul Shabrina", role: "Operational", title: "CFO", status: "active", avatar: "/Images/profile/aqna.jpeg", email: "aqnhatul.shabrina@terrava.id" },
   { name: "Alexandra Clarissa", role: "Operational", title: "COO", status: "active", avatar: "/Images/profile/alexandra.png", email: "alexandra.clarissa@terrava.id" },
   { name: "Ratna Kusuma", role: "Farm Manager", status: "active" },

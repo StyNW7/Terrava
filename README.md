@@ -569,16 +569,16 @@ Terrava contributes to seven of the United Nations Sustainable Development Goals
       <sub>Founder & CEO</sub><br />
       <a href="https://www.linkedin.com/in/stanley-nathanael-wijaya/">LinkedIn</a>
     </td>
-    <td align="center" width="160">
+    <!-- <td align="center" width="160">
       <img src="frontend/public/Images/profile/britney.jpeg" alt="Britney Angeline Soeseno" width="120" /><br />
       <b>Britney Angeline Soeseno</b><br />
       <sub>CMO</sub>
-    </td>
-    <td align="center" width="160">
+    </td> -->
+    <!-- <td align="center" width="160">
       <img src="frontend/public/Images/profile/hamra.png" alt="Ahmad Hamra" width="120" /><br />
       <b>Ahmad Hamra</b><br />
       <sub>CTO</sub>
-    </td>
+    </td> -->
     <td align="center" width="160">
       <img src="frontend/public/Images/profile/aqna.jpeg" alt="Aqnhatul Shabrina" width="120" /><br />
       <b>Aqnhatul Shabrina</b><br />
