@@ -9,6 +9,7 @@ import SecondaryButton from "@/components/common/SecondaryButton";
 import UserAvatar from "@/components/dashboard/UserAvatar";
 import ThemeToggle from "@/components/common/ThemeToggle";
 import LanguageToggle from "@/components/common/LanguageToggle";
+import ScrollProgress from "@/components/motion/ScrollProgress";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,7 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-terrava-border bg-white/85 shadow-sm backdrop-blur-md"
+          ? "border-b border-terrava-border/70 bg-white/80 shadow-[0_8px_30px_-18px_rgb(var(--t-shadow)/0.25)] backdrop-blur-xl backdrop-saturate-150"
           : "border-b border-transparent bg-white/60 backdrop-blur-sm"
       )}
     >
@@ -69,19 +70,25 @@ export default function Navbar() {
                 to={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-200",
+                  "group relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-200",
                   active ? "text-terrava-primary" : "text-terrava-text hover:text-terrava-primary"
                 )}
               >
                 {active && (
                   <motion.span
                     layoutId="navbar-active"
-                    className="absolute inset-0 rounded-lg bg-terrava-light"
+                    className="absolute inset-0 rounded-lg bg-terrava-light ring-1 ring-terrava-primary/10"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     aria-hidden="true"
                   />
                 )}
-                <span className="relative">{item.label}</span>
+                <span className="relative">{t(item.labelKey)}</span>
+                {!active && (
+                  <span
+                    className="absolute inset-x-3.5 bottom-1 h-px origin-left scale-x-0 rounded-full bg-terrava-primary/60 transition-transform duration-300 ease-out-expo group-hover:scale-x-100"
+                    aria-hidden="true"
+                  />
+                )}
               </Link>
             );
           })}
@@ -137,6 +144,8 @@ export default function Navbar() {
         </div>
       </div>
 
+      <ScrollProgress className={cn("absolute inset-x-0 bottom-0 transition-opacity duration-300", scrolled ? "opacity-100" : "opacity-0")} />
+
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -162,7 +171,7 @@ export default function Navbar() {
                       isActive(item.href) ? "bg-terrava-light text-terrava-primary" : "text-terrava-text hover:bg-terrava-light/60"
                     )}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                   </Link>
                 </motion.div>
               ))}

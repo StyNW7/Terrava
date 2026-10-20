@@ -11,7 +11,8 @@ import type { Localized, LocalizedList } from "@/i18n/types";
  */
 
 export interface NavItem {
-  label: string;
+  /** Dictionary key, resolved with `t()`. */
+  labelKey: string;
   href: string;
 }
 

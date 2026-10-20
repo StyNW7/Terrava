@@ -1,35 +1,32 @@
 import type { NavItem } from "@/types";
 
 export const mainNavItems: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Solutions", href: "/solutions" },
-  { label: "Smart Ear Tag", href: "/smart-ear-tag" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Impact", href: "/impact" },
-  { label: "Contact", href: "/contact" },
+  { labelKey: "nav.home", href: "/" },
+  { labelKey: "nav.about", href: "/about" },
+  { labelKey: "nav.solutions", href: "/solutions" },
+  { labelKey: "nav.earTag", href: "/smart-ear-tag" },
+  { labelKey: "nav.howItWorks", href: "/how-it-works" },
+  { labelKey: "nav.impact", href: "/impact" },
+  { labelKey: "nav.contact", href: "/contact" },
 ];
 
+// Footer links only point at pages that exist in this prototype.
 export const productLinks: NavItem[] = [
-  { label: "Solutions", href: "/solutions" },
-  { label: "Smart Ear Tag", href: "/smart-ear-tag" },
-  { label: "AI Monitoring", href: "/how-it-works" },
-  { label: "Farm Analytics", href: "/impact" },
-  { label: "Request Demo", href: "/contact" },
+  { labelKey: "nav.solutions", href: "/solutions" },
+  { labelKey: "nav.earTag", href: "/smart-ear-tag" },
+  { labelKey: "nav.howItWorks", href: "/how-it-works" },
+  { labelKey: "footer.link.demoDashboard", href: "/login" },
 ];
 
 export const companyLinks: NavItem[] = [
-  { label: "About", href: "/about" },
-  { label: "Impact", href: "/impact" },
-  { label: "Careers", href: "/contact" },
-  { label: "Partners", href: "/contact" },
-  { label: "Contact", href: "/contact" },
+  { labelKey: "footer.link.aboutTeam", href: "/about" },
+  { labelKey: "footer.link.impactSdg", href: "/impact" },
+  { labelKey: "footer.link.partnership", href: "/contact" },
+  { labelKey: "nav.contact", href: "/contact" },
 ];
 
 export const resourceLinks: NavItem[] = [
-  { label: "Help Center", href: "/contact" },
-  { label: "Documentation", href: "/how-it-works" },
-  { label: "Privacy Policy", href: "/contact" },
-  { label: "Terms of Service", href: "/contact" },
-  { label: "System Status", href: "/contact" },
+  { labelKey: "footer.link.createAccount", href: "/register" },
+  { labelKey: "footer.link.signIn", href: "/login" },
+  { labelKey: "footer.link.faq", href: "/contact" },
 ];

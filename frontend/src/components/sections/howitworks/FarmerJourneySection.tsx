@@ -19,7 +19,7 @@ export default function FarmerJourneySection() {
         <div className="mx-auto mt-14 max-w-2xl">
           <ol className="space-y-4">
             {scenario.map((step, index) => (
-              <li key={step} className="flex items-start gap-3 rounded-2xl border border-terrava-border bg-white p-4 shadow-card">
+              <li key={step} className="card-hover group flex items-start gap-3 rounded-2xl border border-terrava-border bg-white p-4 shadow-card">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-terrava-light text-xs font-bold text-terrava-primary">
                   {index + 1}
                 </span>

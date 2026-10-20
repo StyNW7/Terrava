@@ -39,7 +39,7 @@ export default function DashboardPreviewSection() {
         <div className="mt-14 rounded-3xl border border-terrava-border bg-terrava-bg p-5 shadow-soft sm:p-8">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {summaryCards.map((card) => (
-              <div key={card.key} className="rounded-2xl border border-terrava-border bg-white p-4 sm:p-5">
+              <div key={card.key} className="card-hover group rounded-2xl border border-terrava-border bg-white p-4 sm:p-5">
                 <card.icon className={`mb-3 h-5 w-5 ${card.tone}`} aria-hidden="true" />
                 <p className={`text-xl font-bold sm:text-2xl ${card.tone}`}>{card.value}</p>
                 <p className="mt-1 text-xs text-terrava-muted">{t("home.preview.summary." + card.key)}</p>

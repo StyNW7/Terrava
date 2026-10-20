@@ -4,6 +4,7 @@ import type { SettingsTabProps } from "@/components/settings/settingsDraft";
 import { useTheme } from "@/hooks/useTheme";
 import type { ThemePreference } from "@/context/theme-context";
 import { useLanguage } from "@/hooks/useLanguage";
+import { originFromElement } from "@/lib/themeTransition";
 
 const themes: { value: ThemePreference; icon: typeof Sun }[] = [
   { value: "light", icon: Sun },
@@ -34,7 +35,7 @@ export default function AppearanceTab({ draft, update }: SettingsTabProps) {
               <button
                 key={item.value}
                 type="button"
-                onClick={() => setTheme(item.value)}
+                onClick={(event) => setTheme(item.value, originFromElement(event.currentTarget))}
                 aria-pressed={active}
                 className={`group flex items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-200 sm:flex-col sm:items-center sm:text-center ${
                   active

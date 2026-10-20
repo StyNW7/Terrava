@@ -152,7 +152,7 @@ export const authPanelCopy: Record<"login" | "register" | "forgot" | "reset", Au
         id: "Dengan peringatan dini, kami tidak harus menunggu hingga gejala terlihat parah sebelum mengambil tindakan.",
         en: "With early warnings, we no longer have to wait until symptoms turn severe before we act.",
       },
-      name: "Pak Stanley Wijaya",
+      name: "Pak Slamet Riyadi",
       role: { id: "Peternak Sapi Perah, Boyolali", en: "Dairy Cattle Farmer, Boyolali" },
     },
   },

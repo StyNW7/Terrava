@@ -24,7 +24,7 @@ export default function PlatformAccessSection() {
 
         <StaggerGrid className="mt-14 grid grid-cols-2 gap-5 sm:grid-cols-4">
           {channels.map((channel) => (
-            <div key={channel.key} className="flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-6 text-center shadow-card">
+            <div key={channel.key} className="card-hover group flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-6 text-center shadow-card">
               <channel.icon className="mb-3 h-7 w-7 text-terrava-primary" aria-hidden="true" />
               <p className="text-sm font-medium text-terrava-text">{t("howitworks.access.channel." + channel.key)}</p>
             </div>

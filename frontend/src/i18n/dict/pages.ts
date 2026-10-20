@@ -3,7 +3,7 @@ import type { Dictionary } from "@/i18n/types";
 /** About, Solutions, Smart Ear Tag, How It Works, Impact, Contact, 404. */
 export const pages: Dictionary = {
   // --- Shared CTA labels ---------------------------------------------------
-  "cta.requestDemo": { id: "Request Demo", en: "Request Demo" },
+  "cta.requestDemo": { id: "Jadwalkan Demo", en: "Request a Demo" },
   "cta.contactTeam": { id: "Hubungi Tim Kami", en: "Contact Our Team" },
   "cta.seeHowItWorks": { id: "Lihat Cara Kerja", en: "See How It Works" },
   "cta.viewSolutions": { id: "Lihat Solusi", en: "View Solutions" },
@@ -36,8 +36,8 @@ export const pages: Dictionary = {
     en: "Terrava connects livestock health, data, and decision-making in one modular ecosystem that is genuinely easy to use.",
   },
   "about.hero.imageAlt": {
-    id: "Tim Terrava bersama teknologi peternakan",
-    en: "The Terrava team with its livestock technology",
+    id: "Close-up smart ear tag Terrava yang terpasang di telinga sapi",
+    en: "Close-up of a Terrava smart ear tag fitted to a cow's ear",
   },
   "about.vision.badge": { id: "Vision", en: "Vision" },
   "about.vision.title": {
@@ -112,11 +112,11 @@ export const pages: Dictionary = {
   "solutions.ecosystem.node.people": { id: "Peternak, Manajer, Dokter Hewan", en: "Farmer, Manager, Vet" },
   "solutions.comparison.badge": { id: "Comparison", en: "Comparison" },
   "solutions.comparison.title": {
-    id: "Traditional Monitoring vs Terrava",
-    en: "Traditional Monitoring vs Terrava",
+    id: "Monitoring tradisional vs Terrava",
+    en: "Traditional monitoring vs Terrava",
   },
   "solutions.comparison.aspect": { id: "Aspek", en: "Aspect" },
-  "solutions.comparison.traditional": { id: "Traditional Monitoring", en: "Traditional Monitoring" },
+  "solutions.comparison.traditional": { id: "Monitoring Tradisional", en: "Traditional Monitoring" },
   "solutions.comparison.monitoring.aspect": { id: "Monitoring", en: "Monitoring" },
   "solutions.comparison.monitoring.traditional": { id: "Manual, berkala", en: "Manual and periodic" },
   "solutions.comparison.monitoring.terrava": { id: "Real-time, berkelanjutan", en: "Real-time and continuous" },
@@ -168,7 +168,7 @@ export const pages: Dictionary = {
     id: "Didukung insight dan rekomendasi data",
     en: "Backed by insight and data-driven recommendations",
   },
-  "solutions.cta.title": { id: "Find the Right Solution for Your Farm", en: "Find the Right Solution for Your Farm" },
+  "solutions.cta.title": { id: "Temukan solusi yang tepat untuk peternakan Anda", en: "Find the right solution for your farm" },
   "solutions.cta.description": {
     id: "Konsultasikan kebutuhan peternakan Anda dengan tim Terrava.",
     en: "Talk through what your farm needs with the Terrava team.",
@@ -179,7 +179,7 @@ export const pages: Dictionary = {
     id: "Teknologi ringan yang menjaga setiap detak, gerakan, dan lokasi ternak.",
     en: "Lightweight technology that tracks every heartbeat, movement, and location.",
   },
-  "eartag.overview.title": { id: "Product Overview", en: "Product Overview" },
+  "eartag.overview.title": { id: "Sekilas Produk", en: "Product Overview" },
   "eartag.overview.description": {
     id: "Smart ear tag Terrava dirancang sebagai perangkat hemat energi untuk mengumpulkan data fisiologis, aktivitas, dan lokasi ternak secara berkelanjutan, tanpa mengganggu aktivitas hariannya.",
     en: "The Terrava smart ear tag is a low-power device that continuously gathers physiological, activity, and location data without interrupting the animal's daily routine.",
@@ -258,7 +258,7 @@ export const pages: Dictionary = {
   },
   "eartag.specs.badge": { id: "Specifications", en: "Specifications" },
   "eartag.specs.title": { id: "Spesifikasi teknis smart ear tag", en: "Smart ear tag technical specifications" },
-  "eartag.cta.title": { id: "Bring Smart Monitoring to Your Livestock", en: "Bring Smart Monitoring to Your Livestock" },
+  "eartag.cta.title": { id: "Hadirkan monitoring cerdas untuk ternak Anda", en: "Bring smart monitoring to your livestock" },
   "eartag.cta.description": {
     id: "Diskusikan kebutuhan perangkat untuk peternakan Anda bersama tim Terrava.",
     en: "Discuss your farm's device requirements with the Terrava team.",
@@ -338,7 +338,7 @@ export const pages: Dictionary = {
   "howitworks.access.channel.tablet": { id: "Tablet", en: "Tablet" },
   "howitworks.access.channel.mobile": { id: "Mobile", en: "Mobile" },
   "howitworks.access.channel.notifications": { id: "Kanal Notifikasi", en: "Notification Channels" },
-  "howitworks.cta.title": { id: "See Terrava in Action", en: "See Terrava in Action" },
+  "howitworks.cta.title": { id: "Lihat Terrava beraksi", en: "See Terrava in action" },
   "howitworks.cta.description": {
     id: "Jadwalkan sesi demo untuk melihat alur kerja Terrava secara langsung.",
     en: "Book a demo session and see the Terrava workflow first hand.",
@@ -469,7 +469,7 @@ export const pages: Dictionary = {
     id: "Kontribusi Terrava terhadap tujuan pembangunan berkelanjutan global.",
     en: "How Terrava contributes to the global Sustainable Development Goals.",
   },
-  "impact.cta.title": { id: "Partner with Terrava", en: "Partner with Terrava" },
+  "impact.cta.title": { id: "Bermitra dengan Terrava", en: "Partner with Terrava" },
   "impact.cta.description": {
     id: "Mari berkolaborasi untuk membangun peternakan yang lebih sehat dan berkelanjutan.",
     en: "Let's work together on healthier, more sustainable livestock farming.",
@@ -546,7 +546,7 @@ export const pages: Dictionary = {
   },
 
   // --- Inquiry type labels (canonical values) ------------------------------
-  "contactOption.request-demo": { id: "Request Demo", en: "Request Demo" },
+  "contactOption.request-demo": { id: "Permintaan Demo", en: "Demo Request" },
   "contactOption.pilot-project": { id: "Pilot Project", en: "Pilot Project" },
   "contactOption.partnership": { id: "Kemitraan", en: "Partnership" },
   "contactOption.research-collaboration": { id: "Kolaborasi Riset", en: "Research Collaboration" },
@@ -588,5 +588,5 @@ export const pages: Dictionary = {
     id: "Halaman yang Anda cari mungkin telah dipindahkan atau tidak tersedia. Kembali ke beranda atau hubungi tim kami untuk bantuan lebih lanjut.",
     en: "The page you are looking for may have moved or is no longer available. Head back home, or contact our team for help.",
   },
-  "notFound.contactSupport": { id: "Hubungi Support", en: "Contact Support" },
+  "notFound.contactSupport": { id: "Hubungi Tim Bantuan", en: "Contact Support" },
 };

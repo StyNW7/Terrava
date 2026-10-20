@@ -27,7 +27,7 @@ export default function ConnectivitySection() {
           {reasons.map((reason) => (
             <div
               key={reason.key}
-              className="flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-6 text-center shadow-card"
+              className="card-hover group flex flex-col items-center rounded-2xl border border-terrava-border bg-white p-6 text-center shadow-card"
             >
               <reason.icon className="mb-3 h-6 w-6 text-terrava-primary" aria-hidden="true" />
               <p className="text-sm font-medium text-terrava-text">{t("eartag.connectivity.reason." + reason.key)}</p>

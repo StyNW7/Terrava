@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { ThemeContext, THEME_STORAGE_KEY } from "@/context/theme-context";
 import type { ResolvedTheme, ThemeContextValue, ThemePreference } from "@/context/theme-context";
+import { runThemeTransition } from "@/lib/themeTransition";
+import type { TransitionOrigin } from "@/lib/themeTransition";
 
 const media = () => (typeof window !== "undefined" ? window.matchMedia("(prefers-color-scheme: dark)") : null);
 
@@ -21,6 +23,10 @@ function resolve(preference: ThemePreference): ResolvedTheme {
   return preference;
 }
 
+function appliedTheme(): ResolvedTheme {
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
 function applyTheme(theme: ResolvedTheme) {
   const root = document.documentElement;
   root.classList.toggle("dark", theme === "dark");
@@ -33,16 +39,32 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [preference, setPreferenceState] = useState<ThemePreference>(() => readPreference());
   const [resolved, setResolved] = useState<ResolvedTheme>(() => resolve(readPreference()));
 
+  // Keep the document in sync on first render and persist every choice.
   useEffect(() => {
-    const next = resolve(preference);
-    setResolved(next);
-    applyTheme(next);
+    applyTheme(resolve(preference));
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, preference);
     } catch {
       // ignore storage errors
     }
   }, [preference]);
+
+  const setPreference = useCallback((next: ThemePreference, origin?: TransitionOrigin) => {
+    const target = resolve(next);
+    const commit = () => {
+      applyTheme(target);
+      setPreferenceState(next);
+      setResolved(target);
+    };
+    // Only animate when the visible theme actually changes (light -> system may not).
+    if (target === appliedTheme()) commit();
+    else runThemeTransition(commit, origin);
+  }, []);
+
+  const toggle = useCallback(
+    (origin?: TransitionOrigin) => setPreference(appliedTheme() === "dark" ? "light" : "dark", origin),
+    [setPreference]
+  );
 
   // Follow OS changes while in "system" mode.
   useEffect(() => {
@@ -51,17 +73,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (!query) return;
     const handle = () => {
       const next = resolve("system");
-      setResolved(next);
-      applyTheme(next);
+      runThemeTransition(() => {
+        applyTheme(next);
+        setResolved(next);
+      });
     };
     query.addEventListener("change", handle);
     return () => query.removeEventListener("change", handle);
   }, [preference]);
-
-  const setPreference = useCallback((next: ThemePreference) => setPreferenceState(next), []);
-  const toggle = useCallback(() => {
-    setPreferenceState((current) => (resolve(current) === "dark" ? "light" : "dark"));
-  }, []);
 
   const value = useMemo<ThemeContextValue>(
     () => ({ preference, resolved, isDark: resolved === "dark", setPreference, toggle }),

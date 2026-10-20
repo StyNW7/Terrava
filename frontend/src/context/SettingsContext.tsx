@@ -38,6 +38,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     document.documentElement.style.fontSize = settings.appearance.compact ? "15px" : "";
   }, [settings.appearance.compact]);
 
+  // Non-React animations (e.g. the theme switch) read this flag from the DOM.
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-reduce-motion", !settings.appearance.animations);
+  }, [settings.appearance.animations]);
+
   const saveSettings = useCallback((next: AppSettings) => {
     setSettings(next);
     try {

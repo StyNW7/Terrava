@@ -19,16 +19,19 @@ export default function TargetUsersSection() {
           {targetPersonas.map((persona) => (
             <div
               key={persona.id}
-              className="overflow-hidden rounded-2xl border border-terrava-border bg-terrava-bg shadow-card"
+              className="card-hover group h-full overflow-hidden rounded-2xl border border-terrava-border bg-terrava-bg shadow-card"
             >
-              <img
-                src={persona.image}
-                alt={persona.title}
-                loading="lazy"
-                className="h-40 w-full object-cover"
-              />
+              <div className="relative h-40 overflow-hidden">
+                <img
+                  src={persona.image}
+                  alt={persona.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out-expo group-hover:scale-[1.06]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-terrava-dark/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
+              </div>
               <div className="p-5">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-terrava-light text-terrava-primary">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-terrava-light text-terrava-primary transition-all duration-300 group-hover:bg-terrava-primary group-hover:text-white">
                   <persona.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <h3 className="mb-1.5 text-sm font-semibold text-terrava-text">{persona.title}</h3>

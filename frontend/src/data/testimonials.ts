@@ -7,7 +7,7 @@ export const testimonials: TestimonialItem[] = [
       id: "Dengan peringatan dini, kami tidak harus menunggu hingga gejala terlihat parah sebelum mengambil tindakan.",
       en: "With early warnings, we no longer have to wait until symptoms turn severe before we act.",
     },
-    name: "Pak Stanley Wijaya",
+    name: "Pak Slamet Riyadi",
     role: { id: "Peternak Sapi Perah", en: "Dairy Cattle Farmer" },
     location: "Boyolali, Jawa Tengah",
     image: "Images/avatar/male.jpg",

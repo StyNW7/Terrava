@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import type { PointerEvent } from "react";
 import type { Variants } from "framer-motion";
 import { Activity, ShieldCheck, Radio, Play, HeartPulse, Wifi } from "lucide-react";
 import PrimaryButton from "@/components/common/PrimaryButton";
@@ -23,21 +24,53 @@ const item: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
+// Position (x/y) is left to the pointer parallax, so the entrance only fades and scales.
 const floatCard = (delay: number) => ({
-  initial: { opacity: 0, y: 24, scale: 0.96 },
-  animate: { opacity: 1, y: 0, scale: 1 },
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: 1, scale: 1 },
   transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
 });
 
 export default function HeroSection() {
   const { t } = useLanguage();
+  const reduceMotion = useReducedMotion();
+
+  // Pointer position across the section, -0.5..0.5, smoothed by a spring.
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const springX = useSpring(pointerX, { stiffness: 90, damping: 18 });
+  const springY = useSpring(pointerY, { stiffness: 90, damping: 18 });
+  const tiltX = useTransform(springY, [-0.5, 0.5], [5, -5]);
+  const tiltY = useTransform(springX, [-0.5, 0.5], [-6, 6]);
+  const driftX = useTransform(springX, [-0.5, 0.5], [-14, 14]);
+  const driftY = useTransform(springY, [-0.5, 0.5], [-10, 10]);
+  const counterX = useTransform(springX, [-0.5, 0.5], [12, -12]);
+  const counterY = useTransform(springY, [-0.5, 0.5], [8, -8]);
+
+  const handlePointerMove = (event: PointerEvent<HTMLElement>) => {
+    if (reduceMotion || event.pointerType !== "mouse") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
+    pointerY.set((event.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  const resetPointer = () => {
+    pointerX.set(0);
+    pointerY.set(0);
+  };
 
   return (
-    <section className="relative overflow-hidden bg-terrava-light pb-20 pt-16 sm:pb-28 sm:pt-24">
-      {/* Ambient decoration */}
+    <section
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetPointer}
+      className="relative overflow-hidden bg-terrava-light pb-20 pt-16 sm:pb-28 sm:pt-24"
+    >
+      {/* Ambient decoration: grid, drifting aurora glows, and a soft floor fade. */}
       <div className="pointer-events-none absolute inset-0 bg-grid-soft bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" aria-hidden="true" />
-      <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-terrava-primary/10 blur-3xl animate-float-slow" aria-hidden="true" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-white/70 blur-3xl animate-float-slow [animation-delay:3s] dark:bg-terrava-primary/10" aria-hidden="true" />
+      <div className="pointer-events-none absolute -left-32 top-0 h-[26rem] w-[26rem] rounded-full bg-terrava-primary/15 blur-3xl animate-aurora" aria-hidden="true" />
+      <div className="pointer-events-none absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl animate-aurora [animation-delay:-7s] dark:bg-emerald-400/10" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-[28rem] w-[28rem] rounded-full bg-white/70 blur-3xl animate-aurora [animation-delay:-12s] dark:bg-terrava-primary/15" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-terrava-bg/60" aria-hidden="true" />
 
       <div className="container relative">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
@@ -83,12 +116,17 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-          <div className="relative">
+          <div className="relative [perspective:1200px]">
+            {/* Slowly turning conic glow behind the photo. */}
+            <div className="pointer-events-none absolute -inset-6 rounded-[2.5rem] opacity-50 blur-2xl dark:opacity-40" aria-hidden="true">
+              <div className="h-full w-full animate-spin-slow rounded-full bg-[conic-gradient(from_0deg,rgb(var(--t-primary)/0.55),rgb(110_231_183/0.4),rgb(var(--t-light)/0.1),rgb(var(--t-primary)/0.55))]" />
+            </div>
             <motion.div
               initial={{ opacity: 0, scale: 0.94, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-              className="relative overflow-hidden rounded-3xl shadow-lift ring-1 ring-black/5"
+              style={{ rotateX: tiltX, rotateY: tiltY, transformStyle: "preserve-3d" }}
+              className="relative overflow-hidden rounded-3xl shadow-lift ring-1 ring-black/5 dark:ring-white/10"
             >
               <img
                 src={images.heroFarm}
@@ -115,6 +153,7 @@ export default function HeroSection() {
 
             <motion.div
               {...floatCard(0.55)}
+              style={{ x: driftX, y: driftY }}
               className="absolute -left-4 top-6 w-44 rounded-2xl border border-terrava-border bg-white/95 p-4 shadow-lift backdrop-blur sm:-left-10 sm:top-10 sm:w-52"
             >
               <motion.div animate={{ y: [0, -6, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
@@ -128,6 +167,7 @@ export default function HeroSection() {
 
             <motion.div
               {...floatCard(0.75)}
+              style={{ x: counterX, y: counterY }}
               className="absolute -right-2 bottom-20 w-48 rounded-2xl border border-terrava-border bg-white/95 p-4 shadow-lift backdrop-blur sm:-right-8 sm:bottom-24 sm:w-56"
             >
               <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}>

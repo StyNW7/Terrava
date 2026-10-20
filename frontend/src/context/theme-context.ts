@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import type { TransitionOrigin } from "@/lib/themeTransition";
 
 export type ThemePreference = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
@@ -9,8 +10,9 @@ export interface ThemeContextValue {
   /** The theme actually applied to the document. */
   resolved: ResolvedTheme;
   isDark: boolean;
-  setPreference: (preference: ThemePreference) => void;
-  toggle: () => void;
+  /** Change the theme; `origin` is where the animated reveal starts. */
+  setPreference: (preference: ThemePreference, origin?: TransitionOrigin) => void;
+  toggle: (origin?: TransitionOrigin) => void;
 }
 
 export const THEME_STORAGE_KEY = "terrava-theme";

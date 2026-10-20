@@ -29,10 +29,13 @@ export default function SectionHeading({
       {badge && (
         <span
           className={cn(
-            "mb-4 inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wide",
-            dark ? "bg-white/10 text-white" : "bg-terrava-light text-terrava-primary"
+            "mb-4 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-wide",
+            dark
+              ? "border-white/15 bg-white/10 text-white"
+              : "border-terrava-primary/15 bg-terrava-light text-terrava-primary shadow-[inset_0_1px_0_rgb(255_255_255/0.6)] dark:shadow-none"
           )}
         >
+          <span className={cn("h-1.5 w-1.5 rounded-full", dark ? "bg-emerald-300" : "bg-terrava-primary")} aria-hidden="true" />
           {badge}
         </span>
       )}

@@ -11,6 +11,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { DataStoreProvider } from "@/context/DataStoreContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { useTheme } from "@/hooks/useTheme";
+import { useSpotlight } from "@/hooks/useSpotlight";
 import PWAPrompts from "@/components/pwa/PWAPrompts";
 import ProtectedRoute, { GuestOnlyRoute } from "@/components/auth/ProtectedRoute";
 
@@ -77,6 +78,7 @@ function ThemedToaster() {
 
 function App() {
   const [loading, setLoading] = useState(true);
+  useSpotlight();
 
   return (
     <MotionConfig reducedMotion="user">

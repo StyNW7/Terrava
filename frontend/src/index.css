@@ -252,6 +252,39 @@
   }
 }
 
+/* ------------------------------------------------------------------
+ * Theme switch animation (see src/lib/themeTransition.ts).
+ * The new theme is revealed in a growing circle via the View Transitions
+ * API; JS drives the clip-path, so the default crossfade is disabled here.
+ * ------------------------------------------------------------------ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+/* CSS colour transitions would fight the snapshot, so pause them mid-switch. */
+.theme-vt *,
+.theme-vt *::before,
+.theme-vt *::after {
+  transition: none !important;
+}
+/* Fallback for browsers without view transitions: a smooth colour crossfade. */
+.theme-fade,
+.theme-fade *,
+.theme-fade *::before,
+.theme-fade *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow, outline-color !important;
+  transition-duration: 480ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+  transition-delay: 0ms !important;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 8px;
@@ -278,6 +311,84 @@
   .card-hover {
     @apply transition-all duration-300 ease-out-expo hover:-translate-y-1 hover:shadow-lift hover:border-terrava-primary/30;
   }
+  /* Cursor-following glow: a soft light inside the card plus a lit edge.
+   * --spot-x / --spot-y are set by useSpotlight(). Every .card-hover gets it. */
+  .card-hover,
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .card-hover::after,
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      380px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+      rgb(var(--t-primary) / 0.09),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .card-hover::before,
+  .spotlight::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: radial-gradient(
+      240px circle at var(--spot-x, 50%) var(--spot-y, 0%),
+      rgb(var(--t-primary) / 0.7),
+      transparent 70%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .card-hover:hover::after,
+  .card-hover:hover::before,
+  .spotlight:hover::after,
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+  /* Light sweep across primary buttons on hover. */
+  .btn-shine {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.32) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-shine:hover::after {
+    transform: translateX(120%);
+  }
+  /* Underline that draws in from the left. */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    background-size: 100% 1px;
+  }
   /* Frosted glass surface for floating UI. */
   .glass {
     @apply border border-white/60 bg-white/80 backdrop-blur-md dark:border-terrava-border dark:bg-terrava-surface/85;
@@ -288,11 +399,36 @@
     background-size: 200% 100%;
     @apply animate-shimmer;
   }
+  /* Brand gradient text with a slow, seamless shimmer. */
   .text-gradient {
-    background: linear-gradient(120deg, rgb(var(--t-hover)) 0%, rgb(var(--t-primary)) 45%, rgb(var(--t-success)) 100%);
+    background: linear-gradient(
+      100deg,
+      rgb(var(--t-hover)) 0%,
+      rgb(var(--t-primary)) 25%,
+      rgb(var(--t-success)) 45%,
+      rgb(var(--t-primary)) 75%,
+      rgb(var(--t-hover)) 100%
+    );
+    background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    animation: text-shine 8s linear infinite;
+  }
+  .dark .text-gradient {
+    background-image: linear-gradient(
+      100deg,
+      rgb(var(--t-primary)) 0%,
+      rgb(var(--t-success)) 25%,
+      #a7f3c9 45%,
+      rgb(var(--t-success)) 75%,
+      rgb(var(--t-primary)) 100%
+    );
+  }
+  /* Faint dotted texture for hero and CTA panels. */
+  .bg-dots {
+    background-image: radial-gradient(rgb(var(--t-primary) / 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
   }
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -438,6 +574,11 @@
 }
 .terrava-facility--gateway {
   background: rgb(var(--t-info));
+}
+@keyframes text-shine {
+  to {
+    background-position: 200% center;
+  }
 }
 @keyframes ping-slow {
   0% {

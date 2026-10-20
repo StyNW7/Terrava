@@ -17,7 +17,7 @@ export default function JourneySection() {
 
         <StaggerGrid className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {journeySteps.map((step) => (
-            <div key={step.id} className="overflow-hidden rounded-2xl border border-terrava-border bg-white shadow-card">
+            <div key={step.id} className="card-hover group overflow-hidden rounded-2xl border border-terrava-border bg-white shadow-card">
               <img src={step.image} alt={step.title} loading="lazy" className="h-36 w-full object-cover" />
               <div className="p-5">
                 <div className="mb-3 flex items-center gap-2">

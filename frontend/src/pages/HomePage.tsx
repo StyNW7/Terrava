@@ -42,8 +42,8 @@ export default function HomePage() {
       <CTASection
         title={t("home.cta.title")}
         description={t("home.cta.description")}
-        primaryLabel={t("cta.requestDemo")}
-        primaryHref="/contact"
+        primaryLabel={t("home.hero.primaryCta")}
+        primaryHref="/login"
         secondaryLabel={t("cta.contactTeam")}
         secondaryHref="/contact"
       />

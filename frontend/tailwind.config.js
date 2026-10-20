@@ -147,6 +147,14 @@ module.exports = {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        aurora: {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "33%": { transform: "translate3d(6%, -8%, 0) scale(1.12)" },
+          "66%": { transform: "translate3d(-5%, 6%, 0) scale(0.94)" },
+        },
+        "spin-slow": {
+          to: { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -160,6 +168,8 @@ module.exports = {
         "pulse-dot": "pulse-dot 2s ease-out infinite",
         "float-slow": "float-slow 7s ease-in-out infinite",
         "gradient-shift": "gradient-shift 12s ease infinite",
+        aurora: "aurora 18s ease-in-out infinite",
+        "spin-slow": "spin-slow 24s linear infinite",
       },
     },
   },
