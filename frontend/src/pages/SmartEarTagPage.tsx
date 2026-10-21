@@ -1,17 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import PageHero from "@/components/layout/PageHero";
 import SensorsSection from "@/components/sections/eartag/SensorsSection";
-import AnatomySection from "@/components/sections/eartag/AnatomySection";
+import EarTagFamilySection from "@/components/sections/eartag/EarTagFamilySection";
+import EarTagStudioSection from "@/components/sections/eartag/EarTagStudioSection";
+import CowSimulationSection from "@/components/sections/eartag/CowSimulationSection";
+import EarTagGallerySection from "@/components/sections/eartag/EarTagGallerySection";
 import DataFlowSection from "@/components/sections/eartag/DataFlowSection";
 import EnergySection from "@/components/sections/eartag/EnergySection";
 import ConnectivitySection from "@/components/sections/eartag/ConnectivitySection";
 import ComfortSafetySection from "@/components/sections/eartag/ComfortSafetySection";
 import SpecsSection from "@/components/sections/eartag/SpecsSection";
 import CTASection from "@/components/sections/CTASection";
+import type { EarTagVariantId } from "@/data/earTagVariants";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SmartEarTagPage() {
   const { t } = useLanguage();
+  // One selected design drives the lineup, the 3D studio, the cow simulation and the gallery.
+  const [variant, setVariant] = useState<EarTagVariantId>("shield");
 
   useEffect(() => {
     document.title = "Smart Ear Tag | Terrava";
@@ -34,11 +40,14 @@ export default function SmartEarTagPage() {
       </section>
 
       <SensorsSection />
-      <AnatomySection />
+      <EarTagFamilySection variantId={variant} onVariantChange={setVariant} />
+      <EarTagStudioSection variantId={variant} onVariantChange={setVariant} />
+      <CowSimulationSection variantId={variant} onVariantChange={setVariant} />
       <DataFlowSection />
       <EnergySection />
       <ConnectivitySection />
       <ComfortSafetySection />
+      <EarTagGallerySection variantId={variant} onVariantChange={setVariant} />
       <SpecsSection />
 
       <CTASection

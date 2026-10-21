@@ -134,19 +134,6 @@ export interface SensorItem {
   description: Localized;
 }
 
-export interface AnatomyCallout {
-  id: string;
-  label: string;
-  description: Localized;
-  top: string;
-  left: string;
-}
-
-export interface SpecRow {
-  label: string;
-  value: string;
-}
-
 export interface ImpactPillar {
   id: string;
   icon: LucideIcon;

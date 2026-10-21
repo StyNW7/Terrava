@@ -64,6 +64,16 @@ Terrava is a Progressive Web App (via `vite-plugin-pwa` + Workbox):
 
 The service worker is only generated in production builds (`npm run build` then `npm run preview`). Install is offered by Chrome/Edge on desktop and Android; on iOS use Safari → Share → Add to Home Screen.
 
+## Smart Ear Tag 3D (`/smart-ear-tag`)
+
+The Smart Ear Tag page shows both enclosures from `iot/ear-tag-specifications/` (TV-ET1 Shield and TV-ET0 Classic):
+
+- **3D Studio**: the real CAD assembly in three.js. Visitors can orbit it, explode it (or play the assembly animation), hide the front shell or electronics, use X-ray, show the envelope dimensions, switch colourways, click any component for its description, and save a PNG.
+- **Field simulation**: a procedural 3D cow (Bali, Ongole/Brahman or Holstein) with the tag pinned in the middle third of the left ear, in a pasture with a virtual geofence and a LoRaWAN gateway. Scenarios (healthy, fever, heat stress, lameness, leaving the area) change the cow's behaviour and physiology. Each uplink is encoded to the real 22-byte vitals payload (`iot/protocol/PAYLOAD.md`), and alerts use the dashboard's default thresholds. Visitors can also send downlinks (locate, diagnostics, set-interval) and watch the battery and solar budget over a day/night cycle at 1×, 60× or 600× speed.
+- **Renders & drawings**: WebP copies of the spec renders and A3 drawing sheets in `public/Images/ear-tag/`.
+
+The 3D code lives in `src/components/eartag3d/` and loads lazily, only when a visitor scrolls near it, so other pages never download three.js. The web models in `public/models/ear-tag/` are meshopt-compressed copies of the CAD GLBs (≈ 0.3 MB each). Regenerate them with `scripts/optimize-ear-tag-models.mjs` (instructions are in the file header) whenever the CAD changes.
+
 ## Scripts
 
 - `npm run dev` — start the dev server

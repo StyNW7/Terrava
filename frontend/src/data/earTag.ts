@@ -8,7 +8,7 @@ import {
   Cpu,
   Sun,
 } from "lucide-react";
-import type { SensorItem, AnatomyCallout, SpecRow } from "@/types";
+import type { SensorItem } from "@/types";
 
 export const sensorItems: SensorItem[] = [
   {
@@ -83,65 +83,4 @@ export const sensorItems: SensorItem[] = [
       en: "Supplementary charging from a compact solar panel on the device.",
     },
   },
-];
-
-export const anatomyCallouts: AnatomyCallout[] = [
-  {
-    id: "sensor-module",
-    label: "Sensor Module",
-    description: { id: "Kumpulan sensor fisiologis dan gerak.", en: "The physiological and motion sensor cluster." },
-    top: "18%",
-    left: "62%",
-  },
-  {
-    id: "mcu",
-    label: "MCU",
-    description: { id: "Unit pemroses utama perangkat.", en: "The device's main processing unit." },
-    top: "38%",
-    left: "70%",
-  },
-  {
-    id: "lora-antenna",
-    label: "LoRa Antenna",
-    description: { id: "Antena untuk transmisi data jarak jauh.", en: "Antenna for long-range data transmission." },
-    top: "12%",
-    left: "30%",
-  },
-  {
-    id: "battery-part",
-    label: "Battery",
-    description: { id: "Sumber daya utama perangkat.", en: "The device's primary power source." },
-    top: "58%",
-    left: "55%",
-  },
-  {
-    id: "solar-panel",
-    label: "Solar Panel",
-    description: { id: "Panel pengisian daya tambahan.", en: "Supplementary charging panel." },
-    top: "70%",
-    left: "35%",
-  },
-  {
-    id: "enclosure",
-    label: "Ear Tag Enclosure",
-    description: {
-      id: "Casing pelindung yang tahan terhadap kondisi lapangan.",
-      en: "Protective casing built to withstand field conditions.",
-    },
-    top: "82%",
-    left: "68%",
-  },
-];
-
-export const specifications: SpecRow[] = [
-  { label: "MCU", value: "Low-power 32-bit microcontroller" },
-  { label: "Temperature Sensor", value: "Digital body temperature sensor" },
-  { label: "Heart Rate Sensor", value: "Optical heart rate and oxygen sensor" },
-  { label: "Motion Sensor", value: "6-axis accelerometer and gyroscope" },
-  { label: "GPS", value: "Low-power GPS module" },
-  { label: "Connectivity", value: "LoRa long-range wireless" },
-  { label: "Memory", value: "External flash storage" },
-  { label: "Battery", value: "Rechargeable low-power battery" },
-  { label: "Solar Panel", value: "Optional solar-assisted charging" },
-  { label: "Data Interval", value: "Configurable periodic transmission" },
 ];

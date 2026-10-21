@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Sunrise, Sun, Sunset, Moon, ArrowRight, CircleCheck, BellRing, Radio } from "lucide-react";
+import { ArrowRight, CircleCheck, BellRing, Radio } from "lucide-react";
+import DashboardClock from "@/components/dashboard/overview/DashboardClock";
+import { dayPeriodFor } from "@/components/dashboard/overview/dayPeriod";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useNow } from "@/hooks/useNow";
 
 interface WelcomeBannerProps {
   healthyPercent: number;
@@ -13,19 +16,13 @@ interface WelcomeBannerProps {
   farmName?: string;
 }
 
-function greetingFor(hour: number) {
-  if (hour < 11) return { key: "greeting.morning", icon: Sunrise };
-  if (hour < 15) return { key: "greeting.afternoon", icon: Sun };
-  if (hour < 19) return { key: "greeting.evening", icon: Sunset };
-  return { key: "greeting.night", icon: Moon };
-}
-
 export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnline, devicesTotal, farmName }: WelcomeBannerProps) {
   const { user } = useAuth();
   const { lang, t } = useLanguage();
-  const now = new Date();
-  const greeting = greetingFor(now.getHours());
-  const GreetingIcon = greeting.icon;
+  // Ticks every second, so the clock, greeting and date follow the device time live.
+  const now = useNow();
+  const period = dayPeriodFor(now.getHours());
+  const GreetingIcon = period.icon;
   const firstName = (user?.name ?? t("auth.defaultRole")).replace(/^(drh\.|dr\.|ir\.)\s*/i, "").split(" ")[0];
   const dateLabel = now.toLocaleDateString(lang === "id" ? "id-ID" : "en-GB", {
     weekday: "long",
@@ -73,7 +70,7 @@ export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnl
             {dateLabel}
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-            {t(greeting.key, { name: firstName })}
+            {t(period.greeting, { name: firstName })}
           </h2>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/80">
             {activeAlerts > 0
@@ -97,20 +94,23 @@ export default function WelcomeBanner({ healthyPercent, activeAlerts, devicesOnl
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2.5">
-          <Link
-            to="/dashboard/alerts"
-            className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-terrava-primary transition-all hover:-translate-y-0.5 hover:bg-terrava-light"
-          >
-            {t("overview.reviewAlerts")}
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-          </Link>
-          <Link
-            to="/dashboard/monitoring"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
-          >
-            {t("overview.liveMonitoring")}
-          </Link>
+        <div className="flex shrink-0 flex-col gap-3 sm:items-start lg:items-end">
+          <DashboardClock now={now} period={period} />
+          <div className="flex flex-wrap gap-2.5">
+            <Link
+              to="/dashboard/alerts"
+              className="group inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-terrava-primary transition-all hover:-translate-y-0.5 hover:bg-terrava-light"
+            >
+              {t("overview.reviewAlerts")}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
+            <Link
+              to="/dashboard/monitoring"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/30 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
+            >
+              {t("overview.liveMonitoring")}
+            </Link>
+          </div>
         </div>
       </div>
     </motion.section>
