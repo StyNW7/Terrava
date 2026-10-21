@@ -1,0 +1,70 @@
+{
+  "collisions": [],
+  "clearance_ok": true,
+  "mass": {
+    "parts_g": {
+      "housing": 11.06,
+      "cover": 4.79,
+      "logo_inlay": 0.17,
+      "pin_cap": 0.16,
+      "lock_ring": 0.17,
+      "gasket": 0.11,
+      "usb_plug": 0.19,
+      "yoke": 0.68,
+      "ppg_window": 0.14
+    },
+    "enclosure_g": 17.5,
+    "electronics_g": 26.4,
+    "total_g": 43.9
+  },
+  "envelope_mm": [
+    42.0,
+    66.0,
+    18.0
+  ],
+  "body_mm": [
+    42.0,
+    66.0,
+    17.0
+  ],
+  "internal_volume_cm3": 21.1,
+  "silhouette": {
+    "corners": [
+      [
+        -21.0,
+        0.0,
+        6.5
+      ],
+      [
+        21.0,
+        0.0,
+        6.5
+      ],
+      [
+        21.0,
+        37.84,
+        8.0
+      ],
+      [
+        10.03,
+        46.29,
+        8.0
+      ],
+      [
+        0.0,
+        127.97,
+        8.6
+      ],
+      [
+        -10.03,
+        46.29,
+        8.0
+      ],
+      [
+        -21.0,
+        37.84,
+        8.0
+      ]
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "collisions": [],
+  "clearance_ok": true,
+  "mass": {
+    "parts_g": {
+      "base": 9.32,
+      "cover": 9.68,
+      "logo_inlay": 0.17,
+      "pin_cap": 0.17,
+      "lock_ring": 0.17,
+      "gasket": 0.14,
+      "usb_plug": 0.19,
+      "ppg_window": 0.07
+    },
+    "enclosure_g": 19.9,
+    "electronics_g": 27.7,
+    "total_g": 47.6
+  },
+  "envelope_mm": [
+    46.0,
+    68.0,
+    14.0
+  ],
+  "internal_volume_cm3": 27.04
+}

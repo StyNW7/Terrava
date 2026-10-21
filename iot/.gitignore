@@ -6,3 +6,5 @@ __pycache__/
 *.sqlite3
 firmware/*/.pio/
 firmware/*/include/secrets.h
+ear-tag-specifications/*/cad/.render-cache/
+ear-tag-specifications/*/models/render-meshes/

@@ -1,0 +1,2 @@
+# Same toolchain as the Shield; the Classic also imports its helpers, fonts and logo trace.
+-r ../../tv-et1-shield/cad/requirements.txt

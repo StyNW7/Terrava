@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terrava Classic 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6f3; --panel: #ffffff; --ink: #15231b; --muted: #5d6b63; --line: #dce6df;
+    --green: #0b6b3e; --green-soft: #d5e8dc;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1612; --panel: #14201a; --ink: #e6efe9; --muted: #8fa396; --line: #22392d;
+      --green: #43c282; --green-soft: #173325;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1612; --panel: #14201a; --ink: #e6efe9; --muted: #8fa396; --line: #22392d;
+    --green: #43c282; --green-soft: #173325;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+    font-family: "Plus Jakarta Sans", system-ui, sans-serif; }
+  #app { position: fixed; inset: 0; }
+  canvas { display: block; }
+  .panel { position: fixed; left: 16px; top: 16px; width: min(320px, calc(100vw - 32px));
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 16px;
+    box-shadow: 0 10px 30px rgba(10, 40, 25, .08); }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand b { font-size: 20px; font-weight: 800; color: var(--green); letter-spacing: -.01em; }
+  .brand span { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .08em; }
+  h1 { font-size: 15px; margin: 12px 0 2px; }
+  p.sub { margin: 0 0 14px; font-size: 12.5px; color: var(--muted); }
+  .row { margin: 12px 0; }
+  .row label { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--muted); text-transform: uppercase;
+    display: flex; justify-content: space-between; }
+  input[type=range] { width: 100%; accent-color: var(--green); margin-top: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chips button { font: inherit; font-size: 12.5px; font-weight: 600; border: 1px solid var(--line); background: transparent;
+    color: var(--ink); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+  .chips button[aria-pressed=true] { background: var(--green); border-color: var(--green); color: #fff; }
+  .specs { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 12.5px; margin-top: 14px;
+    padding-top: 12px; border-top: 1px solid var(--line); }
+  .specs dt { color: var(--muted); } .specs dd { margin: 0; font-weight: 600; }
+  .hint { position: fixed; right: 16px; bottom: 14px; font-size: 12px; color: var(--muted); }
+  @media (max-width: 640px) {
+    .panel { top: auto; bottom: 12px; left: 12px; width: calc(100vw - 24px); padding: 14px; }
+    .specs { display: none; } .hint { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="panel">
+  <div class="brand"><b>Terrava</b><span>SMART EAR TAG · TV-ET0 CLASSIC</span></div>
+  <h1>Interactive 3D model</h1>
+  <p class="sub">Drag to orbit, scroll to zoom. Same geometry as the STEP/STL files.</p>
+  <div class="row">
+    <label>Explode <output id="exv">0%</output></label>
+    <input id="explode" type="range" min="0" max="1" step="0.01" value="0">
+  </div>
+  <div class="row">
+    <label>Show</label>
+    <div class="chips">
+      <button id="tCover" aria-pressed="true">Front shell</button>
+      <button id="tElec" aria-pressed="true">Electronics</button>
+    </div>
+  </div>
+  <div class="row">
+    <label>Colourway</label>
+    <div class="chips" id="cw">
+      <button data-cw="signature" aria-pressed="true">Signature</button>
+      <button data-cw="mint" aria-pressed="false">Mint</button>
+      <button data-cw="stealth" aria-pressed="false">Stealth</button>
+    </div>
+  </div>
+  <dl class="specs">
+    <dt>Envelope</dt><dd>42 × 66 × 18 mm</dd>
+    <dt>Weight</dt><dd>≈ __MASS__ g with electronics</dd>
+    <dt>Radio</dt><dd>LoRaWAN AS923-2 (SX1262)</dd>
+    <dt>Sensors</dt><dd>IR temp · PPG · 6-axis IMU · GNSS</dd>
+    <dt>Power</dt><dd>LiPo 302535 ~250 mAh + 154 mW solar</dd>
+  </dl>
+</div>
+<div class="hint">Terrava · parametric CAD in <code>cad/terrava_classic.py</code></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const GLB_B64 = "__GLB_BASE64__";
+
+const app = document.getElementById("app");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+app.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, 1, 5000);
+camera.position.set(-110, 95, 230);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 33, 8);
+controls.enableDamping = true;
+controls.minDistance = 80; controls.maxDistance = 900;
+
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(-120, 220, 160);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -150, right: 150, top: 150, bottom: -150, near: 10, far: 800 });
+scene.add(sun);
+const ground = new THREE.Mesh(new THREE.CircleGeometry(600, 64), new THREE.ShadowMaterial({ opacity: 0.16 }));
+ground.rotation.x = -Math.PI / 2; ground.position.y = -36; ground.receiveShadow = true;
+scene.add(ground);
+
+const EXPLODE_Z = { yoke: -34, ppg_window: -46, housing: -12, gasket: 14, lock_ring: 22, cover: 40, logo_inlay: 56, pin_cap: 66 };
+const COLORWAYS = {
+  signature: { housing: 0xeeece6, cover: 0xeeece6, logo_inlay: 0x0b6b3e, pin_cap: 0x8f9392, yoke: 0x8f9392, usb_plug: 0xeeece6 },
+  mint: { housing: 0x9bdcc1, cover: 0x9bdcc1, logo_inlay: 0x0b6b3e, pin_cap: 0xe9ecea, yoke: 0xe9ecea, usb_plug: 0x9bdcc1 },
+  stealth: { housing: 0x2c3133, cover: 0x2c3133, logo_inlay: 0x3fb27a, pin_cap: 0x4a5052, yoke: 0x4a5052, usb_plug: 0x2c3133 },
+};
+
+const parts = {}; let electronics = null;
+const bytes = Uint8Array.from(atob(GLB_B64), c => c.charCodeAt(0));
+new GLTFLoader().parse(bytes.buffer, "", gltf => {
+  const root = gltf.scene.children[0];
+  root.quaternion.identity(); // the CAD is already Y-up
+  gltf.scene.traverse(o => {
+    if (o.isMesh) {
+      o.castShadow = true; o.receiveShadow = true;
+      o.material = o.material.clone();
+      o.material.roughness = 0.55; o.material.metalness = 0.0;
+    }
+  });
+  for (const child of root.children) {
+    child.userData.base = child.position.clone();
+    if (child.name === "electronics") electronics = child; else parts[child.name] = child;
+  }
+  if (electronics) for (const c of electronics.children) {
+    c.userData.base = c.position.clone();
+    c.traverse(o => { if (o.isMesh && /screw|insert|shield|USB|MLX|LiPo|Solar_cell/.test(c.name)) { o.material.metalness = 0.8; o.material.roughness = 0.3; } });
+  }
+  scene.add(gltf.scene);
+  applyColorway("signature");
+  applyExplode(0);
+});
+
+function meshOf(node) { let m = null; node.traverse(o => { if (!m && o.isMesh) m = o; }); return m; }
+function applyColorway(name) {
+  for (const [k, hex] of Object.entries(COLORWAYS[name])) {
+    const m = parts[k] && meshOf(parts[k]);
+    if (m) m.material.color.setHex(hex).convertSRGBToLinear();
+  }
+}
+function applyExplode(t) {
+  for (const [k, node] of Object.entries(parts)) {
+    const z = (EXPLODE_Z[k] ?? 0) * t;
+    node.position.copy(node.userData.base).add(new THREE.Vector3(0, 0.22 * z, z));
+    if (k === "usb_plug") node.position.set(node.userData.base.x, node.userData.base.y - 24 * t, node.userData.base.z - 12 * t);
+  }
+  if (electronics) for (const c of electronics.children) {
+    const z = /screw/.test(c.name) ? -60 : /insert/.test(c.name) ? 26 : 0;
+    c.position.copy(c.userData.base).add(new THREE.Vector3(0, 0.22 * z * t, z * t));
+  }
+}
+
+const ex = document.getElementById("explode"), exv = document.getElementById("exv");
+ex.addEventListener("input", () => { applyExplode(+ex.value); exv.textContent = Math.round(ex.value * 100) + "%"; });
+function toggle(btn, fn) {
+  btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") !== "true";
+    btn.setAttribute("aria-pressed", on); fn(on);
+  });
+}
+toggle(document.getElementById("tCover"), on => {
+  for (const k of ["cover", "logo_inlay"]) if (parts[k]) parts[k].visible = on;
+});
+toggle(document.getElementById("tElec"), on => { if (electronics) electronics.visible = on; });
+for (const b of document.querySelectorAll("#cw button")) b.addEventListener("click", () => {
+  for (const o of document.querySelectorAll("#cw button")) o.setAttribute("aria-pressed", o === b);
+  applyColorway(b.dataset.cw);
+});
+
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>

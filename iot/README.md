@@ -22,6 +22,7 @@ flowchart LR
 | [`protocol/`](protocol) | Binary payload spec v1 ([`PAYLOAD.md`](protocol/PAYLOAD.md)), header-only C codec, TTN/ChirpStack JavaScript formatter, shared test vectors |
 | [`firmware/ear-tag/`](firmware/ear-tag) | PlatformIO / Arduino C++ firmware for the tag: sensors, LoRaWAN OTAA or P2P, deep sleep, flash buffering, downlink commands |
 | [`firmware/gateway/`](firmware/gateway) | Single-channel LoRa → Wi-Fi gateway for pilots without LoRaWAN coverage |
+| [`ear-tag-specifications/`](ear-tag-specifications) | Two 3D-printable ear tag enclosures, TV-ET1 Shield (flat, compact) and TV-ET0 Classic (dangle, solar): parametric CAD, STL/STEP, renders, drawings, 3D viewers, spec sheets |
 | [`terrava_iot/`](terrava_iot) | Python package: codec, simulator, MQTT bridge with durable outbox, CLI |
 | [`tests/`](tests) | 31 tests; the Python codec, the JS formatter and the vectors must agree byte for byte |
 

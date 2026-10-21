@@ -1,0 +1,10 @@
+# Terrava ear tag CAD / render / drawing toolchain (Python 3.12)
+cadquery==2.8.0
+mitsuba==3.9.1
+trimesh==5.1.1
+mapbox_earcut==2.1.0
+shapely==2.2.0
+scikit-image==0.26.0
+matplotlib==3.11.2
+pillow==13.0.0
+numpy==2.5.4
