@@ -575,7 +575,7 @@ Terrava berjalan dengan dataset yang realistis sehingga setiap fitur bisa langsu
 | 📡 Perangkat | 20 perangkat (smart ear tag dan gateway) dengan log kejadian dan perawatan |
 | 🚨 Alert | 18 alert dari kategori kesehatan, perilaku, lokasi, perangkat, lingkungan, dan cuaca |
 | 🧠 AI insights | Insight dengan prioritas, tingkat keyakinan, dan rekomendasi tindakan |
-| 👥 Tim | 9 anggota dengan peran dan penugasan peternakan |
+| 👥 Tim | 10 anggota dengan peran dan penugasan peternakan |
 
 Setiap aksi (menyelesaikan alert, menambah ternak, mengundang anggota, membuat tugas, dan lainnya) memperbarui satu data store bersama, sehingga perubahannya terlihat di semua halaman. Data disimpan di `localStorage` browser:
 
@@ -673,17 +673,35 @@ Terrava berkontribusi pada tujuh Tujuan Pembangunan Berkelanjutan (SDGs) Perseri
 <table>
   <tr>
     <td align="center" width="200">
-      <img src="frontend/public/Images/profile/snw.png" alt="Stanley Wijaya" width="120" /><br />
-      <b>Stanley Wijaya</b><br />
-      <sub>Founder & Product Lead</sub><br />
+      <img src="frontend/public/Images/profile/snw.png" alt="Stanley Nathanael Wijaya" width="120" /><br />
+      <b>Stanley Nathanael Wijaya</b><br />
+      <sub>Founder & CEO</sub><br />
       <a href="https://www.linkedin.com/in/stanley-nathanael-wijaya/">LinkedIn</a>
     </td>
     <td align="center" width="200">
+      <img src="frontend/public/Images/profile/britney.jpeg" alt="Britney Angeline Soeseno" width="120" /><br />
+      <b>Britney Angeline Soeseno</b><br />
+      <sub>CMO</sub><br />
+      <a href="https://www.linkedin.com/in/britneyangeline/">LinkedIn</a>
+    </td>
+    <td align="center" width="200">
+      <img src="frontend/public/Images/profile/hamra.png" alt="Ahmad Hamra" width="120" /><br />
+      <b>Ahmad Hamra</b><br />
+      <sub>CTO</sub><br />
+      <a href="https://www.linkedin.com/in/ahmad-hamra/">LinkedIn</a>
+    </td>
+    <!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/aqna.jpeg" alt="Aqnhatul Shabrina" width="120" /><br />
       <b>Aqnhatul Shabrina</b><br />
-      <sub>Business Lead</sub><br />
+      <sub>CFO</sub><br />
       <a href="https://www.linkedin.com/in/aqnhatul-shabrina-341643320/">LinkedIn</a>
-    </td>
+    </td> -->
+    <!-- <td align="center" width="200">
+      <img src="frontend/public/Images/profile/alexandra.png" alt="Alexandra Clarissa" width="120" /><br />
+      <b>Alexandra Clarissa</b><br />
+      <sub>COO</sub><br />
+      <a href="https://www.linkedin.com/in/alexandraclarissa/">LinkedIn</a>
+    </td> -->
   </tr>
 </table>
 

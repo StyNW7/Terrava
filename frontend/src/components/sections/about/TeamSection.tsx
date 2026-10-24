@@ -12,20 +12,22 @@ export default function TeamSection() {
       <div className="container">
         <SectionHeading badge={t("about.team.badge")} title={t("about.team.title")} />
 
-        <StaggerGrid className="mt-14 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+        <StaggerGrid className="mx-auto mt-14 grid max-w-3xl grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
           {teamMembers.map((member) => (
             <div key={member.id} className="text-center">
               <img
                 src={member.image}
                 alt={member.name}
                 loading="lazy"
-                className="mx-auto mb-4 h-28 w-28 rounded-2xl object-cover sm:h-32 sm:w-32"
+                className="mx-auto mb-4 h-32 w-32 rounded-2xl object-cover sm:h-36 sm:w-36"
               />
               <h3 className="text-sm font-semibold text-terrava-text">{member.name}</h3>
               <p className="mb-2 text-xs text-terrava-muted">{member.role}</p>
               {member.linkedin && (
                 <a
                   href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={`LinkedIn ${member.name}`}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-terrava-light text-terrava-primary transition-colors hover:bg-terrava-primary hover:text-white"
                 >

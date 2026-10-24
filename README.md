@@ -575,7 +575,7 @@ Terrava runs on a seeded, realistic dataset so every feature can be tried right 
 | 📡 Devices | 20 devices (smart ear tags and gateways) with event and maintenance logs |
 | 🚨 Alerts | 18 alerts across health, behaviour, location, device, environment, and weather |
 | 🧠 AI insights | Insights with priority, confidence, and recommended actions |
-| 👥 Team | 9 members with roles and farm assignments |
+| 👥 Team | 10 members with roles and farm assignments |
 
 Every action (resolving alerts, adding livestock, inviting members, creating tasks, and so on) updates a shared store, so the change shows up on every page. Data is saved in the browser's `localStorage`:
 
@@ -672,33 +672,36 @@ Terrava contributes to seven of the United Nations Sustainable Development Goals
 
 <table>
   <tr>
-    <td align="center" width="160">
+    <td align="center" width="200">
       <img src="frontend/public/Images/profile/snw.png" alt="Stanley Nathanael Wijaya" width="120" /><br />
       <b>Stanley Nathanael Wijaya</b><br />
       <sub>Founder & CEO</sub><br />
       <a href="https://www.linkedin.com/in/stanley-nathanael-wijaya/">LinkedIn</a>
     </td>
-    <!-- <td align="center" width="160">
+    <td align="center" width="200">
       <img src="frontend/public/Images/profile/britney.jpeg" alt="Britney Angeline Soeseno" width="120" /><br />
       <b>Britney Angeline Soeseno</b><br />
-      <sub>CMO</sub>
-    </td> -->
-    <!-- <td align="center" width="160">
+      <sub>CMO</sub><br />
+      <a href="https://www.linkedin.com/in/britneyangeline/">LinkedIn</a>
+    </td>
+    <td align="center" width="200">
       <img src="frontend/public/Images/profile/hamra.png" alt="Ahmad Hamra" width="120" /><br />
       <b>Ahmad Hamra</b><br />
-      <sub>CTO</sub>
-    </td> -->
-    <td align="center" width="160">
+      <sub>CTO</sub><br />
+      <a href="https://www.linkedin.com/in/ahmad-hamra/">LinkedIn</a>
+    </td>
+    <!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/aqna.jpeg" alt="Aqnhatul Shabrina" width="120" /><br />
       <b>Aqnhatul Shabrina</b><br />
       <sub>CFO</sub><br />
       <a href="https://www.linkedin.com/in/aqnhatul-shabrina-341643320/">LinkedIn</a>
-    </td>
-    <td align="center" width="160">
+    </td> -->
+    <!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/alexandra.png" alt="Alexandra Clarissa" width="120" /><br />
       <b>Alexandra Clarissa</b><br />
-      <sub>COO</sub>
-    </td>
+      <sub>COO</sub><br />
+      <a href="https://www.linkedin.com/in/alexandraclarissa/">LinkedIn</a>
+    </td> -->
   </tr>
 </table>
 
