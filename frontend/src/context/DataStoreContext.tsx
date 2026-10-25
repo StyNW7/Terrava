@@ -27,7 +27,7 @@ function seedTasks(): FarmTask[] {
 }
 
 /** Bump when the seed data shape changes so stale browser copies are discarded. */
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 
 function createSeed(): DataState {
   // Deep copies so edits never mutate the module-level seed arrays.

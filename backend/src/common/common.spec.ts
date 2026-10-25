@@ -106,7 +106,8 @@ describe('TTN uplink mapping', () => {
 describe('auth helpers', () => {
   it('derives initials, ignoring academic titles', () => {
     expect(initials('drh. Andi Prasetyo')).toBe('AP');
-    expect(initials('Stanley Nathanael Wijaya')).toBe('SN');
+    // expect(initials('Stanley Nathanael Wijaya')).toBe('SN');
+    expect(initials('Arif Setiawan Putra')).toBe('AS');
   });
 
   it('describes user agents for the sessions list', () => {

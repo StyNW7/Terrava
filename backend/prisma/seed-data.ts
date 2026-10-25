@@ -50,7 +50,8 @@ export const farms = [
     name: 'Green Valley Farm',
     location: 'Boyolali, Jawa Tengah',
     region: 'Jawa Tengah',
-    manager: 'Stanley Nathanael Wijaya',
+    // manager: 'Stanley Nathanael Wijaya',
+    manager: 'Arif Setiawan',
     image: images.modernBarn,
   },
   {
@@ -83,7 +84,8 @@ export function generateBarns() {
   const random = createSeededRandom(1001);
   const barnNames = ['Barn A', 'Barn B', 'Barn C'];
   const barnManagers = [
-    'Stanley Nathanael Wijaya',
+    // 'Stanley Nathanael Wijaya',
+    'Arif Setiawan',
     'Ratna Kusuma',
     'Andi Wirawan',
     'Budi Santoso',
@@ -491,30 +493,33 @@ export function generateStaff() {
     avatar?: string;
     email?: string;
   }[] = [
-    {
-      name: 'Stanley Nathanael Wijaya',
-      role: 'Owner',
-      title: 'Founder & CEO',
-      status: 'active',
-      avatar: '/Images/profile/snw.png',
-      email: 'stanley.wijaya@terrava.id',
-    },
-    {
-      name: 'Britney Angeline Soeseno',
-      role: 'Operational',
-      title: 'CMO',
-      status: 'active',
-      avatar: '/Images/profile/britney.jpeg',
-      email: 'britney.soeseno@terrava.id',
-    },
-    {
-      name: 'Ahmad Hamra',
-      role: 'Operational',
-      title: 'CTO',
-      status: 'active',
-      avatar: '/Images/profile/hamra.png',
-      email: 'ahmad.hamra@terrava.id',
-    },
+    // {
+    //   name: 'Stanley Nathanael Wijaya',
+    //   role: 'Owner',
+    //   title: 'Founder & CEO',
+    //   status: 'active',
+    //   avatar: '/Images/profile/snw.png',
+    //   email: 'stanley.wijaya@terrava.id',
+    // },
+    // {
+    //   name: 'Britney Angeline Soeseno',
+    //   role: 'Operational',
+    //   title: 'CMO',
+    //   status: 'active',
+    //   avatar: '/Images/profile/britney.jpeg',
+    //   email: 'britney.soeseno@terrava.id',
+    // },
+    // {
+    //   name: 'Ahmad Hamra',
+    //   role: 'Operational',
+    //   title: 'CTO',
+    //   status: 'active',
+    //   avatar: '/Images/profile/hamra.png',
+    //   email: 'ahmad.hamra@terrava.id',
+    // },
+    { name: 'Arif Setiawan', role: 'Owner', title: 'Farm Owner', status: 'active' },
+    { name: 'Sinta Maharani', role: 'Operational', title: 'Operations Lead', status: 'active' },
+    { name: 'Fajar Nugroho', role: 'Operational', title: 'Technical Lead', status: 'active' },
     // {
     //   name: 'Aqnhatul Shabrina',
     //   role: 'Operational',

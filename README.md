@@ -96,7 +96,7 @@ Terrava connects smart ear tags, IoT, the cloud, and artificial intelligence so 
 - [Who Terrava Is For](#-who-terrava-is-for)
 - [Sustainable Development Goals](#-sustainable-development-goals)
 - [Roadmap](#-roadmap)
-- [Team](#-team)
+<!-- - [Team](#-team) -->
 - [Acknowledgements](#-acknowledgements)
 - [License](#-license)
 
@@ -208,7 +208,7 @@ flowchart LR
 | Page | What it offers |
 | --- | --- |
 | **Home** | Hero, partners, the problems farmers face, the six-step flow, core features, a dashboard preview, ear tag highlights, target users, prototype capabilities, pilot stories, and FAQ |
-| **About** | Vision and mission, values, recognition, the team, and SDG contribution |
+| **About** | Vision and mission, values, recognition, <!-- the team, -->and SDG contribution |
 | **Solutions** | Eight solutions, each with its problem, Terrava's answer, capabilities, and benefit |
 | **Smart Ear Tag** | Product overview, sensors, device anatomy, connectivity, energy, comfort and safety, data flow, and specifications |
 | **How It Works** | The data journey, technical workflow, the farmer journey, user roles, and platform access |
@@ -421,7 +421,7 @@ Terrava/
 ├── frontend/                    # Terrava web platform (React + Vite)
 │   ├── public/
 │   │   ├── icons/               # PWA and favicon icons
-│   │   └── Images/              # Product photos, mockups, team photos
+│   │   └── Images/              # Product photos, mockups, avatars
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── auth/            # Login, register, demo account card
@@ -668,6 +668,8 @@ Terrava contributes to seven of the United Nations Sustainable Development Goals
 
 ---
 
+<!-- Team section hidden from the public README; kept for reference.
+
 ## 👩‍💻 Team
 
 <table>
@@ -690,22 +692,25 @@ Terrava contributes to seven of the United Nations Sustainable Development Goals
       <sub>CTO</sub><br />
       <a href="https://www.linkedin.com/in/ahmad-hamra/">LinkedIn</a>
     </td>
-    <!-- <td align="center" width="200">
+-->
+<!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/aqna.jpeg" alt="Aqnhatul Shabrina" width="120" /><br />
       <b>Aqnhatul Shabrina</b><br />
       <sub>CFO</sub><br />
       <a href="https://www.linkedin.com/in/aqnhatul-shabrina-341643320/">LinkedIn</a>
     </td> -->
-    <!-- <td align="center" width="200">
+<!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/alexandra.png" alt="Alexandra Clarissa" width="120" /><br />
       <b>Alexandra Clarissa</b><br />
       <sub>COO</sub><br />
       <a href="https://www.linkedin.com/in/alexandraclarissa/">LinkedIn</a>
     </td> -->
+<!--
   </tr>
 </table>
 
 ---
+-->
 
 ## 🙏 Acknowledgements
 

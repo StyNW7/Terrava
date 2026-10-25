@@ -96,7 +96,7 @@ Terrava menghubungkan smart ear tag, IoT, cloud, dan kecerdasan buatan agar pete
 - [Untuk Siapa Terrava](#-untuk-siapa-terrava)
 - [Tujuan Pembangunan Berkelanjutan](#-tujuan-pembangunan-berkelanjutan)
 - [Roadmap](#-roadmap)
-- [Tim](#-tim)
+<!-- - [Tim](#-tim) -->
 - [Ucapan Terima Kasih](#-ucapan-terima-kasih)
 - [Lisensi](#-lisensi)
 
@@ -208,7 +208,7 @@ flowchart LR
 | Halaman | Isi |
 | --- | --- |
 | **Home** | Hero, mitra, masalah yang dihadapi peternak, alur enam langkah, fitur inti, pratinjau dashboard, sorotan ear tag, target pengguna, kapabilitas prototipe, cerita pilot, dan FAQ |
-| **About** | Visi dan misi, nilai-nilai, rekognisi, tim, dan kontribusi SDG |
+| **About** | Visi dan misi, nilai-nilai, rekognisi, <!-- tim, -->dan kontribusi SDG |
 | **Solutions** | Delapan solusi, masing-masing dengan masalah, jawaban Terrava, kapabilitas, dan manfaatnya |
 | **Smart Ear Tag** | Gambaran produk, sensor, anatomi perangkat, konektivitas, energi, kenyamanan dan keamanan, alur data, serta spesifikasi |
 | **How It Works** | Perjalanan data, alur kerja teknis, perjalanan peternak, peran pengguna, dan akses platform |
@@ -421,7 +421,7 @@ Terrava/
 ├── frontend/                    # Platform web Terrava (React + Vite)
 │   ├── public/
 │   │   ├── icons/               # Ikon PWA dan favicon
-│   │   └── Images/              # Foto produk, mockup, foto tim
+│   │   └── Images/              # Foto produk, mockup, avatar
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── auth/            # Login, registrasi, kartu akun demo
@@ -668,6 +668,8 @@ Terrava berkontribusi pada tujuh Tujuan Pembangunan Berkelanjutan (SDGs) Perseri
 
 ---
 
+<!-- Team section hidden from the public README; kept for reference.
+
 ## 👩‍💻 Tim
 
 <table>
@@ -690,22 +692,25 @@ Terrava berkontribusi pada tujuh Tujuan Pembangunan Berkelanjutan (SDGs) Perseri
       <sub>CTO</sub><br />
       <a href="https://www.linkedin.com/in/ahmad-hamra/">LinkedIn</a>
     </td>
-    <!-- <td align="center" width="200">
+-->
+<!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/aqna.jpeg" alt="Aqnhatul Shabrina" width="120" /><br />
       <b>Aqnhatul Shabrina</b><br />
       <sub>CFO</sub><br />
       <a href="https://www.linkedin.com/in/aqnhatul-shabrina-341643320/">LinkedIn</a>
     </td> -->
-    <!-- <td align="center" width="200">
+<!-- <td align="center" width="200">
       <img src="frontend/public/Images/profile/alexandra.png" alt="Alexandra Clarissa" width="120" /><br />
       <b>Alexandra Clarissa</b><br />
       <sub>COO</sub><br />
       <a href="https://www.linkedin.com/in/alexandraclarissa/">LinkedIn</a>
     </td> -->
+<!--
   </tr>
 </table>
 
 ---
+-->
 
 ## 🙏 Ucapan Terima Kasih
 
