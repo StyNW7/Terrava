@@ -17,6 +17,12 @@ function isStandalone() {
   );
 }
 
+/** iOS never fires `beforeinstallprompt`; installing goes through Share → Add to Home Screen. */
+function isIOS() {
+  if (typeof navigator === "undefined") return false;
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
 function recentlyDismissed() {
   try {
     const raw = window.localStorage.getItem(DISMISS_KEY);
@@ -30,7 +36,8 @@ function recentlyDismissed() {
 /**
  * Captures the install prompt the browser offers so the app can trigger
  * installation from its own UI. `canInstall` is only true when the browser
- * allows it and the visitor has not dismissed the offer recently.
+ * allows it and the visitor has not dismissed the offer recently. `showIOSHint`
+ * is the iOS equivalent: the app can only explain the manual steps there.
  */
 export function useInstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
@@ -75,6 +82,7 @@ export function useInstallPrompt() {
   return {
     canInstall: Boolean(deferred) && !installed && !dismissed,
     installAvailable: Boolean(deferred) && !installed,
+    showIOSHint: isIOS() && !installed && !dismissed,
     installed,
     install,
     dismiss,

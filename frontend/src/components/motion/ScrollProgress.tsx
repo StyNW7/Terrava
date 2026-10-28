@@ -1,10 +1,12 @@
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /** Thin brand-gradient bar that fills as the page is scrolled. */
 export default function ScrollProgress({ className }: { className?: string }) {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 26, restDelta: 0.001 });
+  const spring = useSpring(scrollYProgress, { stiffness: 140, damping: 26, restDelta: 0.001 });
+  // The spring can overshoot after a route change; clamp so the bar never widens the page.
+  const scaleX = useTransform(spring, (value) => Math.min(Math.max(value, 0), 1));
 
   return (
     <motion.div

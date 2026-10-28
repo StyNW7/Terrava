@@ -66,14 +66,14 @@ export default function DashboardPreviewSection() {
                 {recentAlerts.map((alert) => (
                   <li
                     key={alert.animal}
-                    className="flex items-center justify-between rounded-xl bg-terrava-bg px-4 py-3"
+                    className="flex items-center justify-between gap-3 rounded-xl bg-terrava-bg px-4 py-3"
                   >
-                    <div>
-                      <p className="text-sm font-semibold text-terrava-text">{alert.animal}</p>
+                    <div className="min-w-0">
+                      <p className="whitespace-nowrap text-sm font-semibold text-terrava-text">{alert.animal}</p>
                       <p className="text-xs text-terrava-muted">{t("home.preview.issue." + alert.issueKey)}</p>
                     </div>
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                         alert.level === "critical"
                           ? "bg-terrava-error/10 text-terrava-error"
                           : "bg-terrava-warning/10 text-terrava-warning"

@@ -34,7 +34,7 @@ export default function BackToTopButton() {
           whileTap={{ scale: 0.94 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label={t("common.backToTop")}
-          className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-terrava-primary text-white shadow-lift"
+          className="fixed bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+0.75rem))] right-4 z-40 sm:bottom-6 sm:right-6 flex h-12 w-12 items-center justify-center rounded-full bg-terrava-primary text-white shadow-lift"
         >
           <svg className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
             <circle cx="24" cy="24" r={radius} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2.5" />

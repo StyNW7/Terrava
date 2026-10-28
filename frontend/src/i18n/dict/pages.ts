@@ -761,9 +761,16 @@ export const pages: Dictionary = {
   "pwa.later": { id: "Nanti", en: "Later" },
   "pwa.installTitle": { id: "Pasang Terrava di perangkat Anda", en: "Install Terrava on your device" },
   "pwa.installDescription": {
-    id: "Akses dashboard lebih cepat dari layar utama, tampil layar penuh tanpa browser, dan tetap bisa dibuka saat offline.",
-    en: "Open the dashboard faster from your home screen, run it full screen without the browser, and keep access while offline.",
+    id: "Buka dashboard langsung dari layar utama, tanpa bilah browser.",
+    en: "Open the dashboard straight from your home screen, without the browser bar.",
   },
+  "pwa.installMeta": { id: "Gratis · Ringan · Tanpa app store", en: "Free · Lightweight · No app store" },
+  "pwa.benefitFast": { id: "Lebih cepat", en: "Faster" },
+  "pwa.benefitOffline": { id: "Bisa offline", en: "Works offline" },
+  "pwa.benefitFullscreen": { id: "Layar penuh", en: "Full screen" },
+  "pwa.iosStep1": { id: "Ketuk tombol Bagikan", en: "Tap the Share button" },
+  "pwa.iosStep2": { id: "Pilih “Tambah ke Layar Utama”", en: "Choose “Add to Home Screen”" },
+  "pwa.gotIt": { id: "Mengerti", en: "Got it" },
   "pwa.install": { id: "Pasang aplikasi", en: "Install app" },
   "pwa.maybeLater": { id: "Lain kali", en: "Maybe later" },
   "pwa.installed": {

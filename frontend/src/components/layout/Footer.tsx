@@ -142,7 +142,7 @@ export default function Footer() {
       </div>
 
       <div className="relative border-t border-white/10">
-        <div className="container flex flex-col items-center justify-between gap-3 py-6 text-xs text-white/60 sm:flex-row">
+        <div className="container flex flex-col items-center justify-between gap-3 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center text-xs text-white/60 sm:flex-row sm:text-left">
           <p>&copy; {new Date().getFullYear()} Terrava. {t("footer.rights")}</p>
           <InstallAppButton className="w-auto px-3 py-1.5 text-xs text-white/70 hover:bg-white/10 hover:text-white" />
           <p>{t("footer.madeFor")}</p>
